@@ -90,9 +90,9 @@ const Account = () => {
     setWdLoading(true);
     try {
       const { error } = await supabase.rpc("request_withdrawal", {
-        p_amount: amount,
-        p_momo_phone: wdPhone,
-        p_momo_name: wdName || "",
+        _amount: amount,
+        _momo_phone: wdPhone,
+        _momo_name: wdName || "",
       });
       if (error) {
         toast.error("Lỗi: " + error.message);
