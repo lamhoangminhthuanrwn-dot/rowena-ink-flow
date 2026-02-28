@@ -1,23 +1,24 @@
 
 
+## Analysis
+
+The domain `notify.thuanlam.id.vn` is verified. The issue causing emails to land in spam is the **domain mismatch** between `FROM_DOMAIN` and `SENDER_DOMAIN`:
+
+- `SENDER_DOMAIN = "notify.thuanlam.id.vn"` (actual sending infrastructure)
+- `FROM_DOMAIN = "thuanlam.id.vn"` (domain in the From header)
+
+When SPF/DKIM are set up on `notify.thuanlam.id.vn` but the From address says `noreply@thuanlam.id.vn`, the domains don't align. Email providers (Gmail, Outlook) see this as a failed alignment and flag the message as spam.
+
 ## Plan
 
-### 1. Đổi link giới thiệu sang `https://thuanlam.id.vn/inv/{code}`
+### Fix FROM_DOMAIN to match SENDER_DOMAIN
 
-**Files cần sửa:**
+**File: `supabase/functions/auth-email-hook/index.ts`**
+- Change `FROM_DOMAIN` from `"thuanlam.id.vn"` to `"notify.thuanlam.id.vn"`
+- Result: From address becomes `Rowena Ink Hub <noreply@notify.thuanlam.id.vn>`
+- This ensures SPF/DKIM alignment, improving inbox delivery
 
-- **`src/pages/Account.tsx`**: Thay `${window.location.origin}/auth?ref=` thành `https://thuanlam.id.vn/inv/` ở cả `handleCopyReferral` (line 92) và phần hiển thị link (line 390)
+### Re-deploy edge function
 
-- **`src/App.tsx`**: Thêm route `/inv/:code` bên cạnh route `/r/:code` hiện tại, cả hai đều redirect về `/auth?ref={code}`
-
-### 2. Fix lỗi email xác nhận không gửi được
-
-Logs cho thấy auth-email-hook chạy thành công nhưng `message_id: undefined` — email có thể không thực sự được gửi đi.
-
-**Nguyên nhân**: Trong `auth-email-hook/index.ts`, `FROM_DOMAIN = "lamthuan.codes"` (from address: `noreply@lamthuan.codes`) nhưng `SENDER_DOMAIN = "notify.lamthuan.codes"`. Domain gửi và domain trong from address không khớp, có thể gây lỗi delivery.
-
-**Fix `supabase/functions/auth-email-hook/index.ts`**:
-- Đổi `FROM_DOMAIN` thành `"notify.lamthuan.codes"` để khớp với `SENDER_DOMAIN`
-- From address sẽ là `Rowena Ink Hub <noreply@notify.lamthuan.codes>`
-- Re-deploy edge function
+- Deploy `auth-email-hook` after the change
 
