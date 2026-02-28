@@ -14,6 +14,7 @@ import Success from "./pages/Success";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Ketoan from "./pages/Ketoan";
+import AdminBranches from "./pages/AdminBranches";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/ketoan" element={<Ketoan />} />
+                <Route path="/admin/branches" element={<AdminBranches />} />
                 <Route path="/r/:code" element={<ReferralRedirect />} />
                 <Route path="/inv/:code" element={<ReferralRedirect />} />
                 <Route path="*" element={<NotFound />} />
