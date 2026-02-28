@@ -89,7 +89,7 @@ const Account = () => {
 
   const handleCopyReferral = () => {
     if (!profile?.referral_code) return;
-    const link = `${window.location.origin}/auth?ref=${profile.referral_code}`;
+    const link = `https://thuanlam.id.vn/inv/${profile.referral_code}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -387,7 +387,7 @@ const Account = () => {
                     <div className="rounded-lg border border-border bg-card px-4 py-3">
                       <p className="text-xs text-muted-foreground mb-1">Link giới thiệu</p>
                       <p className="break-all text-sm text-foreground">
-                        {window.location.origin}/auth?ref={profile.referral_code}
+                        https://thuanlam.id.vn/inv/{profile.referral_code}
                       </p>
                     </div>
                     <Button

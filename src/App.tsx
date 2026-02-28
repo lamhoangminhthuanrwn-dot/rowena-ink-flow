@@ -38,6 +38,7 @@ const App = () => (
                 <Route path="/account" element={<Account />} />
                 <Route path="/ketoan" element={<Ketoan />} />
                 <Route path="/r/:code" element={<ReferralRedirect />} />
+                <Route path="/inv/:code" element={<ReferralRedirect />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
@@ -50,7 +51,8 @@ const App = () => (
 );
 
 const ReferralRedirect = () => {
-  const code = window.location.pathname.split("/r/")[1];
+  const path = window.location.pathname;
+  const code = path.includes("/inv/") ? path.split("/inv/")[1] : path.split("/r/")[1];
   return <Navigate to={`/auth?ref=${code}`} replace />;
 };
 

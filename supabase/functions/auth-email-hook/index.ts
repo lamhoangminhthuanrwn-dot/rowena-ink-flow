@@ -38,7 +38,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 const SITE_NAME = "Rowena Ink Hub"
 const SENDER_DOMAIN = "notify.lamthuan.codes"
 const ROOT_DOMAIN = "lamthuan.codes"
-const FROM_DOMAIN = "lamthuan.codes" // Domain shown in From address (may be root or sender subdomain)
+const FROM_DOMAIN = "notify.lamthuan.codes" // Must match SENDER_DOMAIN for successful delivery
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.
