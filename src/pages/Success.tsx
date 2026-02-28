@@ -174,7 +174,7 @@ const Success = () => {
       // Insert booking first if not yet
       await insertBooking();
 
-      const uploadedUrls: string[] = [];
+      const uploadedPaths: string[] = [];
       for (let i = 0; i < depositFiles.length; i++) {
         const file = depositFiles[i];
         const ext = file.name.split(".").pop();
@@ -182,16 +182,23 @@ const Success = () => {
         const { error: uploadError } = await supabase.storage
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
-        if (!uploadError) {
-          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30);
-          if (urlData?.signedUrl) uploadedUrls.push(urlData.signedUrl);
+        if (uploadError) {
+          console.error("Upload error:", uploadError);
+        } else {
+          uploadedPaths.push(path);
         }
+      }
+
+      if (uploadedPaths.length === 0) {
+        toast.error("Không thể tải ảnh lên. Vui lòng thử lại.");
+        setUploading(false);
+        return;
       }
 
       const { data, error } = await supabase.functions.invoke("upload-deposit", {
         body: {
           booking_code: state.bookingCode,
-          receipt_urls: uploadedUrls,
+          receipt_paths: uploadedPaths,
           deposit_note: depositNote || undefined,
         },
       });

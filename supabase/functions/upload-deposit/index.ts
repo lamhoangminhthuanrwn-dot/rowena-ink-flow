@@ -11,15 +11,18 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { booking_code, receipt_urls, deposit_note } = await req.json();
+    const body = await req.json();
+    const { booking_code, deposit_note } = body;
+    // Support both old receipt_urls and new receipt_paths
+    const receipt_paths: string[] = body.receipt_paths || [];
+    const receipt_urls_legacy: string[] = body.receipt_urls || [];
 
-    if (!booking_code || !receipt_urls || receipt_urls.length === 0) {
-      return new Response(JSON.stringify({ error: 'Missing booking_code or receipt_urls' }), {
+    if (!booking_code || (receipt_paths.length === 0 && receipt_urls_legacy.length === 0)) {
+      return new Response(JSON.stringify({ error: 'Missing booking_code or receipt data' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Validate booking_code length/format
     if (typeof booking_code !== 'string' || booking_code.length > 20) {
       return new Response(JSON.stringify({ error: 'Invalid booking code' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -43,9 +46,27 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Update booking with deposit receipts using service role (bypasses RLS)
+    // Generate signed URLs from paths using service role
+    let finalUrls: string[] = [...receipt_urls_legacy];
+    for (const path of receipt_paths) {
+      const { data: urlData, error: urlErr } = await supabase.storage
+        .from('booking-uploads')
+        .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 year
+      if (urlErr) {
+        console.error('Signed URL error for path:', path, urlErr);
+      } else if (urlData?.signedUrl) {
+        finalUrls.push(urlData.signedUrl);
+      }
+    }
+
+    if (finalUrls.length === 0) {
+      return new Response(JSON.stringify({ error: 'Failed to generate URLs for receipts' }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const updateData: Record<string, unknown> = {
-      deposit_receipts: receipt_urls,
+      deposit_receipts: finalUrls,
       payment_status: 'pending_verify',
     };
     if (deposit_note) {
