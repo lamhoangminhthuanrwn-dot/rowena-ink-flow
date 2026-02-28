@@ -1,9 +1,1 @@
-project_id = "mqdjpdczjdlntzauvvww"
-
-[functions]
-  [functions.auth-email-hook]
-    verify_jwt = false
-  [functions.send-booking-email]
-    verify_jwt = false
-  [functions.upload-deposit]
-    verify_jwt = false
+project_id = "qbbvnjnpbbpskhwngsrq"
