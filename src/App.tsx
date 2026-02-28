@@ -2,8 +2,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Index from "./pages/Index";
+import Catalog from "./pages/Catalog";
+import ProductDetail from "./pages/ProductDetail";
+import Booking from "./pages/Booking";
+import Success from "./pages/Success";
+import Auth from "./pages/Auth";
+import Account from "./pages/Account";
+import Ketoan from "./pages/Ketoan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -14,14 +24,34 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <div className="grain">
+            <Navbar />
+            <main className="min-h-screen">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/catalog" element={<Catalog />} />
+                <Route path="/catalog/:id" element={<ProductDetail />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/ketoan" element={<Ketoan />} />
+                <Route path="/r/:code" element={<ReferralRedirect />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
+
+const ReferralRedirect = () => {
+  const code = window.location.pathname.split("/r/")[1];
+  return <Navigate to={`/auth?ref=${code}`} replace />;
+};
 
 export default App;

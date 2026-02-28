@@ -1,0 +1,391 @@
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { formatVND } from "@/data/tattooDesigns";
+import { Check, X, Download, Search, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+const paymentStatusLabels: Record<string, { text: string; className: string }> = {
+  unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
+  pending_verify: { text: "Chờ xác nhận", className: "bg-primary/10 text-primary" },
+  paid: { text: "Đã thanh toán", className: "bg-success/10 text-success" },
+  rejected: { text: "Từ chối", className: "bg-destructive/10 text-destructive" },
+};
+
+const bookingStatusLabels: Record<string, { text: string; className: string }> = {
+  pending: { text: "Chờ xử lý", className: "bg-primary/10 text-primary" },
+  confirmed: { text: "Đã xác nhận", className: "bg-ring/10 text-ring" },
+  completed: { text: "Hoàn thành", className: "bg-success/10 text-success" },
+  cancelled: { text: "Đã hủy", className: "bg-destructive/10 text-destructive" },
+};
+
+const withdrawalStatusLabels: Record<string, { text: string; className: string }> = {
+  pending: { text: "Chờ duyệt", className: "bg-muted text-muted-foreground" },
+  approved: { text: "Đã duyệt", className: "bg-primary/10 text-primary" },
+  paid: { text: "Đã chuyển", className: "bg-success/10 text-success" },
+  rejected: { text: "Từ chối", className: "bg-destructive/10 text-destructive" },
+};
+
+const Ketoan = () => {
+  const { user, isAdmin, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<"bookings" | "withdrawals">("bookings");
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [filter, setFilter] = useState("all");
+  const [wdFilter, setWdFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [rejectId, setRejectId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [receiptModal, setReceiptModal] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && (!user || !isAdmin)) {
+      navigate("/auth");
+      toast.error("Bạn không có quyền truy cập trang này.");
+    }
+  }, [user, authLoading, isAdmin, navigate]);
+
+  const fetchBookings = async () => {
+    const { data } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+    if (data) setBookings(data);
+  };
+
+  const fetchWithdrawals = async () => {
+    const { data } = await supabase.from("withdrawals").select("*").order("created_at", { ascending: false });
+    if (data) setWithdrawals(data);
+  };
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchBookings();
+      fetchWithdrawals();
+    }
+  }, [user, authLoading, isAdmin]);
+
+  const markPaid = async (id: string) => {
+    const { error } = await supabase.from("bookings").update({ payment_status: "paid" }).eq("id", id);
+    if (error) { toast.error("Lỗi: " + error.message); return; }
+
+    try {
+      await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
+    } catch (e) {
+      console.warn("Referral reward processing:", e);
+    }
+
+    toast.success("Đã xác nhận thanh toán!");
+    fetchBookings();
+  };
+
+  const rejectPayment = async (id: string) => {
+    const { error } = await supabase.from("bookings").update({ payment_status: "rejected", reject_reason: rejectReason || null }).eq("id", id);
+    if (error) { toast.error("Lỗi: " + error.message); return; }
+    toast.success("Đã từ chối.");
+    setRejectId(null);
+    setRejectReason("");
+    fetchBookings();
+  };
+
+  const markCompleted = async (id: string) => {
+    const { error } = await supabase.from("bookings").update({ booking_status: "completed" }).eq("id", id);
+    if (error) { toast.error("Lỗi: " + error.message); return; }
+    toast.success("Đã đánh dấu hoàn thành!");
+    fetchBookings();
+  };
+
+  const approveWithdrawal = async (id: string) => {
+    const { error } = await supabase.from("withdrawals").update({ status: "approved", decided_by: user?.id }).eq("id", id);
+    if (error) { toast.error("Lỗi: " + error.message); return; }
+    toast.success("Đã duyệt yêu cầu rút tiền!");
+    fetchWithdrawals();
+  };
+
+  const rejectWithdrawal = async (id: string) => {
+    const wd = withdrawals.find((w) => w.id === id);
+    if (!wd) return;
+
+    const { error: wdError } = await supabase.from("withdrawals").update({ status: "rejected", decided_by: user?.id, note: rejectReason || null }).eq("id", id);
+    if (wdError) { toast.error("Lỗi: " + wdError.message); return; }
+
+    await supabase.rpc("release_reserved", { p_user_id: wd.user_id, p_amount: wd.amount_vnd });
+
+    toast.success("Đã từ chối yêu cầu rút tiền.");
+    setRejectId(null);
+    setRejectReason("");
+    fetchWithdrawals();
+  };
+
+  const markWithdrawalPaid = async (id: string) => {
+    const wd = withdrawals.find((w) => w.id === id);
+    if (!wd) return;
+
+    const { error } = await supabase.from("withdrawals").update({ status: "paid", decided_by: user?.id }).eq("id", id);
+    if (error) { toast.error("Lỗi: " + error.message); return; }
+
+    await supabase.rpc("complete_withdrawal", { p_withdrawal_id: id });
+
+    toast.success("Đã đánh dấu đã chuyển!");
+    fetchWithdrawals();
+  };
+
+  const exportCSV = () => {
+    const headers = ["Mã", "Khách hàng", "SĐT", "Mẫu", "Ngày hẹn", "Cọc", "Thanh toán", "Trạng thái", "Ngày tạo"];
+    const rows = filteredBookings.map((b) => [
+      b.booking_code, b.customer_name, b.phone, b.design_name,
+      `${b.appointment_date} ${b.appointment_time}`,
+      b.deposit_amount, b.payment_status, b.booking_status,
+      new Date(b.created_at).toLocaleDateString("vi-VN"),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `bookings_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  const filteredBookings = bookings.filter((b) => {
+    const matchFilter = filter === "all" ||
+      (filter === "new" && b.payment_status === "unpaid") ||
+      (filter === "pending_verify" && b.payment_status === "pending_verify") ||
+      (filter === "paid" && b.payment_status === "paid") ||
+      (filter === "completed" && b.booking_status === "completed");
+    const matchSearch = !search ||
+      b.booking_code?.toLowerCase().includes(search.toLowerCase()) ||
+      b.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
+      b.phone?.includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  const filteredWithdrawals = withdrawals.filter((w) => {
+    return wdFilter === "all" || w.status === wdFilter;
+  });
+
+  if (authLoading) {
+    return <div className="flex min-h-screen items-center justify-center pt-16"><p className="text-muted-foreground">Đang tải...</p></div>;
+  }
+
+  return (
+    <div className="pt-20 pb-16">
+      <div className="mx-auto max-w-6xl px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="font-serif text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Xác nhận thanh toán, quản lý lịch hẹn & rút tiền</p>
+        </motion.div>
+
+        {/* Main tabs */}
+        <div className="mt-4 mb-4 flex gap-1.5">
+          <button onClick={() => setActiveTab("bookings")}
+            className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "bookings" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            Bookings
+          </button>
+          <button onClick={() => setActiveTab("withdrawals")}
+            className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
+              activeTab === "withdrawals" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
+            }`}>
+            Rút tiền ({withdrawals.filter((w) => w.status === "pending").length})
+          </button>
+        </div>
+
+        {activeTab === "bookings" && (
+          <>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex gap-1.5">
+                {[
+                  { key: "all", label: "Tất cả" },
+                  { key: "new", label: "Mới" },
+                  { key: "pending_verify", label: "Chờ xác nhận" },
+                  { key: "paid", label: "Đã TT" },
+                  { key: "completed", label: "Hoàn thành" },
+                ].map((f) => (
+                  <button key={f.key} onClick={() => setFilter(f.key)}
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${filter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <div className="relative flex-1 min-w-[200px]">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input type="text" placeholder="Tìm theo mã, tên, SĐT..." value={search} onChange={(e) => setSearch(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-secondary/30 pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
+              </div>
+              <Button variant="outline" size="sm" onClick={exportCSV} className="gap-1 border-border text-muted-foreground hover:text-foreground">
+                <Download size={14} /> CSV
+              </Button>
+            </div>
+
+            <div className="mt-6 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <th className="px-3 py-3">Mã</th>
+                    <th className="px-3 py-3">Khách hàng</th>
+                    <th className="px-3 py-3">Mẫu</th>
+                    <th className="px-3 py-3">Ngày</th>
+                    <th className="px-3 py-3">Thanh toán</th>
+                    <th className="px-3 py-3">Trạng thái</th>
+                    <th className="px-3 py-3">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBookings.map((b) => {
+                    const ps = paymentStatusLabels[b.payment_status] || paymentStatusLabels.unpaid;
+                    const bs = bookingStatusLabels[b.booking_status] || bookingStatusLabels.pending;
+                    return (
+                      <tr key={b.id} className="border-b border-border/50 transition-colors hover:bg-secondary/20">
+                        <td className="px-3 py-3 font-mono text-xs text-primary">{b.booking_code}</td>
+                        <td className="px-3 py-3">
+                          <p className="font-medium text-foreground">{b.customer_name}</p>
+                          <p className="text-xs text-muted-foreground">{b.phone}</p>
+                        </td>
+                        <td className="px-3 py-3 text-foreground">{b.design_name}</td>
+                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{b.appointment_date} · {b.appointment_time}</td>
+                        <td className="px-3 py-3">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
+                        </td>
+                        <td className="px-3 py-3">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex gap-1">
+                            {b.deposit_receipts && b.deposit_receipts.length > 0 && (
+                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => setReceiptModal(b.deposit_receipts)} title="Xem biên lai">
+                                <Eye size={14} />
+                              </Button>
+                            )}
+                            {(b.payment_status === "unpaid" || b.payment_status === "pending_verify") && (
+                              <>
+                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-primary hover:text-primary/80" onClick={() => markPaid(b.id)} title="Xác nhận thanh toán">
+                                  <Check size={14} />
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối">
+                                  <X size={14} />
+                                </Button>
+                              </>
+                            )}
+                            {b.payment_status === "paid" && b.booking_status !== "completed" && (
+                              <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-primary hover:text-primary/80" onClick={() => markCompleted(b.id)}>
+                                Hoàn thành
+                              </Button>
+                            )}
+                          </div>
+                          {rejectId === b.id && (
+                            <div className="mt-2 space-y-2">
+                              <input type="text" placeholder="Lý do từ chối..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
+                                className="w-full rounded border border-border bg-secondary/30 px-2 py-1 text-xs text-foreground focus:border-primary focus:outline-none" />
+                              <div className="flex gap-1">
+                                <Button size="sm" className="h-6 px-2 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/80" onClick={() => rejectPayment(b.id)}>Từ chối</Button>
+                                <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => { setRejectId(null); setRejectReason(""); }}>Hủy</Button>
+                              </div>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {filteredBookings.length === 0 && (
+                    <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">Không có booking nào.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {activeTab === "withdrawals" && (
+          <>
+            <div className="flex gap-1.5 mb-4">
+              {[
+                { key: "all", label: "Tất cả" },
+                { key: "pending", label: "Chờ duyệt" },
+                { key: "approved", label: "Đã duyệt" },
+                { key: "paid", label: "Đã chuyển" },
+                { key: "rejected", label: "Từ chối" },
+              ].map((f) => (
+                <button key={f.key} onClick={() => setWdFilter(f.key)}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${wdFilter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <th className="px-3 py-3">User</th>
+                    <th className="px-3 py-3">Số tiền</th>
+                    <th className="px-3 py-3">MoMo</th>
+                    <th className="px-3 py-3">Trạng thái</th>
+                    <th className="px-3 py-3">Ngày</th>
+                    <th className="px-3 py-3">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredWithdrawals.map((w) => {
+                    const ws = withdrawalStatusLabels[w.status] || withdrawalStatusLabels.pending;
+                    return (
+                      <tr key={w.id} className="border-b border-border/50 transition-colors hover:bg-secondary/20">
+                        <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{w.user_id?.slice(0, 8)}...</td>
+                        <td className="px-3 py-3 font-semibold text-foreground">{formatVND(w.amount_vnd)}</td>
+                        <td className="px-3 py-3">
+                          <p className="text-foreground">{w.momo_phone}</p>
+                          {w.momo_name && <p className="text-xs text-muted-foreground">{w.momo_name}</p>}
+                        </td>
+                        <td className="px-3 py-3">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ws.className}`}>{ws.text}</span>
+                        </td>
+                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{new Date(w.created_at).toLocaleDateString("vi-VN")}</td>
+                        <td className="px-3 py-3">
+                          <div className="flex gap-1">
+                            {w.status === "pending" && (
+                              <>
+                                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-primary" onClick={() => approveWithdrawal(w.id)}>Duyệt</Button>
+                                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive" onClick={() => rejectWithdrawal(w.id)}>Từ chối</Button>
+                              </>
+                            )}
+                            {w.status === "approved" && (
+                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-success" onClick={() => markWithdrawalPaid(w.id)}>Đã chuyển</Button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {filteredWithdrawals.length === 0 && (
+                    <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">Không có yêu cầu rút tiền nào.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* Receipt Modal */}
+        {receiptModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={() => setReceiptModal(null)}>
+            <div className="mx-4 max-w-lg rounded-lg border border-border bg-card p-6" onClick={(e) => e.stopPropagation()}>
+              <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Biên lai đặt cọc</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {receiptModal.map((url, i) => (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                    <img src={url} alt={`Receipt ${i + 1}`} className="rounded-lg border border-border/50 object-cover" />
+                  </a>
+                ))}
+              </div>
+              <Button variant="ghost" className="mt-4 w-full" onClick={() => setReceiptModal(null)}>Đóng</Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Ketoan;
