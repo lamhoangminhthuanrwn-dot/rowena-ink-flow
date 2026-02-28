@@ -1,18 +1,17 @@
 
 
-## Plan: Thêm nút mở ZaloPay trên trang /success
+## Plan: Cập nhật ZaloPay deeplink với thông tin chuyển tiền
 
 ### Changes
 
-**`src/pages/Success.tsx`**:
-- Thêm nút "Thanh toán qua ZaloPay" ngay dưới phần bank details, trong section Deposit Instruction
-- Nút sử dụng deeplink `zalopay://` để mở app ZaloPay trên điện thoại
-- Styling: nút nổi bật với icon ZaloPay (dùng `Wallet` icon từ lucide), màu xanh ZaloPay (#008fe5)
-- Fallback: nếu trên desktop/không có app, link sẽ mở trang ZaloPay web
-
 **`src/data/bankInfo.ts`**:
-- Thêm hàm `generateZaloPayUrl(bookingCode)` tạo deeplink ZaloPay dạng `https://social.zalopay.vn/spa/qr/...` hoặc fallback `zalopay://` scheme
+- Thêm `zaloPayPhone: "0938048780"` vào `bankInfo`
+- Cập nhật `generateZaloPayUrl(bookingCode)` để tạo deeplink ZaloPay chuyển tiền với:
+  - Số điện thoại đích: `0938048780`
+  - Số tiền: `bankInfo.depositAmount` (200,000)
+  - Nội dung: transfer content (`ROWENA {bookingCode}`)
+  - Deeplink format: `https://social.zalopay.vn/spa/personal-transfer?phone=0938048780&amount=200000&note=ROWENA%20RW-xxx`
 
-### UI Layout
-Nút ZaloPay sẽ nằm ngay sau bảng thông tin ngân hàng, trước section upload biên lai.
+**`src/pages/Success.tsx`**:
+- Cập nhật lời gọi `generateZaloPayUrl()` → `generateZaloPayUrl(state.bookingCode)` để truyền mã booking vào deeplink
 
