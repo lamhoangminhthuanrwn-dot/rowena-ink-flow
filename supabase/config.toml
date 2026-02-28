@@ -1,5 +1,1 @@
-[functions.send-booking-email]
-verify_jwt = false
-
-[functions.process-referral-reward]
-verify_jwt = false
+project_id = "mqdjpdczjdlntzauvvww"
