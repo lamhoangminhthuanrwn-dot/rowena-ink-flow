@@ -51,24 +51,49 @@ Deno.serve(async (req) => {
       });
     }
 
+    function escapeHtml(text: string): string {
+      const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function sanitizeUrl(url: string): string {
+      try {
+        const parsed = new URL(url);
+        if (!['http:', 'https:'].includes(parsed.protocol)) return '#';
+        return escapeHtml(parsed.href);
+      } catch { return '#'; }
+    }
+
+    const safeBookingCode = escapeHtml(booking_code || '');
+    const safeCustomerName = escapeHtml(customer_name || '');
+    const safePhone = escapeHtml(phone || '');
+    const safeEmail = escapeHtml(email || 'N/A');
+    const safeDesignName = escapeHtml(design_name || '');
+    const safePlacement = escapeHtml(placement || 'N/A');
+    const safeSize = escapeHtml(size || 'N/A');
+    const safeStyle = escapeHtml(style || 'N/A');
+    const safeAppointmentDate = escapeHtml(appointment_date || '');
+    const safeAppointmentTime = escapeHtml(appointment_time || '');
+    const safeNote = escapeHtml(note || 'Không có');
+
     const referenceImagesHtml = reference_urls && reference_urls.length > 0
-      ? `<p><strong>Ảnh tham khảo:</strong></p>${reference_urls.map((url: string) => `<p><a href="${url}">${url}</a></p>`).join('')}`
+      ? `<p><strong>Ảnh tham khảo:</strong></p>${reference_urls.map((url: string) => { const safe = sanitizeUrl(url); return `<p><a href="${safe}">${safe}</a></p>`; }).join('')}`
       : '';
 
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #d4a843;">🔔 Booking mới — ${booking_code}</h2>
+        <h2 style="color: #d4a843;">🔔 Booking mới — ${safeBookingCode}</h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mã booking</td><td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">${booking_code}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Khách hàng</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${customer_name}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">SĐT</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${phone}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Email</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${email || 'N/A'}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mẫu</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${design_name}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Vị trí</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${placement || 'N/A'}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Kích thước</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${size || 'N/A'}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Phong cách</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${style || 'N/A'}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ngày hẹn</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${appointment_date} · ${appointment_time}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ghi chú</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${note || 'Không có'}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mã booking</td><td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">${safeBookingCode}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Khách hàng</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeCustomerName}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">SĐT</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safePhone}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Email</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeEmail}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mẫu</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeDesignName}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Vị trí</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safePlacement}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Kích thước</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeSize}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Phong cách</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeStyle}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ngày hẹn</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeAppointmentDate} · ${safeAppointmentTime}</td></tr>
+          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ghi chú</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeNote}</td></tr>
         </table>
         ${referenceImagesHtml}
         <p style="margin-top: 20px; color: #888; font-size: 12px;">— ROWENA Tattoo Studio</p>

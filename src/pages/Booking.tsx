@@ -63,8 +63,8 @@ const Booking = () => {
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = supabase.storage.from("booking-uploads").getPublicUrl(path);
-          if (urlData?.publicUrl) uploadedUrls.push(urlData.publicUrl);
+          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30); // 30 days
+          if (urlData?.signedUrl) uploadedUrls.push(urlData.signedUrl);
         }
       }
 
