@@ -16,7 +16,7 @@ const paymentStatusLabels: Record<string, { text: string; className: string }> =
 };
 
 const bookingStatusLabels: Record<string, { text: string; className: string }> = {
-  pending: { text: "Chờ xử lý", className: "bg-primary/10 text-primary" },
+  pending: { text: "Chưa xăm", className: "bg-primary/10 text-primary" },
   confirmed: { text: "Đã xác nhận", className: "bg-ring/10 text-ring" },
   completed: { text: "Hoàn thành", className: "bg-success/10 text-success" },
   cancelled: { text: "Đã hủy", className: "bg-destructive/10 text-destructive" },
@@ -44,17 +44,42 @@ const Account = () => {
   useEffect(() => {
     if (!user) return;
 
-    supabase.from("bookings").select("*").eq("user_id", user.id).order("created_at", { ascending: false })
-      .then(({ data }) => { if (data) setBookings(data); });
+    supabase
+      .from("bookings")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setBookings(data);
+      });
 
-    supabase.from("wallet").select("*").eq("user_id", user.id).single()
-      .then(({ data }) => { if (data) setWallet(data); });
+    supabase
+      .from("wallet")
+      .select("*")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) setWallet(data);
+      });
 
-    supabase.from("wallet_transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20)
-      .then(({ data }) => { if (data) setTransactions(data); });
+    supabase
+      .from("wallet_transactions")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        if (data) setTransactions(data);
+      });
 
-    supabase.from("withdrawals").select("*").eq("user_id", user.id).order("created_at", { ascending: false })
-      .then(({ data }) => { if (data) setWithdrawals(data); });
+    supabase
+      .from("withdrawals")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setWithdrawals(data);
+      });
   }, [user]);
 
   const handleLogout = async () => {
@@ -104,7 +129,11 @@ const Account = () => {
         setWdName("");
         const { data: wData } = await supabase.from("wallet").select("*").eq("user_id", user!.id).single();
         if (wData) setWallet(wData);
-        const { data: wdData } = await supabase.from("withdrawals").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
+        const { data: wdData } = await supabase
+          .from("withdrawals")
+          .select("*")
+          .eq("user_id", user!.id)
+          .order("created_at", { ascending: false });
         if (wdData) setWithdrawals(wdData);
       }
     } finally {
@@ -113,7 +142,11 @@ const Account = () => {
   };
 
   if (authLoading) {
-    return <div className="flex min-h-screen items-center justify-center pt-16"><p className="text-muted-foreground">Đang tải...</p></div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center pt-16">
+        <p className="text-muted-foreground">Đang tải...</p>
+      </div>
+    );
   }
 
   if (!user) return null;
@@ -160,7 +193,10 @@ const Account = () => {
               {bookings.length === 0 ? (
                 <div className="rounded-lg border border-border/50 bg-card p-8 text-center">
                   <p className="text-muted-foreground">Bạn chưa có lịch hẹn nào.</p>
-                  <Button className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/booking")}>
+                  <Button
+                    className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
+                    onClick={() => navigate("/booking")}
+                  >
                     Đặt lịch ngay
                   </Button>
                 </div>
@@ -175,11 +211,21 @@ const Account = () => {
                           <div>
                             <p className="font-mono text-xs text-primary">{b.booking_code}</p>
                             <p className="mt-1 font-semibold text-foreground">{b.design_name}</p>
-                            <p className="text-xs text-muted-foreground">{b.appointment_date} · {b.appointment_time}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {b.appointment_date} · {b.appointment_time}
+                            </p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
-                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
-                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
+                            <span
+                              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}
+                            >
+                              {bs.text}
+                            </span>
+                            <span
+                              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}
+                            >
+                              {ps.text}
+                            </span>
                           </div>
                         </div>
                         {b.reject_reason && (
@@ -211,24 +257,40 @@ const Account = () => {
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số tiền (VNĐ) *</label>
-                    <input type="number" value={wdAmount} onChange={(e) => setWdAmount(e.target.value)}
+                    <input
+                      type="number"
+                      value={wdAmount}
+                      onChange={(e) => setWdAmount(e.target.value)}
                       className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      placeholder="300000" min="1" />
+                      placeholder="300000"
+                      min="1"
+                    />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại MoMo *</label>
-                    <input type="tel" value={wdPhone} onChange={(e) => setWdPhone(e.target.value)}
+                    <input
+                      type="tel"
+                      value={wdPhone}
+                      onChange={(e) => setWdPhone(e.target.value)}
                       className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      placeholder="0901 234 567" />
+                      placeholder="0901 234 567"
+                    />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Tên MoMo (tùy chọn)</label>
-                    <input type="text" value={wdName} onChange={(e) => setWdName(e.target.value)}
+                    <input
+                      type="text"
+                      value={wdName}
+                      onChange={(e) => setWdName(e.target.value)}
                       className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      placeholder="Nguyễn Văn A" />
+                      placeholder="Nguyễn Văn A"
+                    />
                   </div>
-                  <Button onClick={handleWithdraw} disabled={wdLoading || available <= 0}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button
+                    onClick={handleWithdraw}
+                    disabled={wdLoading || available <= 0}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
                     {wdLoading ? "Đang xử lý..." : "Yêu cầu rút tiền"}
                   </Button>
                 </div>
@@ -239,18 +301,34 @@ const Account = () => {
                   <h3 className="font-serif text-lg font-semibold text-foreground mb-3">Lịch sử rút tiền</h3>
                   <div className="space-y-2">
                     {withdrawals.map((w) => (
-                      <div key={w.id} className="flex items-center justify-between rounded-lg border border-border/50 bg-card px-4 py-3">
+                      <div
+                        key={w.id}
+                        className="flex items-center justify-between rounded-lg border border-border/50 bg-card px-4 py-3"
+                      >
                         <div>
                           <p className="text-sm font-medium text-foreground">{formatVND(w.amount_vnd)}</p>
-                          <p className="text-xs text-muted-foreground">{w.momo_phone} · {new Date(w.created_at).toLocaleDateString("vi-VN")}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {w.momo_phone} · {new Date(w.created_at).toLocaleDateString("vi-VN")}
+                          </p>
                         </div>
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          w.status === "paid" ? "bg-success/10 text-success" :
-                          w.status === "rejected" ? "bg-destructive/10 text-destructive" :
-                          w.status === "approved" ? "bg-primary/10 text-primary" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
-                          {w.status === "pending" ? "Chờ duyệt" : w.status === "approved" ? "Đã duyệt" : w.status === "paid" ? "Đã chuyển" : "Từ chối"}
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            w.status === "paid"
+                              ? "bg-success/10 text-success"
+                              : w.status === "rejected"
+                                ? "bg-destructive/10 text-destructive"
+                                : w.status === "approved"
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {w.status === "pending"
+                            ? "Chờ duyệt"
+                            : w.status === "approved"
+                              ? "Đã duyệt"
+                              : w.status === "paid"
+                                ? "Đã chuyển"
+                                : "Từ chối"}
                         </span>
                       </div>
                     ))}
@@ -263,13 +341,21 @@ const Account = () => {
                   <h3 className="font-serif text-lg font-semibold text-foreground mb-3">Lịch sử giao dịch</h3>
                   <div className="space-y-2">
                     {transactions.map((t) => (
-                      <div key={t.id} className="flex items-center justify-between rounded-lg border border-border/50 bg-card px-4 py-3">
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between rounded-lg border border-border/50 bg-card px-4 py-3"
+                      >
                         <div>
                           <p className="text-sm text-foreground">{t.description || t.type}</p>
-                          <p className="text-xs text-muted-foreground">{new Date(t.created_at).toLocaleDateString("vi-VN")}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(t.created_at).toLocaleDateString("vi-VN")}
+                          </p>
                         </div>
-                        <span className={`text-sm font-semibold ${t.amount_vnd > 0 ? "text-success" : "text-destructive"}`}>
-                          {t.amount_vnd > 0 ? "+" : ""}{formatVND(t.amount_vnd)}
+                        <span
+                          className={`text-sm font-semibold ${t.amount_vnd > 0 ? "text-success" : "text-destructive"}`}
+                        >
+                          {t.amount_vnd > 0 ? "+" : ""}
+                          {formatVND(t.amount_vnd)}
                         </span>
                       </div>
                     ))}
@@ -284,9 +370,12 @@ const Account = () => {
             <div className="space-y-6">
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-6 text-center">
                 <Share2 className="mx-auto mb-3 text-primary" size={32} />
-                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Giới thiệu bạn bè — Nhận 300.000đ</h3>
+                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+                  Giới thiệu bạn bè — Nhận 300.000đ
+                </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Chia sẻ link giới thiệu. Khi bạn bè đặt lịch và cọc thành công lần đầu, bạn nhận <span className="font-semibold text-primary">300.000đ</span> vào ví.
+                  Chia sẻ link giới thiệu. Khi bạn bè đặt lịch và cọc thành công lần đầu, bạn nhận{" "}
+                  <span className="font-semibold text-primary">300.000đ</span> vào ví.
                 </p>
 
                 {profile?.referral_code ? (
@@ -310,7 +399,9 @@ const Account = () => {
                     </Button>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Mã giới thiệu sẽ hiển thị sau khi tài khoản được kích hoạt.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Mã giới thiệu sẽ hiển thị sau khi tài khoản được kích hoạt.
+                  </p>
                 )}
               </div>
             </div>

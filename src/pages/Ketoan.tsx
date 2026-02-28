@@ -16,7 +16,7 @@ const paymentStatusLabels: Record<string, { text: string; className: string }> =
 };
 
 const bookingStatusLabels: Record<string, { text: string; className: string }> = {
-  pending: { text: "Chờ xử lý", className: "bg-primary/10 text-primary" },
+  pending: { text: "Chưa xăm", className: "bg-primary/10 text-primary" },
   confirmed: { text: "Đã xác nhận", className: "bg-ring/10 text-ring" },
   completed: { text: "Hoàn thành", className: "bg-success/10 text-success" },
   cancelled: { text: "Đã hủy", className: "bg-destructive/10 text-destructive" },
@@ -67,37 +67,13 @@ const Ketoan = () => {
     }
   }, [user, authLoading, isAdmin]);
 
-  // Realtime: listen for new bookings
-  useEffect(() => {
-    if (!user || !isAdmin) return;
-    const channel = supabase
-      .channel("admin-bookings-realtime")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "bookings" },
-        (payload) => {
-          const newBooking = payload.new as any;
-          toast.info(`📩 Đơn mới: ${newBooking.booking_code} — ${newBooking.customer_name}`);
-          setBookings((prev) => [newBooking, ...prev]);
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "bookings" },
-        (payload) => {
-          const updated = payload.new as any;
-          setBookings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user, isAdmin]);
-
   const markPaid = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ payment_status: "paid" }).eq("id", id);
-    if (error) { console.error("markPaid error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    if (error) {
+      console.error("markPaid error:", error);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
 
     try {
       await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
@@ -110,8 +86,15 @@ const Ketoan = () => {
   };
 
   const rejectPayment = async (id: string) => {
-    const { error } = await supabase.from("bookings").update({ payment_status: "rejected", reject_reason: rejectReason || null }).eq("id", id);
-    if (error) { console.error("rejectPayment error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    const { error } = await supabase
+      .from("bookings")
+      .update({ payment_status: "rejected", reject_reason: rejectReason || null })
+      .eq("id", id);
+    if (error) {
+      console.error("rejectPayment error:", error);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
     toast.success("Đã từ chối.");
     setRejectId(null);
     setRejectReason("");
@@ -120,28 +103,47 @@ const Ketoan = () => {
 
   const markCompleted = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ booking_status: "completed" }).eq("id", id);
-    if (error) { console.error("markCompleted error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    if (error) {
+      console.error("markCompleted error:", error);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
     toast.success("Đã đánh dấu hoàn thành!");
     fetchBookings();
   };
 
   const confirmBooking = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ booking_status: "confirmed" }).eq("id", id);
-    if (error) { console.error("confirmBooking error:", error); toast.error("Không thể thực hiện thao tác."); return; }
+    if (error) {
+      console.error("confirmBooking error:", error);
+      toast.error("Không thể thực hiện thao tác.");
+      return;
+    }
     toast.success("Đã xác nhận đơn!");
     fetchBookings();
   };
 
   const cancelBooking = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ booking_status: "cancelled" }).eq("id", id);
-    if (error) { console.error("cancelBooking error:", error); toast.error("Không thể thực hiện thao tác."); return; }
+    if (error) {
+      console.error("cancelBooking error:", error);
+      toast.error("Không thể thực hiện thao tác.");
+      return;
+    }
     toast.success("Đã hủy đơn!");
     fetchBookings();
   };
 
   const approveWithdrawal = async (id: string) => {
-    const { error } = await supabase.from("withdrawals").update({ status: "approved", decided_by: user?.id }).eq("id", id);
-    if (error) { console.error("approveWithdrawal error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    const { error } = await supabase
+      .from("withdrawals")
+      .update({ status: "approved", decided_by: user?.id })
+      .eq("id", id);
+    if (error) {
+      console.error("approveWithdrawal error:", error);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
     toast.success("Đã duyệt yêu cầu rút tiền!");
     fetchWithdrawals();
   };
@@ -150,8 +152,15 @@ const Ketoan = () => {
     const wd = withdrawals.find((w) => w.id === id);
     if (!wd) return;
 
-    const { error: wdError } = await supabase.from("withdrawals").update({ status: "rejected", decided_by: user?.id, note: rejectReason || null }).eq("id", id);
-    if (wdError) { console.error("rejectWithdrawal error:", wdError); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    const { error: wdError } = await supabase
+      .from("withdrawals")
+      .update({ status: "rejected", decided_by: user?.id, note: rejectReason || null })
+      .eq("id", id);
+    if (wdError) {
+      console.error("rejectWithdrawal error:", wdError);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
 
     await supabase.rpc("release_reserved", { _withdrawal_id: id });
 
@@ -166,7 +175,11 @@ const Ketoan = () => {
     if (!wd) return;
 
     const { error } = await supabase.from("withdrawals").update({ status: "paid", decided_by: user?.id }).eq("id", id);
-    if (error) { console.error("markWithdrawalPaid error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
+    if (error) {
+      console.error("markWithdrawalPaid error:", error);
+      toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
+      return;
+    }
 
     await supabase.rpc("complete_withdrawal", { _withdrawal_id: id });
 
@@ -177,9 +190,14 @@ const Ketoan = () => {
   const exportCSV = () => {
     const headers = ["Mã", "Khách hàng", "SĐT", "Mẫu", "Ngày hẹn", "Cọc", "Thanh toán", "Trạng thái", "Ngày tạo"];
     const rows = filteredBookings.map((b) => [
-      b.booking_code, b.customer_name, b.phone, b.design_name,
+      b.booking_code,
+      b.customer_name,
+      b.phone,
+      b.design_name,
       `${b.appointment_date} ${b.appointment_time}`,
-      b.deposit_amount, b.payment_status, b.booking_status,
+      b.deposit_amount,
+      b.payment_status,
+      b.booking_status,
       new Date(b.created_at).toLocaleDateString("vi-VN"),
     ]);
     const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
@@ -192,12 +210,14 @@ const Ketoan = () => {
   };
 
   const filteredBookings = bookings.filter((b) => {
-    const matchFilter = filter === "all" ||
+    const matchFilter =
+      filter === "all" ||
       (filter === "new" && b.payment_status === "unpaid") ||
       (filter === "pending_verify" && b.payment_status === "pending_verify") ||
       (filter === "paid" && b.payment_status === "paid") ||
       (filter === "completed" && b.booking_status === "completed");
-    const matchSearch = !search ||
+    const matchSearch =
+      !search ||
       b.booking_code?.toLowerCase().includes(search.toLowerCase()) ||
       b.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
       b.phone?.includes(search);
@@ -209,7 +229,11 @@ const Ketoan = () => {
   });
 
   if (authLoading) {
-    return <div className="flex min-h-screen items-center justify-center pt-16"><p className="text-muted-foreground">Đang tải...</p></div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center pt-16">
+        <p className="text-muted-foreground">Đang tải...</p>
+      </div>
+    );
   }
 
   return (
@@ -222,16 +246,24 @@ const Ketoan = () => {
 
         {/* Main tabs */}
         <div className="mt-4 mb-4 flex gap-1.5">
-          <button onClick={() => setActiveTab("bookings")}
+          <button
+            onClick={() => setActiveTab("bookings")}
             className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "bookings" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
-            }`}>
+              activeTab === "bookings"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
             Bookings
           </button>
-          <button onClick={() => setActiveTab("withdrawals")}
+          <button
+            onClick={() => setActiveTab("withdrawals")}
             className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
-              activeTab === "withdrawals" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
-            }`}>
+              activeTab === "withdrawals"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
             Rút tiền ({withdrawals.filter((w) => w.status === "pending").length})
           </button>
         </div>
@@ -247,18 +279,31 @@ const Ketoan = () => {
                   { key: "paid", label: "Đã TT" },
                   { key: "completed", label: "Hoàn thành" },
                 ].map((f) => (
-                  <button key={f.key} onClick={() => setFilter(f.key)}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${filter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+                  <button
+                    key={f.key}
+                    onClick={() => setFilter(f.key)}
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${filter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
+                  >
                     {f.label}
                   </button>
                 ))}
               </div>
               <div className="relative flex-1 min-w-[200px]">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="text" placeholder="Tìm theo mã, tên, SĐT..." value={search} onChange={(e) => setSearch(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-secondary/30 pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo mã, tên, SĐT..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-secondary/30 pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                />
               </div>
-              <Button variant="outline" size="sm" onClick={exportCSV} className="gap-1 border-border text-muted-foreground hover:text-foreground">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportCSV}
+                className="gap-1 border-border text-muted-foreground hover:text-foreground"
+              >
                 <Download size={14} /> CSV
               </Button>
             </div>
@@ -282,108 +327,207 @@ const Ketoan = () => {
                     const bs = bookingStatusLabels[b.booking_status] || bookingStatusLabels.pending;
                     return (
                       <React.Fragment key={b.id}>
-                      <tr className="border-b border-border/50 transition-colors hover:bg-secondary/20 cursor-pointer" onClick={() => setExpandedId(expandedId === b.id ? null : b.id)}>
-                        <td className="px-3 py-3 font-mono text-xs text-primary">{b.booking_code}</td>
-                        <td className="px-3 py-3">
-                          <p className="font-medium text-foreground">{b.customer_name}</p>
-                          <p className="text-xs text-muted-foreground">{b.customer_phone}</p>
-                        </td>
-                        <td className="px-3 py-3 text-foreground">{b.product_name}</td>
-                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{b.preferred_date} · {b.preferred_time}</td>
-                        {/* Hóa đơn column */}
-                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                          {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
-                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-primary hover:text-primary/80" onClick={() => setReceiptModal(b.deposit_receipts)} title="Xem biên lai">
-                              <Eye size={14} />
-                            </Button>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        {/* Thanh toán + inline actions */}
-                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
-                            {(b.payment_status === "unpaid" || b.payment_status === "pending_verify") && (
-                              <>
-                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-primary hover:text-primary/80" onClick={() => markPaid(b.id)} title="Xác nhận thanh toán">
-                                  <Check size={13} />
-                                </Button>
-                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối thanh toán">
-                                  <X size={13} />
-                                </Button>
-                              </>
+                        <tr
+                          className="border-b border-border/50 transition-colors hover:bg-secondary/20 cursor-pointer"
+                          onClick={() => setExpandedId(expandedId === b.id ? null : b.id)}
+                        >
+                          <td className="px-3 py-3 font-mono text-xs text-primary">{b.booking_code}</td>
+                          <td className="px-3 py-3">
+                            <p className="font-medium text-foreground">{b.customer_name}</p>
+                            <p className="text-xs text-muted-foreground">{b.customer_phone}</p>
+                          </td>
+                          <td className="px-3 py-3 text-foreground">{b.product_name}</td>
+                          <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">
+                            {b.preferred_date} · {b.preferred_time}
+                          </td>
+                          {/* Hóa đơn column */}
+                          <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                            {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 w-7 p-0 text-primary hover:text-primary/80"
+                                onClick={() => setReceiptModal(b.deposit_receipts)}
+                                title="Xem biên lai"
+                              >
+                                <Eye size={14} />
+                              </Button>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
                             )}
-                          </div>
-                          {rejectId === b.id && (
-                            <div className="mt-2 space-y-2">
-                              <input type="text" placeholder="Lý do từ chối..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
-                                className="w-full rounded border border-border bg-secondary/30 px-2 py-1 text-xs text-foreground focus:border-primary focus:outline-none" />
-                              <div className="flex gap-1">
-                                <Button size="sm" className="h-6 px-2 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/80" onClick={() => rejectPayment(b.id)}>Từ chối</Button>
-                                <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => { setRejectId(null); setRejectReason(""); }}>Hủy</Button>
-                              </div>
+                          </td>
+                          {/* Thanh toán + inline actions */}
+                          <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}
+                              >
+                                {ps.text}
+                              </span>
+                              {(b.payment_status === "unpaid" || b.payment_status === "pending_verify") && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 w-6 p-0 text-primary hover:text-primary/80"
+                                    onClick={() => markPaid(b.id)}
+                                    title="Xác nhận thanh toán"
+                                  >
+                                    <Check size={13} />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 w-6 p-0 text-destructive hover:text-destructive/80"
+                                    onClick={() => setRejectId(b.id)}
+                                    title="Từ chối thanh toán"
+                                  >
+                                    <X size={13} />
+                                  </Button>
+                                </>
+                              )}
                             </div>
-                          )}
-                        </td>
-                        {/* Trạng thái + inline actions */}
-                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
-                            {(b.booking_status === "new" || b.booking_status === "pending") && (
-                              <>
-                                <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80 gap-0.5" onClick={() => confirmBooking(b.id)} title="Xác nhận đơn">
-                                  <CheckCircle size={12} /> Xác nhận
+                            {rejectId === b.id && (
+                              <div className="mt-2 space-y-2">
+                                <input
+                                  type="text"
+                                  placeholder="Lý do từ chối..."
+                                  value={rejectReason}
+                                  onChange={(e) => setRejectReason(e.target.value)}
+                                  className="w-full rounded border border-border bg-secondary/30 px-2 py-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                                />
+                                <div className="flex gap-1">
+                                  <Button
+                                    size="sm"
+                                    className="h-6 px-2 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/80"
+                                    onClick={() => rejectPayment(b.id)}
+                                  >
+                                    Từ chối
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => {
+                                      setRejectId(null);
+                                      setRejectReason("");
+                                    }}
+                                  >
+                                    Hủy
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                          {/* Trạng thái + inline actions */}
+                          <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}
+                              >
+                                {bs.text}
+                              </span>
+                              {(b.booking_status === "new" || b.booking_status === "pending") && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80 gap-0.5"
+                                    onClick={() => confirmBooking(b.id)}
+                                    title="Xác nhận đơn"
+                                  >
+                                    <CheckCircle size={12} /> Xác nhận
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
+                                    onClick={() => cancelBooking(b.id)}
+                                    title="Hủy đơn"
+                                  >
+                                    <XCircle size={12} /> Hủy
+                                  </Button>
+                                </>
+                              )}
+                              {b.booking_status === "confirmed" && b.payment_status === "paid" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80"
+                                  onClick={() => markCompleted(b.id)}
+                                >
+                                  Hoàn thành
                                 </Button>
-                                <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5" onClick={() => cancelBooking(b.id)} title="Hủy đơn">
+                              )}
+                              {b.booking_status === "confirmed" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
+                                  onClick={() => cancelBooking(b.id)}
+                                >
                                   <XCircle size={12} /> Hủy
                                 </Button>
-                              </>
-                            )}
-                            {b.booking_status === "confirmed" && b.payment_status === "paid" && (
-                              <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80" onClick={() => markCompleted(b.id)}>
-                                Hoàn thành
-                              </Button>
-                            )}
-                            {b.booking_status === "confirmed" && (
-                              <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5" onClick={() => cancelBooking(b.id)}>
-                                <XCircle size={12} /> Hủy
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      {/* Expanded detail row */}
-                      {expandedId === b.id && (
-                        <tr className="border-b border-border/50 bg-secondary/10">
-                          <td colSpan={7} className="px-4 py-4">
-                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
-                              <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{b.customer_email || "—"}</span></div>
-                              <div><span className="text-muted-foreground">Kích thước:</span> <span className="text-foreground">{b.size || "—"}</span></div>
-                              <div><span className="text-muted-foreground">Vị trí:</span> <span className="text-foreground">{b.placement || "—"}</span></div>
-                              <div className="sm:col-span-2 lg:col-span-3"><span className="text-muted-foreground">Ghi chú:</span> <span className="text-foreground">{b.notes || b.note || "—"}</span></div>
-                              {b.reference_images && b.reference_images.length > 0 && (
-                                <div className="sm:col-span-2 lg:col-span-3">
-                                  <span className="text-muted-foreground block mb-2">Ảnh tham khảo:</span>
-                                  <div className="flex gap-2 flex-wrap">
-                                    {b.reference_images.map((url: string, i: number) => (
-                                      <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                                        <img src={url} alt={`Ref ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                                      </a>
-                                    ))}
-                                  </div>
-                                </div>
                               )}
-                              <div><span className="text-muted-foreground">Ngày tạo:</span> <span className="text-foreground">{new Date(b.created_at).toLocaleString("vi-VN")}</span></div>
                             </div>
                           </td>
                         </tr>
-                      )}
+                        {/* Expanded detail row */}
+                        {expandedId === b.id && (
+                          <tr className="border-b border-border/50 bg-secondary/10">
+                            <td colSpan={7} className="px-4 py-4">
+                              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+                                <div>
+                                  <span className="text-muted-foreground">Email:</span>{" "}
+                                  <span className="text-foreground">{b.customer_email || "—"}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Kích thước:</span>{" "}
+                                  <span className="text-foreground">{b.size || "—"}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Vị trí:</span>{" "}
+                                  <span className="text-foreground">{b.placement || "—"}</span>
+                                </div>
+                                <div className="sm:col-span-2 lg:col-span-3">
+                                  <span className="text-muted-foreground">Ghi chú:</span>{" "}
+                                  <span className="text-foreground">{b.notes || b.note || "—"}</span>
+                                </div>
+                                {b.reference_images && b.reference_images.length > 0 && (
+                                  <div className="sm:col-span-2 lg:col-span-3">
+                                    <span className="text-muted-foreground block mb-2">Ảnh tham khảo:</span>
+                                    <div className="flex gap-2 flex-wrap">
+                                      {b.reference_images.map((url: string, i: number) => (
+                                        <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                                          <img
+                                            src={url}
+                                            alt={`Ref ${i + 1}`}
+                                            className="h-20 w-20 rounded-lg border border-border/50 object-cover"
+                                          />
+                                        </a>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                <div>
+                                  <span className="text-muted-foreground">Ngày tạo:</span>{" "}
+                                  <span className="text-foreground">
+                                    {new Date(b.created_at).toLocaleString("vi-VN")}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
                       </React.Fragment>
                     );
                   })}
                   {filteredBookings.length === 0 && (
-                    <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">Không có booking nào.</td></tr>
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                        Không có booking nào.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -401,8 +545,11 @@ const Ketoan = () => {
                 { key: "paid", label: "Đã chuyển" },
                 { key: "rejected", label: "Từ chối" },
               ].map((f) => (
-                <button key={f.key} onClick={() => setWdFilter(f.key)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${wdFilter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+                <button
+                  key={f.key}
+                  onClick={() => setWdFilter(f.key)}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${wdFilter === f.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
+                >
                   {f.label}
                 </button>
               ))}
@@ -425,26 +572,53 @@ const Ketoan = () => {
                     const ws = withdrawalStatusLabels[w.status] || withdrawalStatusLabels.pending;
                     return (
                       <tr key={w.id} className="border-b border-border/50 transition-colors hover:bg-secondary/20">
-                        <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{w.user_id?.slice(0, 8)}...</td>
+                        <td className="px-3 py-3 font-mono text-xs text-muted-foreground">
+                          {w.user_id?.slice(0, 8)}...
+                        </td>
                         <td className="px-3 py-3 font-semibold text-foreground">{formatVND(w.amount_vnd)}</td>
                         <td className="px-3 py-3">
                           <p className="text-foreground">{w.momo_phone}</p>
                           {w.momo_name && <p className="text-xs text-muted-foreground">{w.momo_name}</p>}
                         </td>
                         <td className="px-3 py-3">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ws.className}`}>{ws.text}</span>
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ws.className}`}>
+                            {ws.text}
+                          </span>
                         </td>
-                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{new Date(w.created_at).toLocaleDateString("vi-VN")}</td>
+                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">
+                          {new Date(w.created_at).toLocaleDateString("vi-VN")}
+                        </td>
                         <td className="px-3 py-3">
                           <div className="flex gap-1">
                             {w.status === "pending" && (
                               <>
-                                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-primary" onClick={() => approveWithdrawal(w.id)}>Duyệt</Button>
-                                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive" onClick={() => rejectWithdrawal(w.id)}>Từ chối</Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 px-2 text-xs text-primary"
+                                  onClick={() => approveWithdrawal(w.id)}
+                                >
+                                  Duyệt
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 px-2 text-xs text-destructive"
+                                  onClick={() => rejectWithdrawal(w.id)}
+                                >
+                                  Từ chối
+                                </Button>
                               </>
                             )}
                             {w.status === "approved" && (
-                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-success" onClick={() => markWithdrawalPaid(w.id)}>Đã chuyển</Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-xs text-success"
+                                onClick={() => markWithdrawalPaid(w.id)}
+                              >
+                                Đã chuyển
+                              </Button>
                             )}
                           </div>
                         </td>
@@ -452,7 +626,11 @@ const Ketoan = () => {
                     );
                   })}
                   {filteredWithdrawals.length === 0 && (
-                    <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">Không có yêu cầu rút tiền nào.</td></tr>
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                        Không có yêu cầu rút tiền nào.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -462,17 +640,29 @@ const Ketoan = () => {
 
         {/* Receipt Modal */}
         {receiptModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={() => setReceiptModal(null)}>
-            <div className="mx-4 max-w-lg rounded-lg border border-border bg-card p-6" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            onClick={() => setReceiptModal(null)}
+          >
+            <div
+              className="mx-4 max-w-lg rounded-lg border border-border bg-card p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Biên lai đặt cọc</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 {receiptModal.map((url, i) => (
                   <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                    <img src={url} alt={`Receipt ${i + 1}`} className="rounded-lg border border-border/50 object-cover" />
+                    <img
+                      src={url}
+                      alt={`Receipt ${i + 1}`}
+                      className="rounded-lg border border-border/50 object-cover"
+                    />
                   </a>
                 ))}
               </div>
-              <Button variant="ghost" className="mt-4 w-full" onClick={() => setReceiptModal(null)}>Đóng</Button>
+              <Button variant="ghost" className="mt-4 w-full" onClick={() => setReceiptModal(null)}>
+                Đóng
+              </Button>
             </div>
           </div>
         )}
