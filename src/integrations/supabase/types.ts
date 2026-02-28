@@ -14,10 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      artists: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          work_end: string
+          work_start: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          work_end?: string
+          work_start?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          work_end?: string
+          work_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artists_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
+          artist_id: string | null
           booking_code: string
           booking_status: string
+          branch_id: string | null
+          branch_name: string | null
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -39,8 +80,11 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          artist_id?: string | null
           booking_code?: string
           booking_status?: string
+          branch_id?: string | null
+          branch_name?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -62,8 +106,11 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          artist_id?: string | null
           booking_code?: string
           booking_status?: string
+          branch_id?: string | null
+          branch_name?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string
@@ -86,6 +133,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "bookings_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -93,6 +154,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      branches: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {

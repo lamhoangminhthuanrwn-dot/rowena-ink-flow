@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const steps = ["Chọn mẫu", "Thông tin", "Lịch hẹn"];
+
+interface Branch {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface Artist {
+  id: string;
+  name: string;
+  branch_id: string;
+}
 
 const Booking = () => {
   const [searchParams] = useSearchParams();
@@ -25,12 +37,27 @@ const Booking = () => {
     style: "",
   });
   const [schedule, setSchedule] = useState({ date: "", time: "" });
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([]);
   const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
   const [referencePreviews, setReferencePreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const design = tattooDesigns.find((d) => d.id === selectedDesign);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [{ data: b }, { data: a }] = await Promise.all([
+        supabase.from("branches").select("id, name, slug").order("name"),
+        supabase.from("artists").select("id, name, branch_id").eq("is_active", true),
+      ]);
+      if (b) setBranches(b);
+      if (a) setArtists(a);
+    };
+    fetchData();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -53,6 +80,13 @@ const Booking = () => {
     try {
       const code = `BK${Date.now().toString(36).toUpperCase().slice(-6)}`;
 
+      // Random artist from selected branch
+      const branchArtists = artists.filter((a) => a.branch_id === selectedBranch);
+      const randomArtist = branchArtists.length > 0
+        ? branchArtists[Math.floor(Math.random() * branchArtists.length)]
+        : null;
+      const branch = branches.find((b) => b.id === selectedBranch);
+
       const uploadedUrls: string[] = [];
       for (let i = 0; i < referenceFiles.length; i++) {
         const file = referenceFiles[i];
@@ -68,7 +102,6 @@ const Booking = () => {
         }
       }
 
-      // Navigate to success page with all data — booking will be inserted there
       navigate("/success", {
         state: {
           bookingCode: code,
@@ -84,6 +117,10 @@ const Booking = () => {
           note: form.note,
           referenceImages: uploadedUrls,
           userId: user?.id || null,
+          branchId: selectedBranch,
+          branchName: branch?.name || "",
+          artistId: randomArtist?.id || null,
+          artistName: randomArtist?.name || "",
         },
       });
     } finally {
@@ -94,7 +131,7 @@ const Booking = () => {
   const canNext = () => {
     if (step === 0) return !!selectedDesign;
     if (step === 1) return form.name.trim() && form.phone.trim();
-    if (step === 2) return schedule.date && schedule.time;
+    if (step === 2) return schedule.date && schedule.time && !!selectedBranch;
     return false;
   };
 
@@ -237,6 +274,22 @@ const Booking = () => {
             {step === 2 && (
               <div className="space-y-4">
                 <h2 className="font-serif text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
+
+                {/* Branch selection */}
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
+                  <select
+                    value={selectedBranch}
+                    onChange={(e) => setSelectedBranch(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                  >
+                    <option value="">Chọn chi nhánh</option>
+                    {branches.map((b) => (
+                      <option key={b.id} value={b.id}>{b.name}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Ngày *</label>
@@ -249,7 +302,7 @@ const Booking = () => {
                     <select value={schedule.time} onChange={(e) => setSchedule({ ...schedule, time: e.target.value })}
                       className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none">
                       <option value="">Chọn giờ</option>
-                      {["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"].map((t) => (
+                      {["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>

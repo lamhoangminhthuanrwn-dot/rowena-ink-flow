@@ -22,6 +22,10 @@ interface BookingState {
   note: string;
   referenceImages?: string[];
   userId?: string | null;
+  branchId?: string;
+  branchName?: string;
+  artistId?: string | null;
+  artistName?: string;
 }
 
 const Success = () => {
@@ -60,6 +64,9 @@ const Success = () => {
         size: state.size,
         payment_status: "unpaid",
         booking_status: "new",
+        branch_id: state.branchId || null,
+        branch_name: state.branchName || null,
+        artist_id: state.artistId || null,
       }]);
 
       if (error) {
@@ -257,6 +264,8 @@ const Success = () => {
               { label: "Họ tên", value: state.customerName },
               { label: "Số điện thoại", value: state.phone },
               { label: "Email", value: state.email },
+              { label: "Chi nhánh", value: state.branchName },
+              { label: "Thợ xăm", value: state.artistName },
               { label: "Mẫu xăm", value: state.designName },
               { label: "Vị trí", value: state.placement },
               { label: "Kích thước", value: state.size },

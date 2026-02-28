@@ -49,7 +49,7 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.");
+      toast.success("Đăng ký thành công! Vui lòng kiểm tra hộp thư đến để xác nhận email. Nếu không thấy, hãy kiểm tra thư mục Spam.", { duration: 10000 });
     }
   };
 
