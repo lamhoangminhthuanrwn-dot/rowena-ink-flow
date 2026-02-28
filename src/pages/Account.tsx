@@ -95,7 +95,8 @@ const Account = () => {
         _momo_name: wdName || "",
       });
       if (error) {
-        toast.error("Lỗi: " + error.message);
+        console.error("Withdrawal error:", error);
+        toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
       } else {
         toast.success("Yêu cầu rút tiền đã được gửi!");
         setWdAmount("");
