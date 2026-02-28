@@ -15,3 +15,7 @@ export function generateVietQRUrl(bookingId: string): string {
   const content = generateTransferContent(bookingId);
   return `https://img.vietqr.io/image/${bankInfo.bankId}-${bankInfo.accountNumber}-compact2.png?amount=${bankInfo.depositAmount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(bankInfo.accountName)}`;
 }
+
+export function generateZaloPayUrl(): string {
+  return "https://zalopay.vn";
+}

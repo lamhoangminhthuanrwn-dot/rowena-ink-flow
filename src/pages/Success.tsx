@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Home, Upload } from "lucide-react";
+import { Check, Copy, Home, Upload, Wallet } from "lucide-react";
 import { useState, useRef } from "react";
-import { bankInfo, generateTransferContent, generateVietQRUrl } from "@/data/bankInfo";
+import { bankInfo, generateTransferContent, generateVietQRUrl, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -205,6 +205,18 @@ const Success = () => {
               </div>
             ))}
           </div>
+
+          {/* ZaloPay Button */}
+          <a
+            href={generateZaloPayUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "#008fe5" }}
+          >
+            <Wallet size={18} />
+            Mở ZaloPay để thanh toán
+          </a>
         </motion.div>
 
         {/* Deposit Proof Upload */}
