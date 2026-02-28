@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     const { data: existingReward } = await supabase
       .from('referral_rewards')
       .select('id')
-      .eq('referred_user_id', booking.user_id)
+      .eq('referred_id', booking.user_id)
       .limit(1);
 
     if (existingReward && existingReward.length > 0) {
@@ -66,9 +66,8 @@ Deno.serve(async (req) => {
     const referrerId = profile.referred_by_user_id;
 
     await supabase.from('referral_rewards').insert({
-      referrer_user_id: referrerId,
-      referred_user_id: booking.user_id,
-      booking_id: booking_id,
+      referrer_id: referrerId,
+      referred_id: booking.user_id,
       amount_vnd: REWARD_AMOUNT,
     });
 
