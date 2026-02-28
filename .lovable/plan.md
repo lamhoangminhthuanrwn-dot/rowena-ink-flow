@@ -1,17 +1,34 @@
 
 
-## Plan: Cập nhật ZaloPay deeplink với thông tin chuyển tiền
+## Phân tích hiện trạng
 
-### Changes
+Hệ thống **đã có sẵn** hầu hết những gì bạn yêu cầu:
 
-**`src/data/bankInfo.ts`**:
-- Thêm `zaloPayPhone: "0938048780"` vào `bankInfo`
-- Cập nhật `generateZaloPayUrl(bookingCode)` để tạo deeplink ZaloPay chuyển tiền với:
-  - Số điện thoại đích: `0938048780`
-  - Số tiền: `bankInfo.depositAmount` (200,000)
-  - Nội dung: transfer content (`ROWENA {bookingCode}`)
-  - Deeplink format: `https://social.zalopay.vn/spa/personal-transfer?phone=0938048780&amount=200000&note=ROWENA%20RW-xxx`
+1. **Tài khoản admin**: Đã có trigger `auto_assign_admin` tự gán role admin cho `admin@rowena.vn`. Tài khoản này chỉ cần đăng ký tại `/auth` với email `admin@rowena.vn`.
 
-**`src/pages/Success.tsx`**:
-- Cập nhật lời gọi `generateZaloPayUrl()` → `generateZaloPayUrl(state.bookingCode)` để truyền mã booking vào deeplink
+2. **Trang quản lý đơn**: Trang `/ketoan` đã hiển thị tất cả bookings cho admin với đầy đủ thông tin (mã đơn, tên khách, SĐT, mẫu tattoo, ngày hẹn, trạng thái thanh toán).
+
+3. **Nút xác nhận/từ chối**: Đã có nút Check (xác nhận thanh toán), nút X (từ chối), và nút "Hoàn thành".
+
+### Thiếu sót cần bổ sung
+
+Hiện tại `booking_status` chỉ có flow: `new` → `completed`. Chưa có nút **"Xác nhận đơn" (confirmed)** và **"Hủy đơn" (cancelled)** rõ ràng tách biệt khỏi flow thanh toán.
+
+## Kế hoạch thực hiện
+
+### 1. Cập nhật trang `/ketoan` — Thêm nút Xác nhận & Hủy đơn
+
+**`src/pages/Ketoan.tsx`**:
+- Thêm nút **"Xác nhận"** (set `booking_status = "confirmed"`) cho đơn có `booking_status = "new"` hoặc `"pending"`
+- Thêm nút **"Hủy"** (set `booking_status = "cancelled"`) cho đơn chưa hoàn thành
+- Giữ nguyên nút "Hoàn thành" cho đơn đã xác nhận & đã thanh toán
+- Thêm chi tiết đơn hàng mở rộng (size, vị trí, ghi chú, ảnh tham khảo) để admin kiểm tra đầy đủ thông tin
+
+### 2. Tạo tài khoản admin
+
+- Hướng dẫn bạn đăng ký tài khoản với email `admin@rowena.vn` tại trang `/auth` — hệ thống sẽ tự động gán quyền admin
+
+### Technical details
+
+Không cần thay đổi database schema — `booking_status` đã hỗ trợ các giá trị `new`, `confirmed`, `completed`, `cancelled`. Chỉ cần cập nhật UI logic trong `Ketoan.tsx` để thêm các action buttons phù hợp với từng trạng thái.
 
