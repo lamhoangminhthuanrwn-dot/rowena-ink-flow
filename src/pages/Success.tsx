@@ -98,7 +98,8 @@ const Success = () => {
       });
 
       if (error || (data && data.error)) {
-        toast.error("Có lỗi xảy ra: " + (data?.error || error?.message));
+        console.error("Deposit upload error:", data?.error || error?.message);
+        toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
       } else {
         toast.success("Đã gửi biên lai! Chúng tôi sẽ xác nhận trong thời gian sớm nhất.");
         setSubmitted(true);

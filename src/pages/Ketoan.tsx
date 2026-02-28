@@ -68,7 +68,7 @@ const Ketoan = () => {
 
   const markPaid = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ payment_status: "paid" }).eq("id", id);
-    if (error) { toast.error("Lỗi: " + error.message); return; }
+    if (error) { console.error("markPaid error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
 
     try {
       await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
@@ -82,7 +82,7 @@ const Ketoan = () => {
 
   const rejectPayment = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ payment_status: "rejected", reject_reason: rejectReason || null }).eq("id", id);
-    if (error) { toast.error("Lỗi: " + error.message); return; }
+    if (error) { console.error("rejectPayment error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
     toast.success("Đã từ chối.");
     setRejectId(null);
     setRejectReason("");
@@ -91,14 +91,14 @@ const Ketoan = () => {
 
   const markCompleted = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ booking_status: "completed" }).eq("id", id);
-    if (error) { toast.error("Lỗi: " + error.message); return; }
+    if (error) { console.error("markCompleted error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
     toast.success("Đã đánh dấu hoàn thành!");
     fetchBookings();
   };
 
   const approveWithdrawal = async (id: string) => {
     const { error } = await supabase.from("withdrawals").update({ status: "approved", decided_by: user?.id }).eq("id", id);
-    if (error) { toast.error("Lỗi: " + error.message); return; }
+    if (error) { console.error("approveWithdrawal error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
     toast.success("Đã duyệt yêu cầu rút tiền!");
     fetchWithdrawals();
   };
@@ -108,7 +108,7 @@ const Ketoan = () => {
     if (!wd) return;
 
     const { error: wdError } = await supabase.from("withdrawals").update({ status: "rejected", decided_by: user?.id, note: rejectReason || null }).eq("id", id);
-    if (wdError) { toast.error("Lỗi: " + wdError.message); return; }
+    if (wdError) { console.error("rejectWithdrawal error:", wdError); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
 
     await supabase.rpc("release_reserved", { _withdrawal_id: id });
 
@@ -123,7 +123,7 @@ const Ketoan = () => {
     if (!wd) return;
 
     const { error } = await supabase.from("withdrawals").update({ status: "paid", decided_by: user?.id }).eq("id", id);
-    if (error) { toast.error("Lỗi: " + error.message); return; }
+    if (error) { console.error("markWithdrawalPaid error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
 
     await supabase.rpc("complete_withdrawal", { _withdrawal_id: id });
 
