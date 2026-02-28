@@ -67,6 +67,34 @@ const Ketoan = () => {
     }
   }, [user, authLoading, isAdmin]);
 
+  // Realtime: listen for new bookings
+  useEffect(() => {
+    if (!user || !isAdmin) return;
+    const channel = supabase
+      .channel("admin-bookings-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "bookings" },
+        (payload) => {
+          const newBooking = payload.new as any;
+          toast.info(`📩 Đơn mới: ${newBooking.booking_code} — ${newBooking.customer_name}`);
+          setBookings((prev) => [newBooking, ...prev]);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "bookings" },
+        (payload) => {
+          const updated = payload.new as any;
+          setBookings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, isAdmin]);
+
   const markPaid = async (id: string) => {
     const { error } = await supabase.from("bookings").update({ payment_status: "paid" }).eq("id", id);
     if (error) { console.error("markPaid error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
