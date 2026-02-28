@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -239,9 +239,14 @@ const Ketoan = () => {
   return (
     <div className="pt-20 pb-16">
       <div className="mx-auto max-w-6xl px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Xác nhận thanh toán, quản lý lịch hẹn & rút tiền</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-end justify-between">
+          <div>
+            <h1 className="font-serif text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Xác nhận thanh toán, quản lý lịch hẹn & rút tiền</p>
+          </div>
+          <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate("/admin/branches")}>
+            <MapPin size={14} /> Chi nhánh & Thợ xăm
+          </Button>
         </motion.div>
 
         {/* Main tabs */}
