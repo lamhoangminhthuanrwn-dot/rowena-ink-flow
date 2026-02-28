@@ -79,27 +79,26 @@ const Success = () => {
       for (let i = 0; i < depositFiles.length; i++) {
         const file = depositFiles[i];
         const ext = file.name.split(".").pop();
-        const path = `deposits/${state.bookingCode}_${i}.${ext}`;
+        const path = `deposits/${state.bookingCode}_${Date.now()}_${i}.${ext}`;
         const { error: uploadError } = await supabase.storage
-          .from("receipts")
+          .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(path);
+          const { data: urlData } = supabase.storage.from("booking-uploads").getPublicUrl(path);
           if (urlData?.publicUrl) uploadedUrls.push(urlData.publicUrl);
         }
       }
 
-      const { error } = await supabase
-        .from("bookings")
-        .update({
-          deposit_receipts: uploadedUrls,
-          payment_status: "pending_verify",
-          note: depositNote ? `${state.note || ""}\n[Deposit note]: ${depositNote}` : undefined,
-        })
-        .eq("booking_code", state.bookingCode);
+      const { data, error } = await supabase.functions.invoke("upload-deposit", {
+        body: {
+          booking_code: state.bookingCode,
+          receipt_urls: uploadedUrls,
+          deposit_note: depositNote || undefined,
+        },
+      });
 
-      if (error) {
-        toast.error("Có lỗi xảy ra: " + error.message);
+      if (error || (data && data.error)) {
+        toast.error("Có lỗi xảy ra: " + (data?.error || error?.message));
       } else {
         toast.success("Đã gửi biên lai! Chúng tôi sẽ xác nhận trong thời gian sớm nhất.");
         setSubmitted(true);
