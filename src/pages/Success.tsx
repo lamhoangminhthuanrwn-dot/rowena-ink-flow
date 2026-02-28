@@ -208,7 +208,7 @@ const Success = () => {
 
           {/* ZaloPay Button */}
           <a
-            href={generateZaloPayUrl()}
+            href={generateZaloPayUrl(state.bookingCode)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
