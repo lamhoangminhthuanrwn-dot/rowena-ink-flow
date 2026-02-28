@@ -1,34 +1,24 @@
 
 
-## Phân tích hiện trạng
+## Nguyên nhân lỗi
 
-Hệ thống **đã có sẵn** hầu hết những gì bạn yêu cầu:
+Có 2 vấn đề:
 
-1. **Tài khoản admin**: Đã có trigger `auto_assign_admin` tự gán role admin cho `admin@rowena.vn`. Tài khoản này chỉ cần đăng ký tại `/auth` với email `admin@rowena.vn`.
+1. **Upload biên lai thất bại**: Sau khi upload file lên storage, code gọi `createSignedUrl` để lấy URL. Nhưng user chưa đăng nhập (anon) không có quyền SELECT trên storage → `createSignedUrl` fail → `uploadedUrls` rỗng → edge function `upload-deposit` nhận `receipt_urls: []` → trả lỗi 400 "Missing receipt_urls".
 
-2. **Trang quản lý đơn**: Trang `/ketoan` đã hiển thị tất cả bookings cho admin với đầy đủ thông tin (mã đơn, tên khách, SĐT, mẫu tattoo, ngày hẹn, trạng thái thanh toán).
+2. **Đơn không hiện bill trên kế toán**: Vì bước upload deposit fail nên `deposit_receipts` và `payment_status` không được cập nhật → admin không thấy biên lai.
 
-3. **Nút xác nhận/từ chối**: Đã có nút Check (xác nhận thanh toán), nút X (từ chối), và nút "Hoàn thành".
+## Kế hoạch fix
 
-### Thiếu sót cần bổ sung
+### 1. Sửa flow upload biên lai (`src/pages/Success.tsx`)
+- Thay vì tạo signed URL ở client (cần quyền SELECT), chỉ gửi **file paths** (e.g. `deposits/BK123_xxx.jpg`) đến edge function
+- Edge function sẽ dùng service role key để tạo signed URL
 
-Hiện tại `booking_status` chỉ có flow: `new` → `completed`. Chưa có nút **"Xác nhận đơn" (confirmed)** và **"Hủy đơn" (cancelled)** rõ ràng tách biệt khỏi flow thanh toán.
+### 2. Cập nhật edge function `upload-deposit/index.ts`
+- Nhận `receipt_paths` thay vì `receipt_urls`
+- Dùng service role để tạo signed URL cho từng path
+- Lưu signed URLs vào `deposit_receipts`
 
-## Kế hoạch thực hiện
-
-### 1. Cập nhật trang `/ketoan` — Thêm nút Xác nhận & Hủy đơn
-
-**`src/pages/Ketoan.tsx`**:
-- Thêm nút **"Xác nhận"** (set `booking_status = "confirmed"`) cho đơn có `booking_status = "new"` hoặc `"pending"`
-- Thêm nút **"Hủy"** (set `booking_status = "cancelled"`) cho đơn chưa hoàn thành
-- Giữ nguyên nút "Hoàn thành" cho đơn đã xác nhận & đã thanh toán
-- Thêm chi tiết đơn hàng mở rộng (size, vị trí, ghi chú, ảnh tham khảo) để admin kiểm tra đầy đủ thông tin
-
-### 2. Tạo tài khoản admin
-
-- Hướng dẫn bạn đăng ký tài khoản với email `admin@rowena.vn` tại trang `/auth` — hệ thống sẽ tự động gán quyền admin
-
-### Technical details
-
-Không cần thay đổi database schema — `booking_status` đã hỗ trợ các giá trị `new`, `confirmed`, `completed`, `cancelled`. Chỉ cần cập nhật UI logic trong `Ketoan.tsx` để thêm các action buttons phù hợp với từng trạng thái.
+### 3. Thêm storage SELECT policy cho anon (backup)
+- Thêm migration cho phép anon SELECT trên `booking-uploads` bucket để đảm bảo không có vấn đề quyền nào khác
 
