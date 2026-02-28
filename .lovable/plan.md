@@ -2,33 +2,27 @@
 
 ## Problem
 
-The production (Live) database has no data in the `branches` and `artists` tables. Database schema syncs on publish, but **data does not sync** between Test and Live environments. The branches and artists were only seeded in Test.
+The `branches` and `artists` tables have **RESTRICTIVE** RLS policies that conflict. The "Admins can manage branches/artists" policy (FOR ALL, RESTRICTIVE) requires admin role for ALL operations including SELECT. Since RESTRICTIVE policies ALL must pass, even though "viewable by everyone" allows SELECT, the admin-only policy blocks non-admin and anonymous users. Additionally, when the component mounts, the auth session may not be restored yet, causing even admin requests to fail.
 
-## Solution
+## Fix
 
-Create a new database migration that inserts the 4 branches and 40 artists using `INSERT ... ON CONFLICT DO NOTHING` so it's safe to run in both environments.
+### 1. Fix RLS policies via migration
 
-**File: New migration**
+**Drop conflicting RESTRICTIVE policies and recreate as PERMISSIVE:**
 
-```sql
--- Insert branches
-INSERT INTO branches (name, slug) VALUES
-  ('Rowena Gò Vấp', 'go-vap'),
-  ('Rowena Hà Nội', 'ha-noi'),
-  ('Rowena Daklak', 'daklak'),
-  ('Rowena Malaysia', 'malaysia')
-ON CONFLICT DO NOTHING;
+For `branches`:
+- Drop "Admins can manage branches" (FOR ALL, RESTRICTIVE)
+- Create PERMISSIVE "Admins can insert branches" (INSERT)
+- Create PERMISSIVE "Admins can update branches" (UPDATE)
+- Change "Branches viewable by everyone" to PERMISSIVE
 
--- Insert 10 artists per branch (using subquery to get branch IDs)
--- For each branch, insert: Minh Tú, Hoàng Anh, Thanh Hằng, Đức Trí, Phương Linh, Quốc Bảo, Ngọc Lan, Tuấn Kiệt, Hải Yến, Văn Hùng
-INSERT INTO artists (name, branch_id)
-SELECT artist_name, b.id
-FROM branches b
-CROSS JOIN (VALUES ('Minh Tú'),('Hoàng Anh'),('Thanh Hằng'),('Đức Trí'),('Phương Linh'),('Quốc Bảo'),('Ngọc Lan'),('Tuấn Kiệt'),('Hải Yến'),('Văn Hùng')) AS a(artist_name)
-WHERE NOT EXISTS (
-  SELECT 1 FROM artists WHERE artists.branch_id = b.id AND artists.name = a.artist_name
-);
-```
+For `artists`:
+- Drop "Admins can manage artists" (FOR ALL, RESTRICTIVE)
+- Create PERMISSIVE "Admins can insert artists" (INSERT)
+- Create PERMISSIVE "Admins can update artists" (UPDATE)
+- Change "Artists viewable by everyone" to PERMISSIVE
 
-This migration will populate the Live database on the next publish, making branches and artists visible on the production booking page.
+### 2. No code changes needed
+
+The Booking.tsx component code is correct. Once RLS allows anonymous/non-admin SELECT, branches will render properly.
 
