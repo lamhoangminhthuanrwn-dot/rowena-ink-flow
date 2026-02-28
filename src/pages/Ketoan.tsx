@@ -51,7 +51,7 @@ const Ketoan = () => {
   }, [user, authLoading, isAdmin, navigate]);
 
   const fetchBookings = async () => {
-    const { data } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("bookings").select("*, artists(name)").order("created_at", { ascending: false });
     if (data) setBookings(data);
   };
 
@@ -321,6 +321,8 @@ const Ketoan = () => {
                     <th className="px-3 py-3">Khách hàng</th>
                     <th className="px-3 py-3">Mẫu</th>
                     <th className="px-3 py-3">Ngày</th>
+                    <th className="px-3 py-3">Chi nhánh</th>
+                    <th className="px-3 py-3">Thợ xăm</th>
                     <th className="px-3 py-3">Hóa đơn</th>
                     <th className="px-3 py-3">Thanh toán</th>
                     <th className="px-3 py-3">Trạng thái</th>
@@ -345,6 +347,8 @@ const Ketoan = () => {
                           <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">
                             {b.preferred_date} · {b.preferred_time}
                           </td>
+                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.branch_name || "—"}</td>
+                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{(b as any).artists?.name || "—"}</td>
                           {/* Hóa đơn column */}
                           <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                             {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
@@ -480,7 +484,7 @@ const Ketoan = () => {
                         {/* Expanded detail row */}
                         {expandedId === b.id && (
                           <tr className="border-b border-border/50 bg-secondary/10">
-                            <td colSpan={7} className="px-4 py-4">
+                            <td colSpan={9} className="px-4 py-4">
                               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
                                 <div>
                                   <span className="text-muted-foreground">Email:</span>{" "}
