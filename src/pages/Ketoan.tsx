@@ -243,9 +243,9 @@ const Ketoan = () => {
                     <th className="px-3 py-3">Khách hàng</th>
                     <th className="px-3 py-3">Mẫu</th>
                     <th className="px-3 py-3">Ngày</th>
+                    <th className="px-3 py-3">Hóa đơn</th>
                     <th className="px-3 py-3">Thanh toán</th>
                     <th className="px-3 py-3">Trạng thái</th>
-                    <th className="px-3 py-3">Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,50 +262,29 @@ const Ketoan = () => {
                         </td>
                         <td className="px-3 py-3 text-foreground">{b.product_name}</td>
                         <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{b.preferred_date} · {b.preferred_time}</td>
-                        <td className="px-3 py-3">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
-                        </td>
-                        <td className="px-3 py-3">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
-                        </td>
+                        {/* Hóa đơn column */}
                         <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex gap-1 flex-wrap">
-                            {/* Payment actions */}
-                            {b.deposit_receipts && b.deposit_receipts.length > 0 && (
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => setReceiptModal(b.deposit_receipts)} title="Xem biên lai">
-                                <Eye size={14} />
-                              </Button>
-                            )}
+                          {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
+                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-primary hover:text-primary/80" onClick={() => setReceiptModal(b.deposit_receipts)} title="Xem biên lai">
+                              <Eye size={14} />
+                            </Button>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        {/* Thanh toán + inline actions */}
+                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
                             {(b.payment_status === "unpaid" || b.payment_status === "pending_verify") && (
                               <>
-                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-primary hover:text-primary/80" onClick={() => markPaid(b.id)} title="Xác nhận thanh toán">
-                                  <Check size={14} />
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-primary hover:text-primary/80" onClick={() => markPaid(b.id)} title="Xác nhận thanh toán">
+                                  <Check size={13} />
                                 </Button>
-                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối thanh toán">
-                                  <X size={14} />
-                                </Button>
-                              </>
-                            )}
-                            {/* Booking status actions */}
-                            {(b.booking_status === "new" || b.booking_status === "pending") && (
-                              <>
-                                <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-primary hover:text-primary/80 gap-1" onClick={() => confirmBooking(b.id)} title="Xác nhận đơn">
-                                  <CheckCircle size={13} /> Xác nhận
-                                </Button>
-                                <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-destructive hover:text-destructive/80 gap-1" onClick={() => cancelBooking(b.id)} title="Hủy đơn">
-                                  <XCircle size={13} /> Hủy
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối thanh toán">
+                                  <X size={13} />
                                 </Button>
                               </>
-                            )}
-                            {b.booking_status === "confirmed" && b.payment_status === "paid" && (
-                              <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-primary hover:text-primary/80" onClick={() => markCompleted(b.id)}>
-                                Hoàn thành
-                              </Button>
-                            )}
-                            {b.booking_status === "confirmed" && (
-                              <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-destructive hover:text-destructive/80 gap-1" onClick={() => cancelBooking(b.id)}>
-                                <XCircle size={13} /> Hủy
-                              </Button>
                             )}
                           </div>
                           {rejectId === b.id && (
@@ -318,6 +297,32 @@ const Ketoan = () => {
                               </div>
                             </div>
                           )}
+                        </td>
+                        {/* Trạng thái + inline actions */}
+                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
+                            {(b.booking_status === "new" || b.booking_status === "pending") && (
+                              <>
+                                <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80 gap-0.5" onClick={() => confirmBooking(b.id)} title="Xác nhận đơn">
+                                  <CheckCircle size={12} /> Xác nhận
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5" onClick={() => cancelBooking(b.id)} title="Hủy đơn">
+                                  <XCircle size={12} /> Hủy
+                                </Button>
+                              </>
+                            )}
+                            {b.booking_status === "confirmed" && b.payment_status === "paid" && (
+                              <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80" onClick={() => markCompleted(b.id)}>
+                                Hoàn thành
+                              </Button>
+                            )}
+                            {b.booking_status === "confirmed" && (
+                              <Button size="sm" variant="ghost" className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5" onClick={() => cancelBooking(b.id)}>
+                                <XCircle size={12} /> Hủy
+                              </Button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                       {/* Expanded detail row */}
