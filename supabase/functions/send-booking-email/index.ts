@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -9,11 +11,37 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate the request has a valid auth token or apikey
+    const authHeader = req.headers.get('Authorization');
+    const apikey = req.headers.get('apikey');
+    if (!authHeader && !apikey) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const {
       booking_code, customer_name, phone, email, design_name,
       placement, size, style, appointment_date, appointment_time,
       note, reference_urls,
     } = await req.json();
+
+    // Validate booking_code exists in DB
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    const { data: booking, error: bookingErr } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('booking_code', booking_code)
+      .single();
+
+    if (bookingErr || !booking) {
+      return new Response(JSON.stringify({ error: 'Invalid booking code' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {

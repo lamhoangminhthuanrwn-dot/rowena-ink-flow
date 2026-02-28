@@ -53,16 +53,17 @@ const Booking = () => {
     try {
       const code = `BK${Date.now().toString(36).toUpperCase().slice(-6)}`;
 
-      const uploadedUrls: string[] = [];
+        const uploadedUrls: string[] = [];
       for (let i = 0; i < referenceFiles.length; i++) {
         const file = referenceFiles[i];
         const ext = file.name.split(".").pop();
-        const path = `references/${code}_${i}.${ext}`;
+        const folder = user?.id || 'anon';
+        const path = `references/${folder}/${code}_${i}.${ext}`;
         const { error: uploadError } = await supabase.storage
-          .from("receipts")
+          .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(path);
+          const { data: urlData } = supabase.storage.from("booking-uploads").getPublicUrl(path);
           if (urlData?.publicUrl) uploadedUrls.push(urlData.publicUrl);
         }
       }
