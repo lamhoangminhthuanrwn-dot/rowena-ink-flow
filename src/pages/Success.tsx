@@ -1,12 +1,28 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Home, Upload, Wallet } from "lucide-react";
-import { useState, useRef } from "react";
+import { Check, Copy, Home, Upload, Wallet, SkipForward } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { bankInfo, generateTransferContent, generateVietQRUrl, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+interface BookingState {
+  bookingCode: string;
+  customerName: string;
+  phone: string;
+  email: string;
+  designName: string;
+  placement: string;
+  size: string;
+  style: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  note: string;
+  referenceImages?: string[];
+  userId?: string | null;
+}
 
 const Success = () => {
   const location = useLocation();
@@ -17,28 +33,108 @@ const Success = () => {
   const [depositNote, setDepositNote] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [bookingInserted, setBookingInserted] = useState(false);
   const depositFileRef = useRef<HTMLInputElement>(null);
+  const insertingRef = useRef(false);
 
-  const state = location.state as {
-    bookingCode: string;
-    customerName: string;
-    phone: string;
-    email: string;
-    designName: string;
-    placement: string;
-    size: string;
-    style: string;
-    appointmentDate: string;
-    appointmentTime: string;
-    note: string;
-  } | null;
+  const state = location.state as BookingState | null;
+
+  // Insert booking into DB
+  const insertBooking = useCallback(async () => {
+    if (!state || insertingRef.current || bookingInserted) return;
+    insertingRef.current = true;
+
+    try {
+      const { error } = await supabase.from("bookings").insert([{
+        booking_code: state.bookingCode,
+        user_id: state.userId || null,
+        customer_name: state.customerName,
+        customer_phone: state.phone,
+        customer_email: state.email,
+        product_name: state.designName,
+        notes: state.note,
+        reference_images: state.referenceImages || [],
+        preferred_date: state.appointmentDate,
+        preferred_time: state.appointmentTime,
+        placement: state.placement,
+        size: state.size,
+        payment_status: "unpaid",
+        booking_status: "new",
+      }]);
+
+      if (error) {
+        console.error("Booking insert error:", error);
+      } else {
+        setBookingInserted(true);
+        // Send email notification
+        try {
+          await supabase.functions.invoke("send-booking-email", {
+            body: {
+              booking_code: state.bookingCode,
+              customer_name: state.customerName,
+              phone: state.phone,
+              email: state.email,
+              design_name: state.designName,
+              placement: state.placement,
+              size: state.size,
+              style: state.style,
+              appointment_date: state.appointmentDate,
+              appointment_time: state.appointmentTime,
+              note: state.note,
+              reference_urls: state.referenceImages || [],
+            },
+          });
+        } catch (emailErr) {
+          console.warn("Email notification failed:", emailErr);
+        }
+      }
+    } catch (err) {
+      console.error("Insert booking error:", err);
+    }
+  }, [state, bookingInserted]);
+
+  // Insert on page unload / tab close
+  useEffect(() => {
+    if (!state) return;
+
+    const handleBeforeUnload = () => {
+      if (!insertingRef.current && !bookingInserted) {
+        // Use sendBeacon for reliable unload
+        const payload = JSON.stringify({
+          booking_code: state.bookingCode,
+          user_id: state.userId || null,
+          customer_name: state.customerName,
+          customer_phone: state.phone,
+          customer_email: state.email,
+          product_name: state.designName,
+          notes: state.note,
+          reference_images: state.referenceImages || [],
+          preferred_date: state.appointmentDate,
+          preferred_time: state.appointmentTime,
+          placement: state.placement,
+          size: state.size,
+          payment_status: "unpaid",
+          booking_status: "new",
+        });
+
+        const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/bookings`;
+        navigator.sendBeacon(
+          url + `?apikey=${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          new Blob([payload], { type: "application/json" })
+        );
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [state, bookingInserted]);
 
   if (!state) {
     return (
       <div className="flex min-h-screen items-center justify-center pt-16">
         <div className="text-center">
           <p className="text-muted-foreground">Không tìm thấy thông tin booking.</p>
-          <Button className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/")}>Về trang chủ</Button>
+          <Button className="mt-4" onClick={() => navigate("/")}>Về trang chủ</Button>
         </div>
       </div>
     );
@@ -75,6 +171,9 @@ const Success = () => {
     }
     setUploading(true);
     try {
+      // Insert booking first if not yet
+      await insertBooking();
+
       const uploadedUrls: string[] = [];
       for (let i = 0; i < depositFiles.length; i++) {
         const file = depositFiles[i];
@@ -84,7 +183,7 @@ const Success = () => {
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30); // 30 days
+          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30);
           if (urlData?.signedUrl) uploadedUrls.push(urlData.signedUrl);
         }
       }
@@ -107,6 +206,16 @@ const Success = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleSkip = async () => {
+    await insertBooking();
+    toast.success("Đơn đặt lịch đã được gửi!");
+  };
+
+  const handleGoHome = async () => {
+    await insertBooking();
+    navigate("/");
   };
 
   return (
@@ -269,7 +378,7 @@ const Success = () => {
             <Button
               onClick={handleDepositSubmit}
               disabled={depositFiles.length === 0 || uploading}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              className="w-full"
             >
               {uploading ? "Đang tải lên..." : "Gửi biên lai xác nhận"}
             </Button>
@@ -278,16 +387,28 @@ const Success = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg border border-success/30 bg-success/5 p-6 mb-6 text-center"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-6 mb-6 text-center"
           >
-            <Check className="mx-auto mb-2 text-success" size={32} />
+            <Check className="mx-auto mb-2 text-primary" size={32} />
             <p className="font-semibold text-foreground">Biên lai đã được gửi!</p>
             <p className="text-sm text-muted-foreground">Chúng tôi sẽ xác nhận thanh toán trong thời gian sớm nhất.</p>
           </motion.div>
         )}
 
-        <div className="text-center">
-          <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/")}>
+        {/* Action buttons */}
+        <div className="flex flex-col items-center gap-3">
+          {!submitted && (
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={handleSkip}
+              disabled={bookingInserted}
+            >
+              <SkipForward size={16} />
+              {bookingInserted ? "Đã gửi đơn" : "Bỏ qua, gửi đơn không cọc"}
+            </Button>
+          )}
+          <Button className="gap-2" onClick={handleGoHome}>
             <Home size={16} /> Về trang chủ
           </Button>
         </div>

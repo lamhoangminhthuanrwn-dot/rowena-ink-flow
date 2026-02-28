@@ -53,7 +53,7 @@ const Booking = () => {
     try {
       const code = `BK${Date.now().toString(36).toUpperCase().slice(-6)}`;
 
-        const uploadedUrls: string[] = [];
+      const uploadedUrls: string[] = [];
       for (let i = 0; i < referenceFiles.length; i++) {
         const file = referenceFiles[i];
         const ext = file.name.split(".").pop();
@@ -63,67 +63,29 @@ const Booking = () => {
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30); // 30 days
+          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30);
           if (urlData?.signedUrl) uploadedUrls.push(urlData.signedUrl);
         }
       }
 
-      const { error } = await supabase.from("bookings").insert([{
-        booking_code: code,
-        user_id: user?.id || null,
-        customer_name: form.name,
-        customer_phone: form.phone,
-        customer_email: form.email,
-        product_name: design?.name || "Tùy chỉnh",
-        notes: form.note,
-        reference_images: uploadedUrls,
-        preferred_date: schedule.date,
-        preferred_time: schedule.time,
-        payment_status: "unpaid",
-        booking_status: "new",
-      }]);
-
-      if (error) {
-        console.error("Booking error:", error);
-        alert("Có lỗi xảy ra, vui lòng thử lại.");
-      } else {
-        try {
-          await supabase.functions.invoke("send-booking-email", {
-            body: {
-              booking_code: code,
-              customer_name: form.name,
-              phone: form.phone,
-              email: form.email,
-              design_name: design?.name || "Tùy chỉnh",
-              placement: form.placement,
-              size: form.size,
-              style: form.style,
-              appointment_date: schedule.date,
-              appointment_time: schedule.time,
-              note: form.note,
-              reference_urls: uploadedUrls,
-            },
-          });
-        } catch (emailErr) {
-          console.warn("Email notification failed:", emailErr);
-        }
-
-        navigate("/success", {
-          state: {
-            bookingCode: code,
-            customerName: form.name,
-            phone: form.phone,
-            email: form.email,
-            designName: design?.name || "Tùy chỉnh",
-            placement: form.placement,
-            size: form.size,
-            style: form.style,
-            appointmentDate: schedule.date,
-            appointmentTime: schedule.time,
-            note: form.note,
-          },
-        });
-      }
+      // Navigate to success page with all data — booking will be inserted there
+      navigate("/success", {
+        state: {
+          bookingCode: code,
+          customerName: form.name,
+          phone: form.phone,
+          email: form.email,
+          designName: design?.name || "Tùy chỉnh",
+          placement: form.placement,
+          size: form.size,
+          style: form.style,
+          appointmentDate: schedule.date,
+          appointmentTime: schedule.time,
+          note: form.note,
+          referenceImages: uploadedUrls,
+          userId: user?.id || null,
+        },
+      });
     } finally {
       setSubmitting(false);
     }
