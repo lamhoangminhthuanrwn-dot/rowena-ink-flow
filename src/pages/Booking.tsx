@@ -67,22 +67,20 @@ const Booking = () => {
         }
       }
 
-      const { error } = await supabase.from("bookings").insert({
+      const { error } = await supabase.from("bookings").insert([{
         booking_code: code,
         user_id: user?.id || null,
         customer_name: form.name,
-        phone: form.phone,
-        email: form.email,
-        design_id: selectedDesign,
-        design_name: design?.name || "Tùy chỉnh",
-        deposit_amount: 200000,
-        appointment_date: schedule.date,
-        appointment_time: schedule.time,
-        note: form.note,
-        receipt_url: uploadedUrls.length > 0 ? uploadedUrls.join(",") : null,
+        customer_phone: form.phone,
+        customer_email: form.email,
+        product_name: design?.name || "Tùy chỉnh",
+        notes: form.note,
+        reference_images: uploadedUrls,
+        preferred_date: schedule.date,
+        preferred_time: schedule.time,
         payment_status: "unpaid",
-        booking_status: "pending",
-      });
+        booking_status: "new",
+      }]);
 
       if (error) {
         console.error("Booking error:", error);

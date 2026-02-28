@@ -14,16 +14,314 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          booking_code: string
+          booking_status: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          deposit_receipts: string[] | null
+          id: string
+          note: string | null
+          notes: string | null
+          payment_status: string
+          placement: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          product_id: string | null
+          product_name: string | null
+          reference_images: string[] | null
+          reject_reason: string | null
+          size: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          booking_code?: string
+          booking_status?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          deposit_receipts?: string[] | null
+          id?: string
+          note?: string | null
+          notes?: string | null
+          payment_status?: string
+          placement?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          product_id?: string | null
+          product_name?: string | null
+          reference_images?: string[] | null
+          reject_reason?: string | null
+          size?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          booking_code?: string
+          booking_status?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          deposit_receipts?: string[] | null
+          id?: string
+          note?: string | null
+          notes?: string | null
+          payment_status?: string
+          placement?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          product_id?: string | null
+          product_name?: string | null
+          reference_images?: string[] | null
+          reject_reason?: string | null
+          size?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          gallery: string[] | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          price_vnd: number
+          slug: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          gallery?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          price_vnd?: number
+          slug: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          gallery?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          price_vnd?: number
+          slug?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          referral_code: string
+          referred_by_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          referral_code?: string
+          referred_by_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          referral_code?: string
+          referred_by_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          amount_vnd: number
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+        }
+        Insert: {
+          amount_vnd?: number
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+        }
+        Update: {
+          amount_vnd?: number
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet: {
+        Row: {
+          balance_vnd: number
+          id: string
+          reserved_vnd: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_vnd?: number
+          id?: string
+          reserved_vnd?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_vnd?: number
+          id?: string
+          reserved_vnd?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount_vnd: number
+          created_at: string
+          description: string | null
+          id: string
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount_vnd: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount_vnd?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          amount_vnd: number
+          created_at: string
+          decided_by: string | null
+          id: string
+          momo_name: string | null
+          momo_phone: string
+          note: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_vnd: number
+          created_at?: string
+          decided_by?: string | null
+          id?: string
+          momo_name?: string | null
+          momo_phone: string
+          note?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_vnd?: number
+          created_at?: string
+          decided_by?: string | null
+          id?: string
+          momo_name?: string | null
+          momo_phone?: string
+          note?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      complete_withdrawal: {
+        Args: { _withdrawal_id: string }
+        Returns: undefined
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      release_reserved: { Args: { _withdrawal_id: string }; Returns: undefined }
+      request_withdrawal: {
+        Args: { _amount: number; _momo_name?: string; _momo_phone: string }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +448,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

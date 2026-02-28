@@ -110,7 +110,7 @@ const Ketoan = () => {
     const { error: wdError } = await supabase.from("withdrawals").update({ status: "rejected", decided_by: user?.id, note: rejectReason || null }).eq("id", id);
     if (wdError) { toast.error("Lỗi: " + wdError.message); return; }
 
-    await supabase.rpc("release_reserved", { p_user_id: wd.user_id, p_amount: wd.amount_vnd });
+    await supabase.rpc("release_reserved", { _withdrawal_id: id });
 
     toast.success("Đã từ chối yêu cầu rút tiền.");
     setRejectId(null);
@@ -125,7 +125,7 @@ const Ketoan = () => {
     const { error } = await supabase.from("withdrawals").update({ status: "paid", decided_by: user?.id }).eq("id", id);
     if (error) { toast.error("Lỗi: " + error.message); return; }
 
-    await supabase.rpc("complete_withdrawal", { p_withdrawal_id: id });
+    await supabase.rpc("complete_withdrawal", { _withdrawal_id: id });
 
     toast.success("Đã đánh dấu đã chuyển!");
     fetchWithdrawals();
