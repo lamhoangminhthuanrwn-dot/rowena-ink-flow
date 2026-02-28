@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ const Ketoan = () => {
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [receiptModal, setReceiptModal] = useState<string[] | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -93,6 +94,20 @@ const Ketoan = () => {
     const { error } = await supabase.from("bookings").update({ booking_status: "completed" }).eq("id", id);
     if (error) { console.error("markCompleted error:", error); toast.error("Không thể thực hiện thao tác. Vui lòng thử lại."); return; }
     toast.success("Đã đánh dấu hoàn thành!");
+    fetchBookings();
+  };
+
+  const confirmBooking = async (id: string) => {
+    const { error } = await supabase.from("bookings").update({ booking_status: "confirmed" }).eq("id", id);
+    if (error) { console.error("confirmBooking error:", error); toast.error("Không thể thực hiện thao tác."); return; }
+    toast.success("Đã xác nhận đơn!");
+    fetchBookings();
+  };
+
+  const cancelBooking = async (id: string) => {
+    const { error } = await supabase.from("bookings").update({ booking_status: "cancelled" }).eq("id", id);
+    if (error) { console.error("cancelBooking error:", error); toast.error("Không thể thực hiện thao tác."); return; }
+    toast.success("Đã hủy đơn!");
     fetchBookings();
   };
 
@@ -238,22 +253,24 @@ const Ketoan = () => {
                     const ps = paymentStatusLabels[b.payment_status] || paymentStatusLabels.unpaid;
                     const bs = bookingStatusLabels[b.booking_status] || bookingStatusLabels.pending;
                     return (
-                      <tr key={b.id} className="border-b border-border/50 transition-colors hover:bg-secondary/20">
+                      <React.Fragment key={b.id}>
+                      <tr className="border-b border-border/50 transition-colors hover:bg-secondary/20 cursor-pointer" onClick={() => setExpandedId(expandedId === b.id ? null : b.id)}>
                         <td className="px-3 py-3 font-mono text-xs text-primary">{b.booking_code}</td>
                         <td className="px-3 py-3">
                           <p className="font-medium text-foreground">{b.customer_name}</p>
-                          <p className="text-xs text-muted-foreground">{b.phone}</p>
+                          <p className="text-xs text-muted-foreground">{b.customer_phone}</p>
                         </td>
-                        <td className="px-3 py-3 text-foreground">{b.design_name}</td>
-                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{b.appointment_date} · {b.appointment_time}</td>
+                        <td className="px-3 py-3 text-foreground">{b.product_name}</td>
+                        <td className="px-3 py-3 text-muted-foreground whitespace-nowrap">{b.preferred_date} · {b.preferred_time}</td>
                         <td className="px-3 py-3">
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${ps.className}`}>{ps.text}</span>
                         </td>
                         <td className="px-3 py-3">
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${bs.className}`}>{bs.text}</span>
                         </td>
-                        <td className="px-3 py-3">
-                          <div className="flex gap-1">
+                        <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex gap-1 flex-wrap">
+                            {/* Payment actions */}
                             {b.deposit_receipts && b.deposit_receipts.length > 0 && (
                               <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => setReceiptModal(b.deposit_receipts)} title="Xem biên lai">
                                 <Eye size={14} />
@@ -264,14 +281,30 @@ const Ketoan = () => {
                                 <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-primary hover:text-primary/80" onClick={() => markPaid(b.id)} title="Xác nhận thanh toán">
                                   <Check size={14} />
                                 </Button>
-                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối">
+                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive hover:text-destructive/80" onClick={() => setRejectId(b.id)} title="Từ chối thanh toán">
                                   <X size={14} />
                                 </Button>
                               </>
                             )}
-                            {b.payment_status === "paid" && b.booking_status !== "completed" && (
+                            {/* Booking status actions */}
+                            {(b.booking_status === "new" || b.booking_status === "pending") && (
+                              <>
+                                <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-primary hover:text-primary/80 gap-1" onClick={() => confirmBooking(b.id)} title="Xác nhận đơn">
+                                  <CheckCircle size={13} /> Xác nhận
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-destructive hover:text-destructive/80 gap-1" onClick={() => cancelBooking(b.id)} title="Hủy đơn">
+                                  <XCircle size={13} /> Hủy
+                                </Button>
+                              </>
+                            )}
+                            {b.booking_status === "confirmed" && b.payment_status === "paid" && (
                               <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-primary hover:text-primary/80" onClick={() => markCompleted(b.id)}>
                                 Hoàn thành
+                              </Button>
+                            )}
+                            {b.booking_status === "confirmed" && (
+                              <Button size="sm" variant="ghost" className="h-auto px-2 py-1 text-xs text-destructive hover:text-destructive/80 gap-1" onClick={() => cancelBooking(b.id)}>
+                                <XCircle size={13} /> Hủy
                               </Button>
                             )}
                           </div>
@@ -287,6 +320,33 @@ const Ketoan = () => {
                           )}
                         </td>
                       </tr>
+                      {/* Expanded detail row */}
+                      {expandedId === b.id && (
+                        <tr className="border-b border-border/50 bg-secondary/10">
+                          <td colSpan={7} className="px-4 py-4">
+                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+                              <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{b.customer_email || "—"}</span></div>
+                              <div><span className="text-muted-foreground">Kích thước:</span> <span className="text-foreground">{b.size || "—"}</span></div>
+                              <div><span className="text-muted-foreground">Vị trí:</span> <span className="text-foreground">{b.placement || "—"}</span></div>
+                              <div className="sm:col-span-2 lg:col-span-3"><span className="text-muted-foreground">Ghi chú:</span> <span className="text-foreground">{b.notes || b.note || "—"}</span></div>
+                              {b.reference_images && b.reference_images.length > 0 && (
+                                <div className="sm:col-span-2 lg:col-span-3">
+                                  <span className="text-muted-foreground block mb-2">Ảnh tham khảo:</span>
+                                  <div className="flex gap-2 flex-wrap">
+                                    {b.reference_images.map((url: string, i: number) => (
+                                      <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                                        <img src={url} alt={`Ref ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
+                                      </a>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              <div><span className="text-muted-foreground">Ngày tạo:</span> <span className="text-foreground">{new Date(b.created_at).toLocaleString("vi-VN")}</span></div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </React.Fragment>
                     );
                   })}
                   {filteredBookings.length === 0 && (
