@@ -17,5 +17,5 @@ export function generateVietQRUrl(bookingId: string): string {
 }
 
 export function generateZaloPayUrl(): string {
-  return "zalopay://";
+  return "https://zalopay.vn";
 }
