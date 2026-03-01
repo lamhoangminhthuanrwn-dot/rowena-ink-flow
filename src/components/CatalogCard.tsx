@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { TattooDesign } from "@/data/tattooDesigns";
 import { displayPrice } from "@/data/tattooDesigns";
+import ImageSlideshow from "@/components/ImageSlideshow";
 
 interface CatalogCardProps {
   design: TattooDesign;
@@ -20,12 +21,16 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
       className="group block overflow-hidden rounded-lg border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
     >
       <div className="aspect-[3/4] overflow-hidden">
-        <img
-          src={design.image}
-          alt={design.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+        {design.images && design.images.length > 1 ? (
+          <ImageSlideshow images={design.images} alt={design.name} />
+        ) : (
+          <img
+            src={design.image}
+            alt={design.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        )}
       </div>
       <div className="p-4">
         <h3 className="font-serif text-base font-semibold text-foreground">{design.name}</h3>
