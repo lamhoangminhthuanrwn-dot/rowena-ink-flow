@@ -17,7 +17,7 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Full body",
     description: "Xăm full lưng với thiết kế theo yêu cầu, chi tiết tinh xảo. Tác phẩm nghệ thuật lớn trên toàn bộ vùng lưng.",
-    image: "https://images.unsplash.com/photo-1590246815117-6ca156e4cecd?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-full-back.jpg",
     size: "Full lưng",
     duration: "10-15 giờ",
   },
