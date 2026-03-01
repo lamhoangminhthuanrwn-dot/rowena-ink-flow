@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ImageSlideshowProps {
   images: string[];
@@ -7,13 +8,18 @@ interface ImageSlideshowProps {
   className?: string;
   interval?: number;
   showDots?: boolean;
+  showArrows?: boolean;
 }
 
-const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true }: ImageSlideshowProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const prev = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   }, [images.length]);
 
   useEffect(() => {
@@ -22,7 +28,7 @@ const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = tr
   }, [next, interval]);
 
   return (
-    <div className={cn("relative h-full w-full overflow-hidden", className)}>
+    <div className={cn("group/slide relative h-full w-full overflow-hidden", className)}>
       {images.map((src, i) => (
         <img
           key={src}
@@ -35,6 +41,24 @@ const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = tr
           loading={i === 0 ? "eager" : "lazy"}
         />
       ))}
+      {showArrows && images.length > 1 && (
+        <>
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); prev(); }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-1 text-foreground opacity-0 transition-opacity group-hover/slide:opacity-100"
+            aria-label="Ảnh trước"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); next(); }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-1 text-foreground opacity-0 transition-opacity group-hover/slide:opacity-100"
+            aria-label="Ảnh tiếp"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </>
+      )}
       {showDots && images.length > 1 && (
         <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
           {images.map((_, i) => (
