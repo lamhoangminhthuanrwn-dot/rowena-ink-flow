@@ -1,21 +1,28 @@
 
 
-## Thay ảnh Unsplash phù hợp với từng dịch vụ xăm
+## Thêm slideshow ảnh cho dịch vụ "Xăm full lưng"
 
-Cập nhật URL ảnh trong `src/data/tattooDesigns.ts` — chọn ảnh Unsplash thực sự khớp với từng loại dịch vụ:
-
-| Dịch vụ | Ảnh mới |
-|---------|---------|
-| Xăm full lưng | Ảnh hình xăm full lưng thật |
-| Xăm full tay | Ảnh tattoo sleeve trên cánh tay |
-| Xăm full chân | Ảnh tattoo trên chân |
-| Xăm full ngực | Ảnh tattoo vùng ngực |
-| Xăm full bụng | Ảnh tattoo vùng bụng/hông |
-| Cover hình xăm cũ | Ảnh cover-up tattoo (trước/sau) |
-| Xăm hình mini & A4 | Ảnh mini tattoo nhỏ xinh |
-| Xăm che sẹo | Ảnh scar cover tattoo |
-| Xăm theo yêu cầu | Ảnh custom tattoo design/artist |
+Thêm 10 ảnh studio vào dịch vụ "Xăm full lưng" và hiển thị dạng slideshow tự động đổi ảnh mỗi 5 giây.
 
 ### Thay đổi
-1. **`src/data/tattooDesigns.ts`**: Thay 9 URL ảnh Unsplash bằng ảnh phù hợp hơn với từng dịch vụ. Một số ảnh hiện tại bị trùng lặp (id 1 & 7, id 2 & 8, id 3 & 9) — sẽ đảm bảo mỗi dịch vụ có ảnh riêng biệt.
+
+1. **Copy 10 ảnh** vào `public/assets/` với tên `tattoo-back-1.jpg` đến `tattoo-back-10.jpg`
+
+2. **`src/data/tattooDesigns.ts`**: Thêm thuộc tính `images?: string[]` vào interface `TattooDesign`. Dịch vụ "Xăm full lưng" (id: 1) sẽ có mảng `images` chứa 10 đường dẫn ảnh, `image` giữ nguyên làm ảnh đại diện.
+
+3. **`src/components/CatalogCard.tsx`**: Nếu design có `images`, hiển thị slideshow tự động (5 giây/ảnh) thay vì ảnh tĩnh, với hiệu ứng fade chuyển ảnh và chỉ báo dot indicators.
+
+4. **`src/pages/ProductDetail.tsx`**: Tương tự, hiển thị slideshow cho trang chi tiết sản phẩm khi có `images`.
+
+### Thứ tự ảnh
+1. `tải_xuống_1.png` (Mèo thần tài samurai)
+2. `tải_xuống_2.png` (Hổ realistic)
+3. `tải_xuống_3.png` (Hổ & đầu lâu)
+4. `tải_xuống_4.png` (Hổ close-up)
+5. `tải_xuống_5.png` (Ơn cha nghĩa mẹ)
+6. `tải_xuống_6.png` (Tề Thiên)
+7. `tải_xuống_7.png` (Hạc & hoa đào)
+8. `tải_xuống_8.png` (Samurai Nhật)
+9. `tải_xuống.png` (Quỷ Nhật)
+10. `z7495959802753...jpg` (Phượng hoàng)
 
