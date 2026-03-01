@@ -1,28 +1,30 @@
 
 
-## Problem
+## Cập nhật danh sách dịch vụ xăm theo bảng giá mới
 
-The `branches` and `artists` tables have **RESTRICTIVE** RLS policies that conflict. The "Admins can manage branches/artists" policy (FOR ALL, RESTRICTIVE) requires admin role for ALL operations including SELECT. Since RESTRICTIVE policies ALL must pass, even though "viewable by everyone" allows SELECT, the admin-only policy blocks non-admin and anonymous users. Additionally, when the component mounts, the auth session may not be restored yet, causing even admin requests to fail.
+### Dữ liệu từ hình
 
-## Fix
+| # | Tên dịch vụ | Giá |
+|---|-------------|-----|
+| 1 | Xăm full lưng | 12,000,000đ |
+| 2 | Xăm full tay | 12,000,000đ |
+| 3 | Xăm full chân | 12,000,000đ |
+| 4 | Xăm full ngực | 12,000,000đ |
+| 5 | Xăm full bụng | 12,000,000đ |
+| 6 | Cover hình xăm cũ | 12,000,000đ |
+| 7 | Xăm hình mini & A4 | 500K - 2Tr5 (hiển thị dạng text) |
+| 8 | Xăm che sẹo | 12,000,000đ |
+| 9 | Xăm theo yêu cầu khác | 12,000,000đ |
 
-### 1. Fix RLS policies via migration
+### Thay đổi
 
-**Drop conflicting RESTRICTIVE policies and recreate as PERMISSIVE:**
+1. **Cập nhật `src/data/tattooDesigns.ts`**: Thay 6 mẫu cũ bằng 9 dịch vụ mới với tên và giá từ hình. Thêm field `priceText` cho "Xăm hình mini & A4" vì giá là khoảng (500K-2Tr5). Cập nhật danh sách categories thành `["Tất cả", "Full body", "Đặc biệt", "Mini"]`.
 
-For `branches`:
-- Drop "Admins can manage branches" (FOR ALL, RESTRICTIVE)
-- Create PERMISSIVE "Admins can insert branches" (INSERT)
-- Create PERMISSIVE "Admins can update branches" (UPDATE)
-- Change "Branches viewable by everyone" to PERMISSIVE
+2. **Cập nhật `formatVND` / hiển thị giá**: Hỗ trợ `priceText` optional — nếu có thì hiển thị text thay vì format số.
 
-For `artists`:
-- Drop "Admins can manage artists" (FOR ALL, RESTRICTIVE)
-- Create PERMISSIVE "Admins can insert artists" (INSERT)
-- Create PERMISSIVE "Admins can update artists" (UPDATE)
-- Change "Artists viewable by everyone" to PERMISSIVE
+3. **Cập nhật `CatalogCard.tsx`**: Hiển thị `priceText` nếu có, ngược lại format giá bình thường.
 
-### 2. No code changes needed
+4. **Cập nhật `ProductDetail.tsx`**: Tương tự xử lý `priceText`.
 
-The Booking.tsx component code is correct. Once RLS allows anonymous/non-admin SELECT, branches will render properly.
+5. **Giữ nguyên ảnh placeholder** từ Unsplash cho các dịch vụ mới (có thể thay sau).
 
