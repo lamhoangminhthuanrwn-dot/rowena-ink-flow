@@ -73,7 +73,11 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Full body",
     description: "Xăm full ngực với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết.",
-    image: "https://images.unsplash.com/photo-1612459284270-27b3a5e2bf9e?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-chest-1.jpg",
+    images: [
+      "/assets/tattoo-chest-1.jpg",
+      "/assets/tattoo-chest-2.jpg",
+    ],
     size: "Full ngực",
     duration: "8-12 giờ",
   },
