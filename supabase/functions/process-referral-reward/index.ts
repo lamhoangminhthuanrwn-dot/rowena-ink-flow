@@ -52,46 +52,25 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'User not referred, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { data: existingReward } = await supabase
-      .from('referral_rewards')
-      .select('id')
-      .eq('referred_id', booking.user_id)
-      .limit(1);
-
-    if (existingReward && existingReward.length > 0) {
-      return new Response(JSON.stringify({ message: 'Reward already granted for this referred user' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-
-    const REWARD_AMOUNT = 300000;
-    const referrerId = profile.referred_by_user_id;
-
-    await supabase.from('referral_rewards').insert({
-      referrer_id: referrerId,
-      referred_id: booking.user_id,
-      amount_vnd: REWARD_AMOUNT,
+    // Use atomic DB function to prevent race conditions
+    const { data: rewarded, error: rpcError } = await supabase.rpc('add_referral_reward', {
+      _referrer_id: profile.referred_by_user_id,
+      _referred_id: booking.user_id,
+      _booking_code: booking.booking_code,
     });
 
-    const { data: existingWallet } = await supabase.from('wallet').select('*').eq('user_id', referrerId).single();
-    if (existingWallet) {
-      await supabase.from('wallet').update({
-        balance_vnd: existingWallet.balance_vnd + REWARD_AMOUNT,
-      }).eq('user_id', referrerId);
-    } else {
-      await supabase.from('wallet').insert({
-        user_id: referrerId,
-        balance_vnd: REWARD_AMOUNT,
-        reserved_vnd: 0,
+    if (rpcError) {
+      console.error('add_referral_reward error:', rpcError);
+      return new Response(JSON.stringify({ error: 'Failed to process reward' }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    await supabase.from('wallet_transactions').insert({
-      user_id: referrerId,
-      amount_vnd: REWARD_AMOUNT,
-      type: 'referral_reward',
-      description: `Thưởng giới thiệu từ booking ${booking.booking_code}`,
-    });
+    if (!rewarded) {
+      return new Response(JSON.stringify({ message: 'Reward already granted for this referred user' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
-    return new Response(JSON.stringify({ success: true, amount: REWARD_AMOUNT }), {
+    return new Response(JSON.stringify({ success: true, amount: 300000 }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {

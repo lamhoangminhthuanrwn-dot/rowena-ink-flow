@@ -388,6 +388,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_referral_reward: {
+        Args: {
+          _booking_code: string
+          _referred_id: string
+          _referrer_id: string
+        }
+        Returns: boolean
+      }
       complete_withdrawal: {
         Args: { _withdrawal_id: string }
         Returns: undefined
