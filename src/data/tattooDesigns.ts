@@ -124,7 +124,12 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Đặc biệt",
     description: "Thiết kế và xăm theo yêu cầu riêng của bạn. Liên hệ để tư vấn chi tiết về ý tưởng, kích thước và giá.",
-    image: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-custom-1.jpg",
+    images: [
+      "/assets/tattoo-custom-1.jpg",
+      "/assets/tattoo-custom-2.jpg",
+      "/assets/tattoo-custom-3.jpg",
+    ],
     size: "Tùy yêu cầu",
     duration: "Tùy yêu cầu",
   },
