@@ -27,7 +27,7 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Full body",
     description: "Xăm full tay (sleeve) từ vai đến cổ tay, thiết kế liền mạch theo phong cách bạn yêu thích.",
-    image: "https://images.unsplash.com/photo-1542556398-95fb5b9f9b48?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-full-arm.jpg",
     size: "Full tay",
     duration: "10-15 giờ",
   },
