@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { TattooDesign } from "@/data/tattooDesigns";
-import { formatVND } from "@/data/tattooDesigns";
+import { displayPrice } from "@/data/tattooDesigns";
 
 interface CatalogCardProps {
   design: TattooDesign;
@@ -30,7 +30,7 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
       <div className="p-4">
         <h3 className="font-serif text-base font-semibold text-foreground">{design.name}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">{design.category}</p>
-        <p className="mt-2 text-sm font-semibold text-primary">{formatVND(design.price)}</p>
+        <p className="mt-2 text-sm font-semibold text-primary">{displayPrice(design)}</p>
       </div>
     </Link>
   </motion.div>

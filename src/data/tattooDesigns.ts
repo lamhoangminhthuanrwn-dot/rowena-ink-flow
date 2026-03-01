@@ -2,6 +2,7 @@ export interface TattooDesign {
   id: string;
   name: string;
   price: number;
+  priceText?: string;
   category: string;
   description: string;
   image: string;
@@ -12,68 +13,103 @@ export interface TattooDesign {
 export const tattooDesigns: TattooDesign[] = [
   {
     id: "1",
-    name: "Rồng Phương Đông",
-    price: 3500000,
-    category: "Truyền thống",
-    description: "Hình xăm rồng phương Đông với chi tiết tinh xảo, phong cách truyền thống Nhật Bản. Phù hợp cho vùng lưng, vai hoặc bắp tay.",
+    name: "Xăm full lưng",
+    price: 12000000,
+    category: "Full body",
+    description: "Xăm full lưng với thiết kế theo yêu cầu, chi tiết tinh xảo. Tác phẩm nghệ thuật lớn trên toàn bộ vùng lưng.",
     image: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&h=800&fit=crop",
-    size: "20 × 30 cm",
-    duration: "6-8 giờ",
+    size: "Full lưng",
+    duration: "10-15 giờ",
   },
   {
     id: "2",
-    name: "Hoa Sen Mandala",
-    price: 2000000,
-    category: "Mandala",
-    description: "Thiết kế mandala kết hợp hoa sen, đường nét đối xứng hoàn hảo. Thích hợp cho bắp tay, đùi hoặc lưng.",
-    image: "https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&h=800&fit=crop",
-    size: "15 × 15 cm",
-    duration: "4-5 giờ",
+    name: "Xăm full tay",
+    price: 12000000,
+    category: "Full body",
+    description: "Xăm full tay (sleeve) từ vai đến cổ tay, thiết kế liền mạch theo phong cách bạn yêu thích.",
+    image: "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?w=600&h=800&fit=crop",
+    size: "Full tay",
+    duration: "10-15 giờ",
   },
   {
     id: "3",
-    name: "Hổ Thủy Mặc",
-    price: 4000000,
-    category: "Truyền thống",
-    description: "Hổ phong cách thủy mặc Á Đông, kết hợp nét cọ mềm mại và chi tiết sắc nét. Tác phẩm nghệ thuật trên da.",
-    image: "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?w=600&h=800&fit=crop",
-    size: "25 × 35 cm",
-    duration: "8-10 giờ",
+    name: "Xăm full chân",
+    price: 12000000,
+    category: "Full body",
+    description: "Xăm full chân từ đùi đến mắt cá, thiết kế tùy chỉnh theo ý tưởng của bạn.",
+    image: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&h=800&fit=crop",
+    size: "Full chân",
+    duration: "10-15 giờ",
   },
   {
     id: "4",
-    name: "Hình Học Tối Giản",
-    price: 1200000,
-    category: "Tối giản",
-    description: "Thiết kế hình học tối giản với đường nét sạch sẽ, hiện đại. Phù hợp cho cổ tay, mắt cá chân hoặc sau tai.",
-    image: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&h=800&fit=crop",
-    size: "5 × 8 cm",
-    duration: "1-2 giờ",
+    name: "Xăm full ngực",
+    price: 12000000,
+    category: "Full body",
+    description: "Xăm full ngực với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết.",
+    image: "https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&h=800&fit=crop",
+    size: "Full ngực",
+    duration: "8-12 giờ",
   },
   {
     id: "5",
-    name: "Phượng Hoàng",
-    price: 5000000,
-    category: "Truyền thống",
-    description: "Phượng hoàng lửa phong cách tân cổ điển, màu sắc rực rỡ, chi tiết cầu kỳ. Tác phẩm lớn cho lưng hoặc ngực.",
-    image: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&h=800&fit=crop",
-    size: "30 × 40 cm",
-    duration: "10-12 giờ",
+    name: "Xăm full bụng",
+    price: 12000000,
+    category: "Full body",
+    description: "Xăm full bụng với thiết kế cá nhân hóa, đường nét sắc sảo và chi tiết.",
+    image: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&h=800&fit=crop",
+    size: "Full bụng",
+    duration: "8-12 giờ",
   },
   {
     id: "6",
-    name: "Chữ Calligraphy",
-    price: 800000,
-    category: "Chữ",
-    description: "Chữ viết tay calligraphy tinh tế, font tùy chỉnh theo yêu cầu. Phù hợp cho xương đòn, cổ tay hoặc sườn.",
+    name: "Cover hình xăm cũ",
+    price: 12000000,
+    category: "Đặc biệt",
+    description: "Cover up hình xăm cũ bằng thiết kế mới, che phủ hoàn toàn hình cũ với tác phẩm ấn tượng hơn.",
     image: "https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=600&h=800&fit=crop",
-    size: "3 × 10 cm",
-    duration: "1 giờ",
+    size: "Tùy vùng",
+    duration: "Tùy kích thước",
+  },
+  {
+    id: "7",
+    name: "Xăm hình mini & A4",
+    price: 500000,
+    priceText: "500K – 2Tr5",
+    category: "Mini",
+    description: "Hình xăm nhỏ từ mini đến khổ A4, phù hợp cho cổ tay, mắt cá chân, sau tai hoặc bất kỳ vị trí nào.",
+    image: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&h=800&fit=crop",
+    size: "Mini – A4",
+    duration: "1-4 giờ",
+  },
+  {
+    id: "8",
+    name: "Xăm che sẹo",
+    price: 12000000,
+    category: "Đặc biệt",
+    description: "Xăm che sẹo chuyên nghiệp, giúp bạn tự tin hơn với thiết kế nghệ thuật phủ lên vùng sẹo.",
+    image: "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?w=600&h=800&fit=crop",
+    size: "Tùy vùng",
+    duration: "Tùy kích thước",
+  },
+  {
+    id: "9",
+    name: "Xăm theo yêu cầu khác",
+    price: 12000000,
+    category: "Đặc biệt",
+    description: "Thiết kế và xăm theo yêu cầu riêng của bạn. Liên hệ để tư vấn chi tiết về ý tưởng, kích thước và giá.",
+    image: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&h=800&fit=crop",
+    size: "Tùy yêu cầu",
+    duration: "Tùy yêu cầu",
   },
 ];
 
-export const categories = ["Tất cả", "Truyền thống", "Mandala", "Tối giản", "Chữ"];
+export const categories = ["Tất cả", "Full body", "Đặc biệt", "Mini"];
 
 export function formatVND(amount: number): string {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+}
+
+export function displayPrice(design: TattooDesign): string {
+  return design.priceText || formatVND(design.price);
 }
