@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { tattooDesigns, formatVND } from "@/data/tattooDesigns";
+import { tattooDesigns, displayPrice } from "@/data/tattooDesigns";
 import { ArrowLeft, Clock, Ruler } from "lucide-react";
 
 const ProductDetail = () => {
@@ -42,7 +42,7 @@ const ProductDetail = () => {
           >
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-primary">{design.category}</p>
             <h1 className="font-serif text-3xl font-bold text-foreground md:text-4xl">{design.name}</h1>
-            <p className="mt-4 text-2xl font-bold text-primary">{formatVND(design.price)}</p>
+            <p className="mt-4 text-2xl font-bold text-primary">{displayPrice(design)}</p>
 
             <p className="mt-6 leading-relaxed text-muted-foreground">{design.description}</p>
 
