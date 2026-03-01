@@ -37,7 +37,7 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Full body",
     description: "Xăm full chân từ đùi đến mắt cá, thiết kế tùy chỉnh theo ý tưởng của bạn.",
-    image: "https://images.unsplash.com/photo-1581542584984-c3a4df076604?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-full-leg.jpg",
     size: "Full chân",
     duration: "10-15 giờ",
   },
