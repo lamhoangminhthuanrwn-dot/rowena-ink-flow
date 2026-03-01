@@ -108,7 +108,7 @@ export const tattooDesigns: TattooDesign[] = [
     priceText: "500K – 2Tr5",
     category: "Mini",
     description: "Hình xăm nhỏ từ mini đến khổ A4, phù hợp cho cổ tay, mắt cá chân, sau tai hoặc bất kỳ vị trí nào.",
-    image: "https://images.unsplash.com/photo-1569173675524-1867558c4614?w=600&h=800&fit=crop",
+    image: "/assets/tattoo-mini-1.jpg",
     size: "Mini – A4",
     duration: "1-4 giờ",
   },
