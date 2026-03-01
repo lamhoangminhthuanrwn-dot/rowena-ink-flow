@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { tattooDesigns, displayPrice } from "@/data/tattooDesigns";
 import { ArrowLeft, Clock, Ruler } from "lucide-react";
+import ImageSlideshow from "@/components/ImageSlideshow";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -15,6 +16,8 @@ const ProductDetail = () => {
       </div>
     );
   }
+
+  const hasSlideshow = design.images && design.images.length > 1;
 
   return (
     <div className="pt-20 pb-16">
@@ -31,7 +34,13 @@ const ProductDetail = () => {
             transition={{ duration: 0.6 }}
             className="overflow-hidden rounded-lg border border-border/50"
           >
-            <img src={design.image} alt={design.name} className="aspect-[3/4] w-full object-cover" />
+            {hasSlideshow ? (
+              <div className="aspect-[3/4]">
+                <ImageSlideshow images={design.images!} alt={design.name} />
+              </div>
+            ) : (
+              <img src={design.image} alt={design.name} className="aspect-[3/4] w-full object-cover" />
+            )}
           </motion.div>
 
           <motion.div

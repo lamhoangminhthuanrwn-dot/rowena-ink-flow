@@ -6,6 +6,7 @@ export interface TattooDesign {
   category: string;
   description: string;
   image: string;
+  images?: string[];
   size: string;
   duration: string;
 }
@@ -17,7 +18,19 @@ export const tattooDesigns: TattooDesign[] = [
     price: 12000000,
     category: "Full body",
     description: "Xăm full lưng với thiết kế theo yêu cầu, chi tiết tinh xảo. Tác phẩm nghệ thuật lớn trên toàn bộ vùng lưng.",
-    image: "/assets/tattoo-full-back.jpg",
+    image: "/assets/tattoo-back-1.png",
+    images: [
+      "/assets/tattoo-back-1.png",
+      "/assets/tattoo-back-2.png",
+      "/assets/tattoo-back-3.png",
+      "/assets/tattoo-back-4.png",
+      "/assets/tattoo-back-5.png",
+      "/assets/tattoo-back-6.png",
+      "/assets/tattoo-back-7.png",
+      "/assets/tattoo-back-8.png",
+      "/assets/tattoo-back-9.png",
+      "/assets/tattoo-back-10.jpg",
+    ],
     size: "Full lưng",
     duration: "10-15 giờ",
   },
