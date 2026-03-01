@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logoRowena from "@/assets/logo-rowena.png";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -23,9 +24,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-sm border border-primary/40 font-serif text-lg font-bold text-primary">
-            R
-          </span>
+          <img src={logoRowena} alt="ROWENA Tattoo" className="h-10 w-auto" />
           <span className="font-serif text-lg font-semibold tracking-wide text-foreground">
             ROWENA <span className="font-sans text-xs font-light uppercase tracking-[0.2em] text-muted-foreground">tattoo</span>
           </span>
