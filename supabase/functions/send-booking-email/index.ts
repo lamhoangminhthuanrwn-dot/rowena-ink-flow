@@ -11,10 +11,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Validate the request has a valid auth token or apikey
+    // Require a valid Authorization Bearer token
     const authHeader = req.headers.get('Authorization');
-    const apikey = req.headers.get('apikey');
-    if (!authHeader && !apikey) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
