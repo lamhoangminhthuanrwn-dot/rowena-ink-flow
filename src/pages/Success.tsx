@@ -49,25 +49,27 @@ const Success = () => {
     insertingRef.current = true;
 
     try {
-      const { error } = await supabase.from("bookings").insert([{
-        booking_code: state.bookingCode,
-        user_id: state.userId || null,
-        customer_name: state.customerName,
-        customer_phone: state.phone,
-        customer_email: state.email,
-        product_name: state.designName,
-        notes: state.note,
-        reference_images: state.referenceImages || [],
-        preferred_date: state.appointmentDate,
-        preferred_time: state.appointmentTime,
-        placement: state.placement,
-        size: state.size,
-        payment_status: "unpaid",
-        booking_status: "new",
-        branch_id: state.branchId || null,
-        branch_name: state.branchName || null,
-        artist_id: state.artistId || null,
-      }]);
+      const { error } = await supabase.from("bookings").insert([
+        {
+          booking_code: state.bookingCode,
+          user_id: state.userId || null,
+          customer_name: state.customerName,
+          customer_phone: state.phone,
+          customer_email: state.email,
+          product_name: state.designName,
+          notes: state.note,
+          reference_images: state.referenceImages || [],
+          preferred_date: state.appointmentDate,
+          preferred_time: state.appointmentTime,
+          placement: state.placement,
+          size: state.size,
+          payment_status: "unpaid",
+          booking_status: "new",
+          branch_id: state.branchId || null,
+          branch_name: state.branchName || null,
+          artist_id: state.artistId || null,
+        },
+      ]);
 
       if (error) {
         console.error("Booking insert error:", error);
@@ -127,7 +129,7 @@ const Success = () => {
         const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/bookings`;
         navigator.sendBeacon(
           url + `?apikey=${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          new Blob([payload], { type: "application/json" })
+          new Blob([payload], { type: "application/json" }),
         );
       }
     };
@@ -141,7 +143,9 @@ const Success = () => {
       <div className="flex min-h-screen items-center justify-center pt-16">
         <div className="text-center">
           <p className="text-muted-foreground">Không tìm thấy thông tin booking.</p>
-          <Button className="mt-4" onClick={() => navigate("/")}>Về trang chủ</Button>
+          <Button className="mt-4" onClick={() => navigate("/")}>
+            Về trang chủ
+          </Button>
         </div>
       </div>
     );
@@ -272,12 +276,16 @@ const Success = () => {
               { label: "Phong cách", value: state.style },
               { label: "Ngày hẹn", value: `${state.appointmentDate} · ${state.appointmentTime}` },
               { label: "Ghi chú", value: state.note },
-            ].filter((r) => r.value).map((row) => (
-              <div key={row.label} className="flex justify-between">
-                <span className="text-muted-foreground">{row.label}</span>
-                <span className={`text-foreground ${row.mono ? "font-mono font-semibold text-primary" : ""}`}>{row.value}</span>
-              </div>
-            ))}
+            ]
+              .filter((r) => r.value)
+              .map((row) => (
+                <div key={row.label} className="flex justify-between">
+                  <span className="text-muted-foreground">{row.label}</span>
+                  <span className={`text-foreground ${row.mono ? "font-mono font-semibold text-primary" : ""}`}>
+                    {row.value}
+                  </span>
+                </div>
+              ))}
           </div>
         </motion.div>
 
@@ -290,7 +298,8 @@ const Success = () => {
         >
           <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Đặt cọc để được ưu tiên lịch</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Đặt cọc <span className="font-semibold text-primary">{formatVND(bankInfo.depositAmount)}</span> để được ưu tiên lịch. Đây không phải bước bắt buộc.
+            Đặt cọc <span className="font-semibold text-primary">{formatVND(bankInfo.depositAmount)}</span> để được ưu
+            tiên lịch. Đây không phải bước bắt buộc.
           </p>
 
           {/* QR Code */}
@@ -357,14 +366,30 @@ const Success = () => {
               Tải lên 1–3 ảnh biên lai chuyển khoản để xác nhận đặt cọc.
             </p>
 
-            <input ref={depositFileRef} type="file" accept="image/*" multiple onChange={handleDepositFileChange} className="hidden" />
+            <input
+              ref={depositFileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleDepositFileChange}
+              className="hidden"
+            />
 
             {depositPreviews.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {depositPreviews.map((p, i) => (
                   <div key={i} className="relative">
-                    <img src={p} alt={`Receipt ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                    <button onClick={() => removeDepositFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
+                    <img
+                      src={p}
+                      alt={`Receipt ${i + 1}`}
+                      className="h-20 w-20 rounded-lg border border-border/50 object-cover"
+                    />
+                    <button
+                      onClick={() => removeDepositFile(i)}
+                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>
@@ -391,11 +416,7 @@ const Success = () => {
               />
             </div>
 
-            <Button
-              onClick={handleDepositSubmit}
-              disabled={depositFiles.length === 0 || uploading}
-              className="w-full"
-            >
+            <Button onClick={handleDepositSubmit} disabled={depositFiles.length === 0 || uploading} className="w-full">
               {uploading ? "Đang tải lên..." : "Gửi biên lai xác nhận"}
             </Button>
           </motion.div>
@@ -414,14 +435,9 @@ const Success = () => {
         {/* Action buttons */}
         <div className="flex flex-col items-center gap-3">
           {!submitted && (
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={handleSkip}
-              disabled={bookingInserted}
-            >
+            <Button variant="outline" className="gap-2" onClick={handleSkip} disabled={bookingInserted}>
               <SkipForward size={16} />
-              {bookingInserted ? "Đã gửi đơn" : "Bỏ qua, gửi đơn không cọc"}
+              {bookingInserted ? "Đã gửi đơn" : "Bỏ qua, không cọc"}
             </Button>
           )}
           <Button className="gap-2" onClick={handleGoHome}>
