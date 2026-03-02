@@ -213,7 +213,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
           <OptionGroup label="Tiến độ">
             {selectedVariant.scheduleOptions!.map((opt, idx) => (
               <OptionButton key={idx} selected={selectedScheduleIdx === idx} onClick={() => setSelectedScheduleIdx(idx)}>
-                {opt.label} – {formatVNDShort(opt.price)}
+                {opt.label}
               </OptionButton>
             ))}
           </OptionGroup>
