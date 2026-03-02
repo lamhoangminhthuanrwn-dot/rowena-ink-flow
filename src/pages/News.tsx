@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { setSEO, resetSEO } from "@/lib/seo";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
@@ -11,6 +12,14 @@ const categories = ["Tất cả", "Tin tức", "Khuyến mãi", "Kiến thức x
 
 const News = () => {
   const [active, setActive] = useState("Tất cả");
+
+  useEffect(() => {
+    setSEO({
+      title: "Tin tức & Khuyến mãi",
+      description: "Cập nhật mới nhất từ ROWENA — khuyến mãi, kiến thức xăm và nhiều hơn nữa",
+    });
+    return () => resetSEO();
+  }, []);
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["posts"],
