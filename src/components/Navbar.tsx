@@ -17,12 +17,12 @@ const Navbar = () => {
     { to: "/booking", label: "Đặt lịch" },
   ];
 
+  const { canManagePosts } = useAuth();
+
   if (user && isAdmin) {
     links.push({ to: "/ketoan", label: "Kế toán" });
   }
-
-  const { isModerator, canManagePosts } = useAuth();
-  if (user && canManagePosts && !isAdmin) {
+  if (user && canManagePosts) {
     links.push({ to: "/admin/posts", label: "Bài viết" });
   }
 
