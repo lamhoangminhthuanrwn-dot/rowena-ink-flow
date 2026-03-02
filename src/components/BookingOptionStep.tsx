@@ -25,7 +25,15 @@ const OptionGroup = ({ label, children }: { label: string; children: React.React
   </div>
 );
 
-const OptionButton = ({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) => (
+const OptionButton = ({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => (
   <button
     type="button"
     onClick={onClick}
@@ -52,19 +60,29 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
 
   // Get available styles for selected position
   const availableStyles = position ? getStyles(variants, position) : [];
-  
+
   // Find selected variant
-  const selectedVariant = position && (isMini ? style : style || (!availableStyles.length ? "" : ""))
-    ? findVariant(variants, position, style || undefined)
-    : undefined;
+  const selectedVariant =
+    position && (isMini ? style : style || (!availableStyles.length ? "" : ""))
+      ? findVariant(variants, position, style || undefined)
+      : undefined;
 
   // Check if same-day is available
   const hasSameDay = selectedVariant?.priceSameDay != null && selectedVariant.priceSameDay > 0;
 
   // Reset downstream when upstream changes
-  useEffect(() => { setStyle(""); setScheduleType(""); setPaymentType(""); }, [position]);
-  useEffect(() => { setScheduleType(""); setPaymentType(""); }, [style]);
-  useEffect(() => { setPaymentType(""); }, [scheduleType]);
+  useEffect(() => {
+    setStyle("");
+    setScheduleType("");
+    setPaymentType("");
+  }, [position]);
+  useEffect(() => {
+    setScheduleType("");
+    setPaymentType("");
+  }, [style]);
+  useEffect(() => {
+    setPaymentType("");
+  }, [scheduleType]);
 
   // Calculate final price & notify parent
   useEffect(() => {
@@ -108,10 +126,11 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
   // Compute display price
   const displayFinalPrice = (() => {
     if (!selectedVariant || !scheduleType) return null;
-    const price = scheduleType === "sameday"
-      ? (selectedVariant.priceSameDay || selectedVariant.priceSimple)
-      : selectedVariant.priceSimple;
-    
+    const price =
+      scheduleType === "sameday"
+        ? selectedVariant.priceSameDay || selectedVariant.priceSimple
+        : selectedVariant.priceSimple;
+
     if (paymentType === "perSession" && scheduleType === "simple") {
       const match = selectedVariant.sessions.match(/(\d+)/);
       const count = match ? parseInt(match[1]) : 1;
@@ -153,7 +172,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
             <OptionButton selected={scheduleType === "simple"} onClick={() => setScheduleType("simple")}>
-              Đơn giản ({selectedVariant.sessions})
+              Số buổi ({selectedVariant.sessions})
             </OptionButton>
             {hasSameDay && (
               <OptionButton selected={scheduleType === "sameday"} onClick={() => setScheduleType("sameday")}>
@@ -171,15 +190,16 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
             <OptionButton selected={paymentType === "full"} onClick={() => setPaymentType("full")}>
               Trả hết
             </OptionButton>
-            {scheduleType === "simple" && (() => {
-              const match = selectedVariant?.sessions.match(/(\d+)/);
-              const count = match ? parseInt(match[1]) : 1;
-              return count > 1;
-            })() && (
-              <OptionButton selected={paymentType === "perSession"} onClick={() => setPaymentType("perSession")}>
-                Trả theo buổi
-              </OptionButton>
-            )}
+            {scheduleType === "simple" &&
+              (() => {
+                const match = selectedVariant?.sessions.match(/(\d+)/);
+                const count = match ? parseInt(match[1]) : 1;
+                return count > 1;
+              })() && (
+                <OptionButton selected={paymentType === "perSession"} onClick={() => setPaymentType("perSession")}>
+                  Trả theo buổi
+                </OptionButton>
+              )}
           </OptionGroup>
         </motion.div>
       )}
@@ -195,7 +215,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
           {"perSession" in displayFinalPrice && displayFinalPrice.perSession ? (
             <>
               <p className="text-2xl font-bold text-primary">
-                {formatVNDShort(displayFinalPrice.perSession)}<span className="text-base font-normal text-muted-foreground"> / buổi</span>
+                {formatVNDShort(displayFinalPrice.perSession)}
+                <span className="text-base font-normal text-muted-foreground"> / buổi</span>
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Tổng {displayFinalPrice.sessions} buổi: {formatVNDShort(displayFinalPrice.total)}
