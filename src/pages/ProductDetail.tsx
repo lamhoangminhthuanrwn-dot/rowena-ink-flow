@@ -2,8 +2,90 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { tattooDesigns, displayPrice } from "@/data/tattooDesigns";
-import { ArrowLeft, Clock, Ruler } from "lucide-react";
+import type { TattooVariant } from "@/data/tattooDesigns";
+import { ArrowLeft, Clock, Ruler, Info } from "lucide-react";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+
+const isMiniVariant = (v: TattooVariant) => !v.style;
+
+const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
+  const positions = [...new Set(variants.map((v) => v.position))];
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-border/50">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-secondary/40">
+            <TableHead className="text-xs font-semibold">Vị trí</TableHead>
+            <TableHead className="text-xs font-semibold">Thể loại</TableHead>
+            <TableHead className="text-xs font-semibold">Số buổi</TableHead>
+            <TableHead className="text-xs font-semibold">Trả hết</TableHead>
+            <TableHead className="text-xs font-semibold">Trong ngày</TableHead>
+            <TableHead className="text-xs font-semibold">Hình khó</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {positions.map((pos) => {
+            const rows = variants.filter((v) => v.position === pos);
+            return rows.map((v, i) => (
+              <TableRow key={`${pos}-${v.style}-${i}`}>
+                {i === 0 && (
+                  <TableCell rowSpan={rows.length} className="whitespace-nowrap text-xs font-medium align-top border-r border-border/30">
+                    {pos}
+                  </TableCell>
+                )}
+                <TableCell className="text-xs">{v.style}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
+                <TableCell className="text-xs font-semibold text-primary">{v.priceSimple}</TableCell>
+                <TableCell className="text-xs">{v.priceSameDay || "—"}</TableCell>
+                <TableCell className="text-xs">{v.priceDifficult}</TableCell>
+              </TableRow>
+            ));
+          })}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+const PriceTableMini = ({ variants }: { variants: TattooVariant[] }) => {
+  const sizeLabels = ["Mini (<10cm)", "A5", "A4"];
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-border/50">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-secondary/40">
+            <TableHead className="text-xs font-semibold">Kích thước</TableHead>
+            <TableHead className="text-xs font-semibold">Vị trí</TableHead>
+            <TableHead className="text-xs font-semibold">Thời gian</TableHead>
+            <TableHead className="text-xs font-semibold">Trả hết</TableHead>
+            <TableHead className="text-xs font-semibold">Hình khó</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {variants.map((v, i) => (
+            <TableRow key={i}>
+              <TableCell className="text-xs font-medium">{sizeLabels[i] || `Size ${i + 1}`}</TableCell>
+              <TableCell className="text-xs">{v.position}</TableCell>
+              <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
+              <TableCell className="text-xs font-semibold text-primary">{v.priceSimple}</TableCell>
+              <TableCell className="text-xs">{v.priceDifficult}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -18,6 +100,8 @@ const ProductDetail = () => {
   }
 
   const hasSlideshow = design.images && design.images.length > 1;
+  const hasVariants = design.variants && design.variants.length > 0;
+  const isMini = hasVariants && isMiniVariant(design.variants![0]);
 
   return (
     <div className="pt-20 pb-16">
@@ -65,6 +149,30 @@ const ProductDetail = () => {
                 {design.duration}
               </div>
             </div>
+
+            {hasVariants && (
+              <div className="mt-8">
+                <h2 className="mb-3 font-serif text-lg font-semibold text-foreground">Bảng giá chi tiết</h2>
+                {isMini ? (
+                  <PriceTableMini variants={design.variants!} />
+                ) : (
+                  <PriceTableFullBody variants={design.variants!} />
+                )}
+                {design.note && (
+                  <div className="mt-3 flex items-start gap-2 rounded-md bg-primary/5 px-3 py-2">
+                    <Info size={14} className="mt-0.5 shrink-0 text-primary/70" />
+                    <p className="text-xs text-muted-foreground">{design.note}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!hasVariants && design.note && (
+              <div className="mt-6 flex items-start gap-2 rounded-md bg-primary/5 px-3 py-2">
+                <Info size={14} className="mt-0.5 shrink-0 text-primary/70" />
+                <p className="text-xs text-muted-foreground">{design.note}</p>
+              </div>
+            )}
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 font-semibold uppercase tracking-wider shadow-lg shadow-primary/25">
