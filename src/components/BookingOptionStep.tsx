@@ -161,7 +161,13 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
   // Compute display price
   const displayFinalPrice = (() => {
     if (hasScheduleOptions && selectedScheduleIdx !== null && selectedVariant) {
-      return { total: selectedVariant.scheduleOptions![selectedScheduleIdx].price };
+      const opt = selectedVariant.scheduleOptions![selectedScheduleIdx];
+      if (opt.isPerSession) {
+        const match = opt.sessions?.match(/(\d+)/);
+        const count = match ? parseInt(match[1]) : 1;
+        return { perSession: 3500000, total: opt.price, sessions: count, note: opt.note };
+      }
+      return { total: opt.price, note: opt.note, sessions: opt.sessions };
     }
     if (!selectedVariant || !scheduleType) return null;
     const price =
@@ -207,7 +213,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 3: Schedule */}
+      {/* Step 3: Schedule — scheduleOptions mode (full body) */}
       {selectedVariant && hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
@@ -220,6 +226,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
+      {/* Step 3: Schedule — legacy mode (mini/A4) */}
       {selectedVariant && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
@@ -235,7 +242,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 4: Payment type (hidden for mini & scheduleOptions) */}
+      {/* Step 4: Payment type (only for mini without scheduleOptions) */}
       {scheduleType && !isMini && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Thanh toán">
@@ -275,7 +282,15 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
               </p>
             </>
           ) : (
-            <p className="text-2xl font-bold text-primary">{formatVNDShort(displayFinalPrice.total)}</p>
+            <>
+              <p className="text-2xl font-bold text-primary">{formatVNDShort(displayFinalPrice.total)}</p>
+              {typeof displayFinalPrice.sessions === "string" && (
+                <p className="mt-1 text-xs text-muted-foreground">{displayFinalPrice.sessions}</p>
+              )}
+            </>
+          )}
+          {"note" in displayFinalPrice && displayFinalPrice.note && (
+            <p className="mt-2 text-xs font-medium text-amber-600">{displayFinalPrice.note}</p>
           )}
           {selectedVariant && selectedVariant.priceDifficult > 0 && !hasScheduleOptions && (
             <p className="mt-2 text-xs text-muted-foreground">
