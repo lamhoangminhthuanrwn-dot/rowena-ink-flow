@@ -61,7 +61,7 @@ const Auth = () => {
         className="mx-4 w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <h1 className="font-serif text-3xl font-bold text-foreground">
+          <h1 className="font-sans text-3xl font-bold text-foreground">
             {tab === "login" ? "Đăng nhập" : "Đăng ký"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">

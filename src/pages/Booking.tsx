@@ -167,7 +167,7 @@ const Booking = () => {
     <div className="pt-20 pb-16">
       <div className="mx-auto max-w-2xl px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Đặt lịch xăm</h1>
+          <h1 className="font-sans text-3xl font-bold text-foreground">Đặt lịch xăm</h1>
           <p className="mt-2 text-sm text-muted-foreground">Hoàn thành các bước bên dưới để đặt lịch</p>
         </motion.div>
 
@@ -202,7 +202,7 @@ const Booking = () => {
           >
             {contentStep === "design" && (
               <div className="space-y-3">
-                <h2 className="font-serif text-xl font-semibold text-foreground">Chọn mẫu xăm</h2>
+                <h2 className="font-sans text-xl font-semibold text-foreground">Chọn mẫu xăm</h2>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {tattooDesigns.map((d) => (
                     <button
@@ -231,7 +231,7 @@ const Booking = () => {
 
             {contentStep === "info" && (
               <div className="space-y-4">
-                <h2 className="font-serif text-xl font-semibold text-foreground">Thông tin cá nhân</h2>
+                <h2 className="font-sans text-xl font-semibold text-foreground">Thông tin cá nhân</h2>
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Họ tên *</label>
@@ -305,7 +305,7 @@ const Booking = () => {
 
             {contentStep === "schedule" && (
               <div className="space-y-4">
-                <h2 className="font-serif text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
+                <h2 className="font-sans text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
 
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>

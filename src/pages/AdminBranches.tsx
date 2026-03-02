@@ -168,13 +168,13 @@ const AdminBranches = () => {
               <ArrowLeft size={16} /> Kế toán
             </Button>
           </div>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Quản lý chi nhánh & thợ xăm</h1>
+          <h1 className="font-sans text-3xl font-bold text-foreground">Quản lý chi nhánh & thợ xăm</h1>
           <p className="mt-2 text-sm text-muted-foreground">Thêm, sửa, xóa chi nhánh và thợ xăm</p>
         </motion.div>
 
         {/* Add Branch */}
         <div className="mt-6 mb-4 flex items-center justify-between">
-          <h2 className="font-serif text-lg font-semibold text-foreground flex items-center gap-2">
+          <h2 className="font-sans text-lg font-semibold text-foreground flex items-center gap-2">
             <MapPin size={18} className="text-primary" /> Chi nhánh ({branches.length})
           </h2>
           {!showBranchForm && (

@@ -33,7 +33,7 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-serif text-base font-semibold text-foreground">{design.name}</h3>
+        <h3 className="font-sans text-base font-semibold text-foreground">{design.name}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">{design.category}</p>
         <p className="mt-2 text-sm font-semibold text-primary">{displayPrice(design)}</p>
       </div>

@@ -18,7 +18,7 @@ const HeroSection = () => (
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="mb-6 font-serif text-5xl font-bold leading-tight text-foreground md:text-7xl"
+        className="mb-6 font-sans text-5xl font-bold leading-tight text-foreground md:text-7xl"
       >
         Nghệ thuật<br />
         <span className="italic text-primary">trên da</span>

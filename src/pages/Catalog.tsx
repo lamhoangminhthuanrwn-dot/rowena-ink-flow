@@ -11,7 +11,7 @@ const Catalog = () => {
     <div className="pt-24 pb-16">
       <div className="mx-auto max-w-6xl px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-10">
-          <h1 className="font-serif text-4xl font-bold text-foreground">Mẫu xăm & Giá</h1>
+          <h1 className="font-sans text-4xl font-bold text-foreground">Mẫu xăm & Giá</h1>
           <p className="mt-2 text-sm text-muted-foreground">Chọn mẫu bạn yêu thích hoặc liên hệ để thiết kế riêng</p>
         </motion.div>
 
