@@ -21,6 +21,11 @@ const Navbar = () => {
     links.push({ to: "/ketoan", label: "Kế toán" });
   }
 
+  const { isModerator, canManagePosts } = useAuth();
+  if (user && canManagePosts && !isAdmin) {
+    links.push({ to: "/admin/posts", label: "Bài viết" });
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">

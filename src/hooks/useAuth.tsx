@@ -13,6 +13,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  isModerator: boolean;
+  /** true if user is admin OR moderator */
+  canManagePosts: boolean;
   profile: Profile | null;
 }
 
@@ -21,6 +24,8 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   isAdmin: false,
+  isModerator: false,
+  canManagePosts: false,
   profile: null,
 });
 
@@ -32,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
 
   const fetchProfile = async (userId: string, currentUser?: User | null) => {
     const { data } = await supabase
@@ -51,12 +57,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const checkAdmin = async (userId: string) => {
-    const { data } = await supabase.rpc("has_role", {
-      _user_id: userId,
-      _role: "admin",
-    });
-    setIsAdmin(data === true);
+  const checkRoles = async (userId: string) => {
+    const [adminRes, modRes] = await Promise.all([
+      supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
+      supabase.rpc("has_role", { _user_id: userId, _role: "moderator" }),
+    ]);
+    setIsAdmin(adminRes.data === true);
+    setIsModerator(modRes.data === true);
   };
 
   useEffect(() => {
@@ -68,11 +75,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           setTimeout(() => {
             fetchProfile(session.user.id, session.user);
-            checkAdmin(session.user.id);
+            checkRoles(session.user.id);
           }, 0);
         } else {
           setProfile(null);
           setIsAdmin(false);
+          setIsModerator(false);
         }
       }
     );
@@ -83,15 +91,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       if (session?.user) {
         fetchProfile(session.user.id, session.user);
-        checkAdmin(session.user.id);
+        checkRoles(session.user.id);
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const canManagePosts = isAdmin || isModerator;
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, profile }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, isModerator, canManagePosts, profile }}>
       {children}
     </AuthContext.Provider>
   );

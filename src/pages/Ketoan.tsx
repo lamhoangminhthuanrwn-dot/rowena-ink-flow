@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -239,9 +239,14 @@ const Ketoan = () => {
             <h1 className="font-sans text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
             <p className="mt-2 text-sm text-muted-foreground">Xác nhận thanh toán, quản lý lịch hẹn & rút tiền</p>
           </div>
-          <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate("/admin/branches")}>
-            <MapPin size={14} /> Chi nhánh & Thợ xăm
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate("/admin/posts")}>
+              <FileText size={14} /> Bài viết
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate("/admin/branches")}>
+              <MapPin size={14} /> Chi nhánh & Thợ xăm
+            </Button>
+          </div>
         </motion.div>
 
         {/* Main tabs */}

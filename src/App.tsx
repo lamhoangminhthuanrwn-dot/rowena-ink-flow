@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Ketoan from "./pages/Ketoan";
 import AdminBranches from "./pages/AdminBranches";
+import AdminPosts from "./pages/AdminPosts";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/account" element={<Account />} />
                 <Route path="/ketoan" element={<Ketoan />} />
                 <Route path="/admin/branches" element={<AdminBranches />} />
+                <Route path="/admin/posts" element={<AdminPosts />} />
                 <Route path="/tin-tuc" element={<News />} />
                 <Route path="/tin-tuc/:slug" element={<NewsDetail />} />
                 <Route path="/r/:code" element={<ReferralRedirect />} />
