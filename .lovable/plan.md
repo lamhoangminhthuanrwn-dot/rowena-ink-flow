@@ -2,7 +2,7 @@
 
 ### Tổng quan
 
-Dựa trên file CSV, mỗi mẫu xăm chính có nhiều **nhánh giá** phân theo: vị trí (trắng đen / màu), thể loại (đá nét, Đá tả, đâu, nhạt, linework), và mức giá theo độ khó (đơn giản, trả hết, trong ngày, hình khó).
+Dựa trên file CSV, mỗi mẫu xăm chính có nhiều **nhánh giá** phân theo: vị trí (trắng đen / màu), thể loại (đá nét, Đá tả, Âu, nhạt, linework), và mức giá theo độ khó (đơn giản, trả hết, trong ngày, hình khó).
 
 ### Dữ liệu từ CSV
 
@@ -51,7 +51,7 @@ TattooDesign
 ├── priceText (khoảng giá tổng quan: "3tr5 – 18tr")
 └── variants?: TattooVariant[]
     ├── position: string    ("Trắng đen" | "Màu")
-    ├── style: string       ("Đá nét" | "Đá tả" | "Đâu" | "Nhạt" | "Linework")
+    ├── style: string       ("Đá nét" | "Đá tả" | "Âu" | "Nhạt" | "Linework")
     ├── sessions: string    ("2 buổi" | "3 giờ")
     ├── priceSimple: string ("6tr6" | "1tr")
     ├── priceFull?: string  ("7tr5")
