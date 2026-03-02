@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar } from "lucide-react";
@@ -5,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { setSEO, resetSEO } from "@/lib/seo";
 
 const NewsDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,6 +25,19 @@ const NewsDetail = () => {
     },
     enabled: !!slug,
   });
+
+  useEffect(() => {
+    if (post) {
+      setSEO({
+        title: post.title,
+        description: post.excerpt || undefined,
+        image: post.cover_image || undefined,
+        type: "article",
+        url: window.location.href,
+      });
+    }
+    return () => resetSEO();
+  }, [post]);
 
   if (isLoading) {
     return (
