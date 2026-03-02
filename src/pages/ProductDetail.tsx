@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { tattooDesigns, displayPrice } from "@/data/tattooDesigns";
+import { tattooDesigns, displayPrice, formatVNDShort } from "@/data/tattooDesigns";
 import type { TattooVariant } from "@/data/tattooDesigns";
 import { ArrowLeft, Clock, Ruler, Info } from "lucide-react";
 import ImageSlideshow from "@/components/ImageSlideshow";
@@ -13,8 +13,6 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-
-const isMiniVariant = (v: TattooVariant) => !v.style;
 
 const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
   const positions = [...new Set(variants.map((v) => v.position))];
@@ -44,9 +42,12 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
                 )}
                 <TableCell className="text-xs">{v.style}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
-                <TableCell className="text-xs font-semibold text-primary">{v.priceSimple}</TableCell>
-                <TableCell className="text-xs">{v.priceSameDay || "—"}</TableCell>
-                <TableCell className="text-xs">{v.priceDifficult}</TableCell>
+                <TableCell className="text-xs font-semibold text-primary">{formatVNDShort(v.priceSimple)}</TableCell>
+                <TableCell className="text-xs">{v.priceSameDay ? formatVNDShort(v.priceSameDay) : "—"}</TableCell>
+                <TableCell className="text-xs">
+                  {formatVNDShort(v.priceDifficult)}
+                  {v.priceDifficultSessions ? ` / ${v.priceDifficultSessions}` : ""}
+                </TableCell>
               </TableRow>
             ));
           })}
@@ -57,8 +58,6 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
 };
 
 const PriceTableMini = ({ variants }: { variants: TattooVariant[] }) => {
-  const sizeLabels = ["Mini (<10cm)", "A5", "A4"];
-
   return (
     <div className="overflow-x-auto rounded-lg border border-border/50">
       <Table>
@@ -67,18 +66,18 @@ const PriceTableMini = ({ variants }: { variants: TattooVariant[] }) => {
             <TableHead className="text-xs font-semibold">Kích thước</TableHead>
             <TableHead className="text-xs font-semibold">Vị trí</TableHead>
             <TableHead className="text-xs font-semibold">Thời gian</TableHead>
-            <TableHead className="text-xs font-semibold">Trả hết</TableHead>
+            <TableHead className="text-xs font-semibold">Đơn giản</TableHead>
             <TableHead className="text-xs font-semibold">Hình khó</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {variants.map((v, i) => (
             <TableRow key={i}>
-              <TableCell className="text-xs font-medium">{sizeLabels[i] || `Size ${i + 1}`}</TableCell>
+              <TableCell className="text-xs font-medium">{v.style || "—"}</TableCell>
               <TableCell className="text-xs">{v.position}</TableCell>
               <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
-              <TableCell className="text-xs font-semibold text-primary">{v.priceSimple}</TableCell>
-              <TableCell className="text-xs">{v.priceDifficult}</TableCell>
+              <TableCell className="text-xs font-semibold text-primary">{formatVNDShort(v.priceSimple)}</TableCell>
+              <TableCell className="text-xs">{formatVNDShort(v.priceDifficult)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -101,7 +100,7 @@ const ProductDetail = () => {
 
   const hasSlideshow = design.images && design.images.length > 1;
   const hasVariants = design.variants && design.variants.length > 0;
-  const isMini = hasVariants && isMiniVariant(design.variants![0]);
+  const isMini = !!design.isMiniType;
 
   return (
     <div className="pt-20 pb-16">

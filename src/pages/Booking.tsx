@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { tattooDesigns, formatVND } from "@/data/tattooDesigns";
+import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-
-const steps = ["Chọn mẫu", "Thông tin", "Lịch hẹn"];
+import BookingOptionStep from "@/components/BookingOptionStep";
+import type { SelectedOptions } from "@/components/BookingOptionStep";
 
 interface Branch {
   id: string;
@@ -27,6 +27,7 @@ const Booking = () => {
   const { user, profile } = useAuth();
   const [step, setStep] = useState(0);
   const [selectedDesign, setSelectedDesign] = useState(searchParams.get("design") || "");
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOptions | null>(null);
   const [form, setForm] = useState({
     name: profile?.full_name || "",
     phone: profile?.phone || "",
@@ -46,6 +47,24 @@ const Booking = () => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const design = tattooDesigns.find((d) => d.id === selectedDesign);
+  const hasVariants = design?.variants && design.variants.length > 0;
+
+  // Dynamic steps: insert "Chọn tùy chọn" if design has variants
+  const stepLabels = hasVariants
+    ? ["Chọn mẫu", "Tùy chọn", "Thông tin", "Lịch hẹn"]
+    : ["Chọn mẫu", "Thông tin", "Lịch hẹn"];
+
+  // Map logical step to content step
+  const getContentStep = () => {
+    if (!hasVariants) {
+      // 0=design, 1=info, 2=schedule
+      return step === 0 ? "design" : step === 1 ? "info" : "schedule";
+    }
+    // 0=design, 1=options, 2=info, 3=schedule
+    return step === 0 ? "design" : step === 1 ? "options" : step === 2 ? "info" : "schedule";
+  };
+
+  const contentStep = getContentStep();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +99,6 @@ const Booking = () => {
     try {
       const code = `BK${Date.now().toString(36).toUpperCase().slice(-6)}`;
 
-      // Random artist from selected branch
       const branchArtists = artists.filter((a) => a.branch_id === selectedBranch);
       const randomArtist = branchArtists.length > 0
         ? branchArtists[Math.floor(Math.random() * branchArtists.length)]
@@ -121,6 +139,13 @@ const Booking = () => {
           branchName: branch?.name || "",
           artistId: randomArtist?.id || null,
           artistName: randomArtist?.name || "",
+          // Selected options
+          selectedPosition: selectedOptions?.position || null,
+          selectedStyle: selectedOptions?.style || null,
+          selectedScheduleType: selectedOptions?.scheduleType || null,
+          selectedPaymentType: selectedOptions?.paymentType || null,
+          selectedPrice: selectedOptions?.finalPrice || null,
+          selectedSessions: selectedOptions?.sessionsLabel || null,
         },
       });
     } finally {
@@ -129,11 +154,14 @@ const Booking = () => {
   };
 
   const canNext = () => {
-    if (step === 0) return !!selectedDesign;
-    if (step === 1) return form.name.trim() && form.phone.trim();
-    if (step === 2) return schedule.date && schedule.time && !!selectedBranch;
+    if (contentStep === "design") return !!selectedDesign;
+    if (contentStep === "options") return !!selectedOptions;
+    if (contentStep === "info") return form.name.trim() && form.phone.trim();
+    if (contentStep === "schedule") return schedule.date && schedule.time && !!selectedBranch;
     return false;
   };
+
+  const isLastStep = step === stepLabels.length - 1;
 
   return (
     <div className="pt-20 pb-16">
@@ -146,7 +174,7 @@ const Booking = () => {
         {/* Progress */}
         <div className="mt-8 mb-10">
           <div className="flex items-center justify-between">
-            {steps.map((s, i) => (
+            {stepLabels.map((s, i) => (
               <div key={s} className="flex flex-1 items-center">
                 <div className="flex flex-col items-center">
                   <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
@@ -156,7 +184,7 @@ const Booking = () => {
                   </div>
                   <span className="mt-1.5 hidden text-[10px] text-muted-foreground sm:block">{s}</span>
                 </div>
-                {i < steps.length - 1 && (
+                {i < stepLabels.length - 1 && (
                   <div className={`mx-2 h-px flex-1 transition-colors ${i < step ? "bg-primary" : "bg-border"}`} />
                 )}
               </div>
@@ -166,20 +194,20 @@ const Booking = () => {
 
         <AnimatePresence mode="wait">
           <motion.div
-            key={step}
+            key={contentStep}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {step === 0 && (
+            {contentStep === "design" && (
               <div className="space-y-3">
                 <h2 className="font-serif text-xl font-semibold text-foreground">Chọn mẫu xăm</h2>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {tattooDesigns.map((d) => (
                     <button
                       key={d.id}
-                      onClick={() => setSelectedDesign(d.id)}
+                      onClick={() => { setSelectedDesign(d.id); setSelectedOptions(null); }}
                       className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-all ${
                         selectedDesign === d.id
                           ? "border-primary bg-primary/5"
@@ -189,7 +217,7 @@ const Booking = () => {
                       <img src={d.image} alt={d.name} className="h-16 w-16 rounded object-cover" loading="lazy" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">{d.name}</p>
-                        <p className="text-xs text-primary">{formatVND(d.price)}</p>
+                        <p className="text-xs text-primary">{formatVNDShort(d.price)}</p>
                       </div>
                     </button>
                   ))}
@@ -197,7 +225,11 @@ const Booking = () => {
               </div>
             )}
 
-            {step === 1 && (
+            {contentStep === "options" && design && (
+              <BookingOptionStep design={design} onOptionsChange={setSelectedOptions} />
+            )}
+
+            {contentStep === "info" && (
               <div className="space-y-4">
                 <h2 className="font-serif text-xl font-semibold text-foreground">Thông tin cá nhân</h2>
                 <div className="space-y-3">
@@ -271,11 +303,10 @@ const Booking = () => {
               </div>
             )}
 
-            {step === 2 && (
+            {contentStep === "schedule" && (
               <div className="space-y-4">
                 <h2 className="font-serif text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
 
-                {/* Branch selection */}
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
                   <select
@@ -308,12 +339,25 @@ const Booking = () => {
                     </select>
                   </div>
                 </div>
+
+                {/* Summary */}
                 {design && (
-                  <div className="rounded-lg border border-border/50 bg-card p-4">
+                  <div className="rounded-lg border border-border/50 bg-card p-4 space-y-1">
                     <p className="text-xs text-muted-foreground">Mẫu đã chọn</p>
                     <p className="text-sm font-semibold text-foreground">{design.name}</p>
-                    <p className="text-sm text-primary">{formatVND(design.price)}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Thời gian ước tính: {design.duration}</p>
+                    {selectedOptions && (
+                      <>
+                        <p className="text-xs text-muted-foreground">
+                          {selectedOptions.position} · {selectedOptions.style} · {selectedOptions.sessionsLabel}
+                        </p>
+                        <p className="text-sm font-bold text-primary">{formatVNDShort(selectedOptions.finalPrice)}
+                          {selectedOptions.paymentType === "perSession" ? " / buổi" : ""}
+                        </p>
+                      </>
+                    )}
+                    {!selectedOptions && (
+                      <p className="text-xs text-muted-foreground">Thời gian ước tính: {design.duration}</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -330,7 +374,7 @@ const Booking = () => {
           >
             <ArrowLeft size={16} /> Quay lại
           </Button>
-          {step < 2 ? (
+          {!isLastStep ? (
             <Button
               onClick={() => setStep(step + 1)}
               disabled={!canNext()}
