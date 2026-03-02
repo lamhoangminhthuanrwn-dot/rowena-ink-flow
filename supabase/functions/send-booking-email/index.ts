@@ -5,6 +5,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+const MAX_FIELD_LENGTH = 500;
+const MAX_URL_COUNT = 10;
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/\//g, '&#x2F;')
+    // Remove null bytes
+    .replace(/\0/g, '')
+    // Remove control characters
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+}
+
+function sanitizeUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return '#';
+    return escapeHtml(parsed.href);
+  } catch { return '#'; }
+}
+
+function validateString(val: unknown, maxLen: number = MAX_FIELD_LENGTH): string {
+  if (val === null || val === undefined) return '';
+  if (typeof val !== 'string') return '';
+  return val.slice(0, maxLen);
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -19,11 +50,29 @@ Deno.serve(async (req) => {
       });
     }
 
-    const {
-      booking_code, customer_name, phone, email, design_name,
-      placement, size, style, appointment_date, appointment_time,
-      note, reference_urls,
-    } = await req.json();
+    const body = await req.json();
+
+    // Validate and truncate all inputs
+    const booking_code = validateString(body.booking_code, 50);
+    const customer_name = validateString(body.customer_name, 200);
+    const phone = validateString(body.phone, 20);
+    const email = validateString(body.email, 255);
+    const design_name = validateString(body.design_name, 200);
+    const placement = validateString(body.placement, 100);
+    const size = validateString(body.size, 100);
+    const style = validateString(body.style, 100);
+    const appointment_date = validateString(body.appointment_date, 20);
+    const appointment_time = validateString(body.appointment_time, 20);
+    const note = validateString(body.note, 500);
+    const reference_urls: string[] = Array.isArray(body.reference_urls)
+      ? body.reference_urls.slice(0, MAX_URL_COUNT).filter((u: unknown) => typeof u === 'string')
+      : [];
+
+    if (!booking_code) {
+      return new Response(JSON.stringify({ error: 'Missing booking_code' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Validate booking_code exists in DB
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -50,32 +99,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    function escapeHtml(text: string): string {
-      const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return text.replace(/[&<>"']/g, m => map[m]);
-    }
-
-    function sanitizeUrl(url: string): string {
-      try {
-        const parsed = new URL(url);
-        if (!['http:', 'https:'].includes(parsed.protocol)) return '#';
-        return escapeHtml(parsed.href);
-      } catch { return '#'; }
-    }
-
-    const safeBookingCode = escapeHtml(booking_code || '');
-    const safeCustomerName = escapeHtml(customer_name || '');
-    const safePhone = escapeHtml(phone || '');
+    const safeBookingCode = escapeHtml(booking_code);
+    const safeCustomerName = escapeHtml(customer_name);
+    const safePhone = escapeHtml(phone);
     const safeEmail = escapeHtml(email || 'N/A');
-    const safeDesignName = escapeHtml(design_name || '');
+    const safeDesignName = escapeHtml(design_name);
     const safePlacement = escapeHtml(placement || 'N/A');
     const safeSize = escapeHtml(size || 'N/A');
     const safeStyle = escapeHtml(style || 'N/A');
-    const safeAppointmentDate = escapeHtml(appointment_date || '');
-    const safeAppointmentTime = escapeHtml(appointment_time || '');
+    const safeAppointmentDate = escapeHtml(appointment_date);
+    const safeAppointmentTime = escapeHtml(appointment_time);
     const safeNote = escapeHtml(note || 'Không có');
 
-    const referenceImagesHtml = reference_urls && reference_urls.length > 0
+    const referenceImagesHtml = reference_urls.length > 0
       ? `<p><strong>Ảnh tham khảo:</strong></p>${reference_urls.map((url: string) => { const safe = sanitizeUrl(url); return `<p><a href="${safe}">${safe}</a></p>`; }).join('')}`
       : '';
 
@@ -108,7 +144,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         from: 'ROWENA Tattoo <onboarding@resend.dev>',
         to: ['lamhoangminhthuan@gmail.com'],
-        subject: `[ROWENA] New Booking ${booking_code}`,
+        subject: `[ROWENA] New Booking ${safeBookingCode}`,
         html: htmlBody,
       }),
     });
