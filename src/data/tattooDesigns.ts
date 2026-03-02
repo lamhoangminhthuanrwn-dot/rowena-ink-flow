@@ -67,13 +67,13 @@ function makeFullBodyVariants(
 }
 
 const bwScheduleOptions: ScheduleOption[] = [
-  { label: "Trả hết", price: 3500000 },
+  { label: "Trả hết 1 lần", price: 3500000 },
   { label: "1,5 buổi", price: 5500000 },
   { label: "2 buổi", price: 7000000 },
 ];
 
 const colorScheduleOptions: ScheduleOption[] = [
-  { label: "Trả hết", price: 5200000 },
+  { label: "Trả hết 1 lần", price: 5200000 },
   { label: "1,5 buổi", price: 5500000 },
   { label: "2 buổi", price: 7000000 },
 ];
