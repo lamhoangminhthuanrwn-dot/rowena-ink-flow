@@ -1,23 +1,23 @@
 
 
-## Plan: Đưa Google Maps lên ngang hàng với thông tin footer
+## Plan: Fix font rendering issue with Vietnamese text
 
-### Phân tích
-Hiện tại, phần bản đồ Google Maps nằm riêng biệt phía dưới grid 4 cột thông tin footer. User muốn đưa bản đồ lên ngang hàng cùng dòng với các cột thông tin.
+### Problem
+Font **Crimson Pro** (`font-serif`) combined with `uppercase` and `tracking-wider` causes Vietnamese diacritical marks to render incorrectly -- characters appear separated (e.g., "LIÊN KẾ T" instead of "LIÊN KẾT"). This is a known issue with certain serif fonts and CSS `text-transform: uppercase` + `letter-spacing` on Vietnamese text.
 
-### Thay đổi
+### Root cause
+The CSS combination `font-serif uppercase tracking-wider` on Vietnamese text breaks diacritics rendering in Crimson Pro.
 
-**File: `src/components/Footer.tsx`**
+### Fix
 
-1. Chuyển layout từ grid 4 cột (`lg:grid-cols-4`) sang grid 5 cột (`lg:grid-cols-5`), trong đó bản đồ chiếm 2 cột (`lg:col-span-2`)
+**File: `src/components/Footer.tsx`** (3 changes)
 
-2. Di chuyển phần Google Maps (branch selector + iframe + address) vào bên trong grid chính, thay vì để riêng phía dưới
+Replace `font-serif` with `font-sans` on all three `<h4>` section headers (lines 63, 80, 95) that use `uppercase tracking-wider`:
+- "Liên kết" (line 63)
+- "Liên hệ" (line 80)
+- "Chi nhánh Studio" (line 95)
 
-3. Bỏ phần `<div className="mt-10">` bọc maps riêng, thay bằng một grid item nằm trong cùng grid với Brand, Liên kết, Liên hệ, Studio
+Change: `font-serif text-sm font-semibold uppercase tracking-wider` → `font-sans text-sm font-semibold uppercase tracking-wider`
 
-### Chi tiết kỹ thuật
-- Grid layout: `sm:grid-cols-2 lg:grid-cols-5`
-- 3 cột đầu (Brand, Liên kết, Liên hệ) giữ nguyên mỗi cột 1 phần
-- Bỏ cột Studio Info riêng (vì thông tin đã có trong maps section)
-- Cột maps chiếm `lg:col-span-2` để có đủ không gian hiển thị bản đồ và branch selector
+This keeps the uppercase styling but uses DM Sans which has proper Vietnamese diacritics support. No other files are affected since the search confirmed only `Footer.tsx` uses the `font-serif + uppercase` combination.
 
