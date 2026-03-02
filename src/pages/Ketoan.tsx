@@ -236,7 +236,7 @@ const Ketoan = () => {
       <div className="mx-auto max-w-6xl px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-end justify-between">
           <div>
-            <h1 className="font-serif text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
+            <h1 className="font-sans text-3xl font-bold text-foreground">Kế toán — Quản lý</h1>
             <p className="mt-2 text-sm text-muted-foreground">Xác nhận thanh toán, quản lý lịch hẹn & rút tiền</p>
           </div>
           <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate("/admin/branches")}>
@@ -652,7 +652,7 @@ const Ketoan = () => {
               className="mx-4 max-w-lg rounded-lg border border-border bg-card p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Biên lai đặt cọc</h3>
+              <h3 className="font-sans text-lg font-semibold text-foreground mb-4">Biên lai đặt cọc</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 {receiptModal.map((url, i) => (
                   <a key={i} href={url} target="_blank" rel="noopener noreferrer">

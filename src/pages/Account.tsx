@@ -159,7 +159,7 @@ const Account = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="font-serif text-3xl font-bold text-foreground">Tài khoản</h1>
+              <h1 className="font-sans text-3xl font-bold text-foreground">Tài khoản</h1>
               <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
             </div>
             <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground hover:text-foreground">
@@ -253,7 +253,7 @@ const Account = () => {
               </div>
 
               <div className="rounded-lg border border-border/50 bg-card p-6">
-                <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Yêu cầu rút về MoMo</h3>
+                <h3 className="font-sans text-lg font-semibold text-foreground mb-4">Yêu cầu rút về MoMo</h3>
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số tiền (VNĐ) *</label>

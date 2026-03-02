@@ -133,7 +133,7 @@ const ProductDetail = () => {
             className="lg:sticky lg:top-24 lg:self-start"
           >
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-primary">{design.category}</p>
-            <h1 className="font-serif text-3xl font-bold text-foreground md:text-4xl">{design.name}</h1>
+            <h1 className="font-sans text-3xl font-bold text-foreground md:text-4xl">{design.name}</h1>
             <p className="mt-4 text-2xl font-bold text-primary">{displayPrice(design)}</p>
 
             <p className="mt-6 leading-relaxed text-muted-foreground">{design.description}</p>
@@ -151,7 +151,7 @@ const ProductDetail = () => {
 
             {hasVariants && (
               <div className="mt-8">
-                <h2 className="mb-3 font-serif text-lg font-semibold text-foreground">Bảng giá chi tiết</h2>
+                <h2 className="mb-3 font-sans text-lg font-semibold text-foreground">Bảng giá chi tiết</h2>
                 {isMini ? (
                   <PriceTableMini variants={design.variants!} />
                 ) : (
