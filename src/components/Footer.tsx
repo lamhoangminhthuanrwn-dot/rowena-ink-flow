@@ -89,6 +89,22 @@ const Footer = () => (
         </div>
       </div>
 
+      {/* Google Maps */}
+      <div className="mt-10">
+        <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Vị trí Studio</h4>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125418.77791228806!2d106.62966791640625!3d10.823098600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2sHo%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+          width="100%"
+          height="200"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="rounded-lg border border-border/30"
+          title="Vị trí Studio Rowena Tattoo"
+        />
+      </div>
+
       <Separator className="my-8 bg-border/30" />
 
       <div className="flex flex-col items-center justify-between gap-3 text-xs text-muted-foreground sm:flex-row">
