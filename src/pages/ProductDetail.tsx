@@ -34,9 +34,9 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
           {positions.map((pos) => {
             const rows = variants.filter((v) => v.position === pos);
             return rows.map((v, i) => (
-              <TableRow key={`${pos}-${v.style}-${i}`}>
+              <TableRow key={`${pos}-${v.style}-${i}`} className="hover:bg-transparent">
                 {i === 0 && (
-                  <TableCell rowSpan={rows.length} className="whitespace-nowrap text-xs font-medium align-top border-r border-border/30">
+                  <TableCell rowSpan={rows.length} className="whitespace-nowrap text-xs font-medium align-middle text-center border-r border-border/30">
                     {pos}
                   </TableCell>
                 )}
