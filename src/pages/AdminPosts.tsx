@@ -52,7 +52,10 @@ const AdminPosts = () => {
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState<PostForm>(emptyForm);
   const [uploading, setUploading] = useState(false);
+  const [contentUploading, setContentUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const contentImageRef = useRef<HTMLInputElement>(null);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -87,6 +90,60 @@ const AdminPosts = () => {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Chỉ hỗ trợ file hình ảnh");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File không được vượt quá 5MB");
+      return;
+    }
+
+    setContentUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("post-images")
+        .upload(fileName, file, { contentType: file.type });
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("post-images")
+        .getPublicUrl(fileName);
+
+      const textarea = contentTextareaRef.current;
+      const imageMarkdown = `\n![image](${urlData.publicUrl})\n`;
+
+      if (textarea) {
+        const start = textarea.selectionStart ?? form.content.length;
+        const before = form.content.slice(0, start);
+        const after = form.content.slice(start);
+        setForm((prev) => ({ ...prev, content: before + imageMarkdown + after }));
+        // Restore cursor after React re-render
+        setTimeout(() => {
+          const newPos = start + imageMarkdown.length;
+          textarea.selectionStart = newPos;
+          textarea.selectionEnd = newPos;
+          textarea.focus();
+        }, 0);
+      } else {
+        setForm((prev) => ({ ...prev, content: prev.content + imageMarkdown }));
+      }
+
+      toast.success("Đã chèn ảnh vào nội dung!");
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi tải ảnh");
+    } finally {
+      setContentUploading(false);
+      if (contentImageRef.current) contentImageRef.current.value = "";
     }
   };
 
@@ -308,8 +365,31 @@ const AdminPosts = () => {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">Nội dung * (hỗ trợ markdown cơ bản)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-muted-foreground">Nội dung * (hỗ trợ markdown cơ bản)</label>
+                  <div>
+                    <input
+                      ref={contentImageRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleContentImageUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => contentImageRef.current?.click()}
+                      disabled={contentUploading}
+                      className="gap-1.5 h-7 text-xs"
+                    >
+                      {contentUploading ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                      {contentUploading ? "Đang tải..." : "Chèn ảnh"}
+                    </Button>
+                  </div>
+                </div>
                 <textarea
+                  ref={contentTextareaRef}
                   value={form.content}
                   onChange={(e) => setForm({ ...form, content: e.target.value })}
                   rows={12}
