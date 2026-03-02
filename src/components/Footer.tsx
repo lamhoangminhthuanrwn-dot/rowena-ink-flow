@@ -60,7 +60,7 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div className="space-y-4">
-          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Liên kết</h4>
+          <h4 className="font-sans text-sm font-semibold uppercase tracking-wider text-foreground">Liên kết</h4>
           <ul className="space-y-2.5 text-sm text-muted-foreground">
             <li><Link to="/catalog" className="transition-colors hover:text-primary">Mẫu xăm</Link></li>
             <li><Link to="/booking" className="transition-colors hover:text-primary">Đặt lịch xăm</Link></li>
@@ -77,7 +77,7 @@ const Footer = () => {
 
         {/* Contact */}
         <div className="space-y-4">
-          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Liên hệ</h4>
+          <h4 className="font-sans text-sm font-semibold uppercase tracking-wider text-foreground">Liên hệ</h4>
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li className="flex items-start gap-2.5">
               <Phone size={15} className="mt-0.5 shrink-0 text-primary/70" />
@@ -92,7 +92,7 @@ const Footer = () => {
 
         {/* Google Maps with branch selector - spans 2 columns */}
         <div className="sm:col-span-2 space-y-4">
-          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Chi nhánh Studio</h4>
+          <h4 className="font-sans text-sm font-semibold uppercase tracking-wider text-foreground">Chi nhánh Studio</h4>
           <div className="flex flex-wrap gap-2">
             {branches.map((branch, index) => <button
                 key={branch.name}
