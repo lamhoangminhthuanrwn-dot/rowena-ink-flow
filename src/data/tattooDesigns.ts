@@ -1,6 +1,9 @@
 export interface ScheduleOption {
   label: string;
   price: number;
+  sessions?: string;
+  note?: string;
+  isPerSession?: boolean;
 }
 
 export interface TattooVariant {
@@ -32,71 +35,51 @@ export interface TattooDesign {
 
 const fullBodyStyles = ["Á nét", "Á tả", "Âu", "Nhật", "Linework"];
 
-function makeFullBodyVariants(
-  bwSessions: string,
-  bwSimple: number,
-  bwSameDay: number,
-  bwDifficult: number,
-  bwDifficultSessions: string | undefined,
-  colorSessions: string,
-  colorSimple: number,
-  colorSameDay: number,
-  colorDifficult: number,
-  colorDifficultSessions: string | undefined,
-): TattooVariant[] {
+interface FullBodyPricing {
+  fullSessions: string;
+  fullPrice: number;
+  perSessionSessions: string;
+  perSessionPrice: number;
+  sameDayPrice: number;
+  sameDayNote?: string;
+}
+
+function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
   return [
-    ...fullBodyStyles.map((style) => ({
-      position: "Trắng đen",
-      style,
-      sessions: bwSessions,
-      priceSimple: bwSimple,
-      priceSameDay: bwSameDay,
-      priceDifficult: bwDifficult,
-      priceDifficultSessions: bwDifficultSessions,
-    })),
-    ...fullBodyStyles.map((style) => ({
-      position: "Màu",
-      style,
-      sessions: colorSessions,
-      priceSimple: colorSimple,
-      priceSameDay: colorSameDay,
-      priceDifficult: colorDifficult,
-      priceDifficultSessions: colorDifficultSessions,
-    })),
+    { label: "Trả hết 1 lần", price: p.fullPrice, sessions: p.fullSessions },
+    { label: "Trả theo buổi", price: p.perSessionPrice, sessions: p.perSessionSessions, isPerSession: true },
+    { label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote },
   ];
 }
 
-const bwScheduleOptions: ScheduleOption[] = [
-  { label: "Trả hết 1 lần", price: 3500000 },
-  { label: "1,5 buổi", price: 5500000 },
-  { label: "2 buổi", price: 7000000 },
-];
-
-const colorScheduleOptions: ScheduleOption[] = [
-  { label: "Trả hết 1 lần", price: 5200000 },
-  { label: "1,5 buổi", price: 5500000 },
-  { label: "2 buổi", price: 7000000 },
-];
-
-function makeChestBellyVariants(): TattooVariant[] {
-  return [
-    ...fullBodyStyles.map((style) => ({
+function makeFullBodyVariants(
+  bw: FullBodyPricing,
+  color: FullBodyPricing,
+  colorLinework?: FullBodyPricing,
+): TattooVariant[] {
+  const variants: TattooVariant[] = [];
+  for (const style of fullBodyStyles) {
+    variants.push({
       position: "Trắng đen",
       style,
-      sessions: "1 buổi",
-      priceSimple: 3500000,
+      sessions: bw.fullSessions,
+      priceSimple: bw.fullPrice,
       priceDifficult: 0,
-      scheduleOptions: bwScheduleOptions,
-    })),
-    ...fullBodyStyles.map((style) => ({
+      scheduleOptions: makeScheduleOptions(bw),
+    });
+  }
+  for (const style of fullBodyStyles) {
+    const pricing = (colorLinework && style === "Linework") ? colorLinework : color;
+    variants.push({
       position: "Màu",
       style,
-      sessions: "1 buổi",
-      priceSimple: 5200000,
+      sessions: pricing.fullSessions,
+      priceSimple: pricing.fullPrice,
       priceDifficult: 0,
-      scheduleOptions: colorScheduleOptions,
-    })),
-  ];
+      scheduleOptions: makeScheduleOptions(pricing),
+    });
+  }
+  return variants;
 }
 
 export const tattooDesigns: TattooDesign[] = [
@@ -129,8 +112,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full lưng",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      "2 buổi", 7000000, 7500000, 10500000, "3 buổi",
-      "4 buổi", 13200000, 15000000, 18000000, "6 buổi",
+      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10500000, sameDayPrice: 7500000 },
+      { fullSessions: "4 buổi", fullPrice: 13200000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 15000000, sameDayNote: "Bắt buộc 2 buổi" },
     ),
   },
   {
@@ -148,8 +131,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full tay",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      "2 buổi", 6600000, 7500000, 10000000, "3 buổi",
-      "2 buổi", 7000000, 7500000, 10000000, "3 buổi",
+      { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
+      { fullSessions: "2 buổi", fullPrice: 6999999, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
     ),
   },
   {
@@ -162,8 +145,9 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full chân",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      "3 buổi", 9900000, 11500000, 13200000, "4 buổi",
-      "4 buổi", 13500000, 14000000, 18000000, "6 buổi",
+      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "4 buổi", perSessionPrice: 13200000, sameDayPrice: 11500000 },
+      { fullSessions: "4 buổi", fullPrice: 13500000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
+      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "5 buổi", perSessionPrice: 16500000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
     ),
   },
   {
@@ -176,7 +160,10 @@ export const tattooDesigns: TattooDesign[] = [
     images: ["/assets/tattoo-chest-1.jpg", "/assets/tattoo-chest-2.jpg"],
     size: "Full ngực",
     duration: "8-12 giờ",
-    variants: makeChestBellyVariants(),
+    variants: makeFullBodyVariants(
+      { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
+      { fullSessions: "1,5 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
+    ),
   },
   {
     id: "5",
@@ -187,7 +174,10 @@ export const tattooDesigns: TattooDesign[] = [
     image: "https://images.unsplash.com/photo-1604941059800-a2c0aee40e77?w=600&h=800&fit=crop",
     size: "Full bụng",
     duration: "8-12 giờ",
-    variants: makeChestBellyVariants(),
+    variants: makeFullBodyVariants(
+      { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
+      { fullSessions: "1,5 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
+    ),
   },
   {
     id: "6",
