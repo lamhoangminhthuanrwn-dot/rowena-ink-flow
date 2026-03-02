@@ -1,15 +1,28 @@
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Share2, Check } from "lucide-react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { setSEO, resetSEO } from "@/lib/seo";
+import { toast } from "sonner";
 
 const NewsDetail = () => {
   const { slug } = useParams<{ slug: string }>();
+
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const shareUrl = `https://${projectId}.supabase.co/functions/v1/og-meta?slug=${slug}`;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    toast.success("Đã sao chép link chia sẻ!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["post", slug],
@@ -90,6 +103,14 @@ const NewsDetail = () => {
                 {format(new Date(post.published_at), "dd MMMM yyyy", { locale: vi })}
               </span>
             )}
+            <button
+              onClick={handleShare}
+              className="ml-auto flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+              title="Sao chép link chia sẻ"
+            >
+              {copied ? <Check size={12} /> : <Share2 size={12} />}
+              {copied ? "Đã sao chép" : "Chia sẻ"}
+            </button>
           </div>
 
           <h1 className="font-sans text-3xl font-bold text-foreground leading-tight md:text-4xl">
