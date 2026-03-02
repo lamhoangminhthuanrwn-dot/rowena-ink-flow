@@ -172,7 +172,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
             <OptionButton selected={scheduleType === "simple"} onClick={() => setScheduleType("simple")}>
-              Số buổi ({selectedVariant.sessions})
+              {selectedVariant.sessions}
             </OptionButton>
             {hasSameDay && (
               <OptionButton selected={scheduleType === "sameday"} onClick={() => setScheduleType("sameday")}>
