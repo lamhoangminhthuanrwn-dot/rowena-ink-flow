@@ -1,28 +1,16 @@
 
 
-## Plan: Add realtime markdown preview to content editor
-
-### Problem
-The content editor is a plain textarea with no visual feedback. Users can't see how their markdown will render until they publish the post.
-
-### Approach
-Add a toggle between "Viết" (Write) and "Xem trước" (Preview) tabs above the content textarea. When in preview mode, render the markdown content using the existing `formatContent` function from `NewsDetail.tsx`.
+## Plan: Extend `formatContent` with bullet lists, blockquotes, and inline code
 
 ### Changes
 
-1. **Extract `formatContent` to a shared utility**
-   - Move `formatContent` from `src/pages/NewsDetail.tsx` into a new file `src/lib/formatContent.ts`
-   - Import it in both `NewsDetail.tsx` and `AdminPosts.tsx`
+**`src/lib/formatContent.ts`** — Enhance the block parser to handle:
 
-2. **Update `src/pages/AdminPosts.tsx`**
-   - Add a `previewMode` boolean state
-   - Add "Viết" / "Xem trước" toggle buttons next to the "Chèn ảnh" button
-   - When preview is active, replace the textarea with a styled div rendering the content via `formatContent` + `dangerouslySetInnerHTML`
-   - When write is active, show the existing textarea as-is
-   - The textarea and preview share the same height/styling area
+1. **Bullet lists** (`- item` or `* item`): Detect blocks where all lines start with `- ` or `* `, wrap in `<ul>` with styled `<li>` elements
+2. **Blockquotes** (`> text`): Detect blocks where all lines start with `> `, wrap in a styled `<blockquote>` with left border
+3. **Inline code** (`` `code` ``): Add regex replacement for backtick-wrapped text → `<code>` with subtle background styling
 
-3. **Update `src/pages/NewsDetail.tsx`**
-   - Replace the local `formatContent` with the import from the shared utility
+The block detection order will be: headings → images → bullet lists → blockquotes → paragraph (with inline processing for bold, links, and code).
 
-No database or backend changes needed.
+No other files need changes — `NewsDetail.tsx` and `AdminPosts.tsx` both already import from this shared utility.
 
