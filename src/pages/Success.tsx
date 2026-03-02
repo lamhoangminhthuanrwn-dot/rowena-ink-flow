@@ -290,7 +290,7 @@ const Success = () => {
           </div>
         </motion.div>
 
-        {skipped ? (
+        {(skipped || submitted) ? (
           <>
             {/* Thank you notice */}
             <motion.div
@@ -299,6 +299,15 @@ const Success = () => {
               transition={{ delay: 0.4 }}
               className="rounded-lg border border-primary/20 bg-primary/5 p-6 mb-6"
             >
+              {submitted && (
+                <div className="flex items-start gap-3 mb-4">
+                  <Check className="mt-0.5 shrink-0 text-primary" size={20} />
+                  <p className="text-sm text-foreground">
+                    <span className="font-semibold">Biên lai đã được gửi!</span>{" "}
+                    Chúng tôi sẽ xác nhận thanh toán trong thời gian sớm nhất.
+                  </p>
+                </div>
+              )}
               <div className="flex items-start gap-3">
                 <Phone className="mt-0.5 shrink-0 text-primary" size={20} />
                 <p className="text-sm text-foreground">
@@ -381,92 +390,78 @@ const Success = () => {
             </motion.div>
 
             {/* Deposit Proof Upload */}
-            {!submitted ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="rounded-lg border border-border/50 bg-card p-6 mb-6"
-              >
-                <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Tôi đã chuyển khoản</h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Tải lên 1–3 ảnh biên lai chuyển khoản để xác nhận đặt cọc.
-                </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="rounded-lg border border-border/50 bg-card p-6 mb-6"
+            >
+              <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Tôi đã chuyển khoản</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Tải lên 1–3 ảnh biên lai chuyển khoản để xác nhận đặt cọc.
+              </p>
 
-                <input
-                  ref={depositFileRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleDepositFileChange}
-                  className="hidden"
-                />
+              <input
+                ref={depositFileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleDepositFileChange}
+                className="hidden"
+              />
 
-                {depositPreviews.length > 0 && (
-                  <div className="mb-3 flex flex-wrap gap-2">
-                    {depositPreviews.map((p, i) => (
-                      <div key={i} className="relative">
-                        <img
-                          src={p}
-                          alt={`Receipt ${i + 1}`}
-                          className="h-20 w-20 rounded-lg border border-border/50 object-cover"
-                        />
-                        <button
-                          onClick={() => removeDepositFile(i)}
-                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {depositFiles.length < 3 && (
-                  <button
-                    onClick={() => depositFileRef.current?.click()}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-4 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground mb-3"
-                  >
-                    <Upload size={18} />
-                    Tải ảnh biên lai ({depositFiles.length}/3)
-                  </button>
-                )}
-
-                <div className="mb-3">
-                  <label className="mb-1 block text-xs font-medium text-muted-foreground">Ghi chú (tùy chọn)</label>
-                  <input
-                    type="text"
-                    value={depositNote}
-                    onChange={(e) => setDepositNote(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                    placeholder="Ghi chú thêm..."
-                  />
+              {depositPreviews.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {depositPreviews.map((p, i) => (
+                    <div key={i} className="relative">
+                      <img
+                        src={p}
+                        alt={`Receipt ${i + 1}`}
+                        className="h-20 w-20 rounded-lg border border-border/50 object-cover"
+                      />
+                      <button
+                        onClick={() => removeDepositFile(i)}
+                        className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
+              )}
 
-                <Button onClick={handleDepositSubmit} disabled={depositFiles.length === 0 || uploading} className="w-full">
-                  {uploading ? "Đang tải lên..." : "Gửi biên lai xác nhận"}
-                </Button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-lg border border-primary/20 bg-primary/5 p-6 mb-6 text-center"
-              >
-                <Check className="mx-auto mb-2 text-primary" size={32} />
-                <p className="font-semibold text-foreground">Biên lai đã được gửi!</p>
-                <p className="text-sm text-muted-foreground">Chúng tôi sẽ xác nhận thanh toán trong thời gian sớm nhất.</p>
-              </motion.div>
-            )}
+              {depositFiles.length < 3 && (
+                <button
+                  onClick={() => depositFileRef.current?.click()}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-4 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground mb-3"
+                >
+                  <Upload size={18} />
+                  Tải ảnh biên lai ({depositFiles.length}/3)
+                </button>
+              )}
+
+              <div className="mb-3">
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">Ghi chú (tùy chọn)</label>
+                <input
+                  type="text"
+                  value={depositNote}
+                  onChange={(e) => setDepositNote(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                  placeholder="Ghi chú thêm..."
+                />
+              </div>
+
+              <Button onClick={handleDepositSubmit} disabled={depositFiles.length === 0 || uploading} className="w-full">
+                {uploading ? "Đang tải lên..." : "Gửi biên lai xác nhận"}
+              </Button>
+            </motion.div>
 
             {/* Action buttons */}
             <div className="flex flex-col items-center gap-3">
-              {!submitted && (
-                <Button variant="outline" className="gap-2" onClick={handleSkip} disabled={bookingInserted}>
-                  <SkipForward size={16} />
-                  {bookingInserted ? "Đã gửi đơn" : "Bỏ qua, không cọc"}
-                </Button>
-              )}
+              <Button variant="outline" className="gap-2" onClick={handleSkip} disabled={bookingInserted}>
+                <SkipForward size={16} />
+                {bookingInserted ? "Đã gửi đơn" : "Bỏ qua, không cọc"}
+              </Button>
               <Button className="gap-2" onClick={handleGoHome}>
                 <Home size={16} /> Về trang chủ
               </Button>
