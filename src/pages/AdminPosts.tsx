@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plus, Edit2, Trash2, Eye, EyeOff, ArrowLeft, Save, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, EyeOff, ArrowLeft, Save, X, Upload, ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -49,8 +49,46 @@ const AdminPosts = () => {
   const navigate = useNavigate();
   const { user, canManagePosts, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState<string | null>(null); // post id or "new"
+  const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState<PostForm>(emptyForm);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Chỉ hỗ trợ file hình ảnh");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File không được vượt quá 5MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("post-images")
+        .upload(fileName, file, { contentType: file.type });
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("post-images")
+        .getPublicUrl(fileName);
+
+      setForm((prev) => ({ ...prev, cover_image: urlData.publicUrl }));
+      toast.success("Đã tải ảnh lên!");
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi tải ảnh");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["admin-posts"],
@@ -217,13 +255,47 @@ const AdminPosts = () => {
                 </select>
               </div>
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">Ảnh bìa (URL)</label>
-                <input
-                  value={form.cover_image}
-                  onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                  placeholder="https://..."
-                />
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">Ảnh bìa</label>
+                <div className="flex gap-3 items-start">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        value={form.cover_image}
+                        onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
+                        className="flex-1 rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                        placeholder="URL ảnh hoặc upload file bên dưới"
+                      />
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="gap-1.5 shrink-0 h-[42px]"
+                      >
+                        {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                        {uploading ? "Đang tải..." : "Upload"}
+                      </Button>
+                    </div>
+                    {form.cover_image && (
+                      <div className="relative w-full max-w-xs">
+                        <img
+                          src={form.cover_image}
+                          alt="Preview"
+                          className="w-full h-32 rounded-lg border border-border object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="sm:col-span-2">
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">Tóm tắt</label>
