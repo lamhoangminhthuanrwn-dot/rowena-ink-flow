@@ -1,32 +1,53 @@
 
 
-## Plan: Add dynamic SEO meta tags for news articles
+## Plan: Edge function for server-side OG meta tags
 
 ### Problem
-Currently, all pages share the same static meta tags defined in `index.html`. When a news article is shared on social media (Facebook, Zalo, Twitter), it shows generic "ROWENA TATTOO CLUB" title/image instead of the article's actual title, description, and cover image.
+Social media crawlers (Facebook, Zalo) don't execute JavaScript, so they can't see the dynamically updated meta tags. When sharing a news article link, the preview shows generic site info instead of the article's title, description, and cover image.
 
 ### Approach
-Since this is a client-side React SPA, we have two layers:
+Create an edge function `og-meta` that acts as a share URL proxy:
+- URL format: `https://{supabase-url}/functions/v1/og-meta?slug=bai-viet-slug`
+- The function fetches the post from DB, returns a minimal HTML page with correct OG tags + an automatic redirect to the real article page
+- When users want to share an article on social media, they use this URL instead of the direct SPA URL
+- Crawlers read the OG tags from the server-rendered HTML; real users get redirected to the full SPA page
 
-1. **Client-side `document.title` + meta tags** — Update `<title>`, `<meta name="description">`, and Open Graph tags dynamically using `useEffect` when post data loads. This handles browser tab title and basic SEO for crawlers that execute JavaScript.
-
-2. **News listing page** — Also update the title for the `/tin-tuc` page.
-
-### Limitation
-Client-side meta tag updates work for Google (which renders JS) and browser tabs, but some social media crawlers (Facebook, Zalo) don't execute JavaScript. For full social media preview support, a server-side rendering solution (edge function that serves pre-rendered HTML) would be needed — but that's a separate, more complex feature. The client-side approach is still valuable and covers most use cases.
+Additionally, add a "Copy share link" button on the `NewsDetail` page that copies the edge function URL (the crawler-friendly version) to clipboard.
 
 ### Changes
 
-1. **`src/pages/NewsDetail.tsx`**
-   - Add a `useEffect` that runs when `post` data is available
-   - Set `document.title` to `{post.title} | ROWENA TATTOO CLUB`
-   - Update/create meta tags: `description` (from excerpt), `og:title`, `og:description`, `og:image`, `og:type` (article), `og:url`, `twitter:title`, `twitter:description`, `twitter:image`
-   - Cleanup function to restore original meta tags on unmount
+1. **Create `supabase/functions/og-meta/index.ts`**
+   - Accept `slug` query parameter
+   - Query `posts` table for the matching published post using service role key
+   - Return minimal HTML with `og:title`, `og:description`, `og:image`, `og:url`, `og:type`
+   - Include `<meta http-equiv="refresh">` and JS redirect to the actual article URL (`https://rowena-ink-flow.lovable.app/tin-tuc/{slug}`)
+   - Handle CORS and missing posts gracefully
+   - Set `verify_jwt = false` in config (public endpoint for crawlers)
 
-2. **`src/pages/News.tsx`**
-   - Add a simple `useEffect` to set `document.title` to `Tin tức & Khuyến mãi | ROWENA TATTOO CLUB`
-   - Set description meta tag for the listing page
+2. **Update `src/pages/NewsDetail.tsx`**
+   - Add a share button (copy icon) next to the article title/meta area
+   - On click, copy the edge function share URL to clipboard with a toast confirmation
+   - Build the URL using `VITE_SUPABASE_PROJECT_ID` env var
+
+3. **Update `supabase/config.toml`** — not needed, it's auto-managed; JWT verification will be set via the function code
 
 ### Technical detail
-A helper function `updateMetaTag(property, content)` will find or create the `<meta>` element and set its content. On component unmount, tags revert to defaults.
+
+The edge function returns HTML like:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta property="og:title" content="Article Title | ROWENA TATTOO CLUB" />
+  <meta property="og:description" content="Article excerpt..." />
+  <meta property="og:image" content="https://..." />
+  <meta property="og:url" content="https://rowena-ink-flow.lovable.app/tin-tuc/slug" />
+  <meta property="og:type" content="article" />
+  <meta http-equiv="refresh" content="0;url=https://rowena-ink-flow.lovable.app/tin-tuc/slug" />
+</head>
+<body><p>Redirecting...</p></body>
+</html>
+```
+
+Crawlers read meta tags from this response. Real users are instantly redirected to the SPA. The site URL for redirects will use the published domain.
 
