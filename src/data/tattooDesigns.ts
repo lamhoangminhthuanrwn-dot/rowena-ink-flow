@@ -2,10 +2,10 @@ export interface TattooVariant {
   position: string;
   style?: string;
   sessions: string;
-  priceSimple: string;
-  priceFull?: string;
-  priceSameDay?: string;
-  priceDifficult: string;
+  priceSimple: number;
+  priceSameDay?: number;
+  priceDifficult: number;
+  priceDifficultSessions?: string;
 }
 
 export interface TattooDesign {
@@ -21,19 +21,22 @@ export interface TattooDesign {
   duration: string;
   variants?: TattooVariant[];
   note?: string;
+  isMiniType?: boolean;
 }
 
 const fullBodyStyles = ["Á nét", "Á tả", "Âu", "Nhật", "Linework"];
 
 function makeFullBodyVariants(
   bwSessions: string,
-  bwSimple: string,
-  bwSameDay: string,
-  bwDifficult: string,
+  bwSimple: number,
+  bwSameDay: number,
+  bwDifficult: number,
+  bwDifficultSessions: string | undefined,
   colorSessions: string,
-  colorSimple: string,
-  colorSameDay: string,
-  colorDifficult: string,
+  colorSimple: number,
+  colorSameDay: number,
+  colorDifficult: number,
+  colorDifficultSessions: string | undefined,
 ): TattooVariant[] {
   return [
     ...fullBodyStyles.map((style) => ({
@@ -43,6 +46,7 @@ function makeFullBodyVariants(
       priceSimple: bwSimple,
       priceSameDay: bwSameDay,
       priceDifficult: bwDifficult,
+      priceDifficultSessions: bwDifficultSessions,
     })),
     ...fullBodyStyles.map((style) => ({
       position: "Màu",
@@ -51,6 +55,7 @@ function makeFullBodyVariants(
       priceSimple: colorSimple,
       priceSameDay: colorSameDay,
       priceDifficult: colorDifficult,
+      priceDifficultSessions: colorDifficultSessions,
     })),
   ];
 }
@@ -60,7 +65,6 @@ export const tattooDesigns: TattooDesign[] = [
     id: "1",
     name: "Xăm full lưng",
     price: 7000000,
-    priceText: "7tr – 18tr",
     category: "Full body",
     description:
       "Xăm full lưng với thiết kế theo yêu cầu, chi tiết tinh xảo. Tác phẩm nghệ thuật lớn trên toàn bộ vùng lưng.",
@@ -85,13 +89,15 @@ export const tattooDesigns: TattooDesign[] = [
     ],
     size: "Full lưng",
     duration: "10-15 giờ",
-    variants: makeFullBodyVariants("2 buổi", "7tr", "7tr5", "10tr5/3 buổi", "4 buổi", "13tr2", "7tr5*2", "18tr/6 buổi"),
+    variants: makeFullBodyVariants(
+      "2 buổi", 7000000, 7500000, 10500000, "3 buổi",
+      "4 buổi", 13200000, 15000000, 18000000, "6 buổi",
+    ),
   },
   {
     id: "2",
     name: "Xăm full tay",
     price: 6600000,
-    priceText: "6tr6 – 10tr",
     category: "Full body",
     description: "Xăm full tay (sleeve) từ vai đến cổ tay, thiết kế liền mạch theo phong cách bạn yêu thích.",
     image: "/assets/tattoo-full-arm.jpg",
@@ -104,34 +110,29 @@ export const tattooDesigns: TattooDesign[] = [
     ],
     size: "Full tay",
     duration: "10-15 giờ",
-    variants: makeFullBodyVariants("2 buổi", "6tr6", "7tr5", "10tr/3 buổi", "2 buổi", "7tr", "7tr5", "10tr/3 buổi"),
+    variants: makeFullBodyVariants(
+      "2 buổi", 6600000, 7500000, 10000000, "3 buổi",
+      "2 buổi", 7000000, 7500000, 10000000, "3 buổi",
+    ),
   },
   {
     id: "3",
     name: "Xăm full chân",
     price: 9900000,
-    priceText: "9tr9 – 18tr",
     category: "Full body",
     description: "Xăm full chân từ đùi đến mắt cá, thiết kế tùy chỉnh theo ý tưởng của bạn.",
     image: "/assets/tattoo-full-leg.jpg",
     size: "Full chân",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      "3 buổi",
-      "9tr9",
-      "11tr5",
-      "13tr2/4 buổi",
-      "4 buổi",
-      "13tr5",
-      "7tr*2",
-      "18tr/6 buổi",
+      "3 buổi", 9900000, 11500000, 13200000, "4 buổi",
+      "4 buổi", 13500000, 14000000, 18000000, "6 buổi",
     ),
   },
   {
     id: "4",
     name: "Xăm full ngực",
     price: 3500000,
-    priceText: "3tr5 – 7tr",
     category: "Full body",
     description: "Xăm full ngực với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết.",
     image: "/assets/tattoo-chest-1.jpg",
@@ -139,35 +140,22 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full ngực",
     duration: "8-12 giờ",
     variants: makeFullBodyVariants(
-      "1 buổi",
-      "3tr5",
-      "5tr5/1.5",
-      "7tr/2 buổi",
-      "1.5 buổi",
-      "5tr2",
-      "5tr5/1.5",
-      "7tr/2 buổi",
+      "1 buổi", 3500000, 5500000, 7000000, "2 buổi",
+      "1.5 buổi", 5200000, 5500000, 7000000, "2 buổi",
     ),
   },
   {
     id: "5",
     name: "Xăm full bụng",
     price: 3500000,
-    priceText: "3tr5 – 7tr",
     category: "Full body",
     description: "Xăm full bụng với thiết kế cá nhân hóa, đường nét sắc sảo và chi tiết.",
     image: "https://images.unsplash.com/photo-1604941059800-a2c0aee40e77?w=600&h=800&fit=crop",
     size: "Full bụng",
     duration: "8-12 giờ",
     variants: makeFullBodyVariants(
-      "1 buổi",
-      "3tr5",
-      "5tr5/1.5",
-      "7tr/2 buổi",
-      "1.5 buổi",
-      "5tr2",
-      "5tr5/1.5",
-      "7tr/2 buổi",
+      "1 buổi", 3500000, 5500000, 7000000, "2 buổi",
+      "1.5 buổi", 5200000, 5500000, 7000000, "2 buổi",
     ),
   },
   {
@@ -184,17 +172,20 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "7",
     name: "Xăm hình mini & A4",
-    price: 500000,
-    priceText: "500K – 3tr5",
+    price: 1000000,
     category: "Mini",
     description: "Hình xăm nhỏ từ mini đến khổ A4, phù hợp cho cổ tay, mắt cá chân, sau tai hoặc bất kỳ vị trí nào.",
     image: "/assets/tattoo-mini-1.jpg",
     size: "Mini – A4",
     duration: "1-6 giờ",
+    isMiniType: true,
     variants: [
-      { position: "Trắng đen / Màu", sessions: "2-3 giờ", priceSimple: "1tr – 1tr5", priceDifficult: "1tr5 – 2tr" },
-      { position: "Trắng đen / Màu", sessions: "3-4 giờ", priceSimple: "1tr5 – 2tr", priceDifficult: "2tr – 3tr" },
-      { position: "Trắng đen / Màu", sessions: "4-6 giờ", priceSimple: "2tr – 3tr5", priceDifficult: "3tr – 3tr5" },
+      { position: "Trắng đen", style: "Mini", sessions: "2 giờ", priceSimple: 1000000, priceDifficult: 1500000 },
+      { position: "Màu", style: "Mini", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
+      { position: "Trắng đen", style: "A5", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
+      { position: "Màu", style: "A5", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
+      { position: "Trắng đen", style: "A4", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
+      { position: "Màu", style: "A4", sessions: "6 giờ", priceSimple: 3500000, priceDifficult: 3500000, priceDifficultSessions: "1 buổi" },
     ],
     note: "Bán thêm 4 giờ = 2tr",
   },
@@ -230,6 +221,23 @@ export function formatVND(amount: number): string {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 }
 
+export function formatVNDShort(amount: number): string {
+  return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
+}
+
 export function displayPrice(design: TattooDesign): string {
-  return design.priceText || formatVND(design.price);
+  return design.priceText || formatVNDShort(design.price);
+}
+
+// Helpers for BookingOptionStep
+export function getPositions(variants: TattooVariant[]): string[] {
+  return [...new Set(variants.map((v) => v.position))];
+}
+
+export function getStyles(variants: TattooVariant[], position: string): string[] {
+  return [...new Set(variants.filter((v) => v.position === position).map((v) => v.style).filter(Boolean))] as string[];
+}
+
+export function findVariant(variants: TattooVariant[], position: string, style?: string): TattooVariant | undefined {
+  return variants.find((v) => v.position === position && (style ? v.style === style : true));
 }
