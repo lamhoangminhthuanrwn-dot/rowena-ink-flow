@@ -13,6 +13,7 @@ const Navbar = () => {
   const links = [
     { to: "/", label: "Trang chủ" },
     { to: "/catalog", label: "Mẫu xăm" },
+    { to: "/tin-tuc", label: "Tin tức" },
     { to: "/booking", label: "Đặt lịch" },
   ];
 
