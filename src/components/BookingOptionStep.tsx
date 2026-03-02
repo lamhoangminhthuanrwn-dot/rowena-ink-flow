@@ -57,6 +57,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
   const [style, setStyle] = useState("");
   const [scheduleType, setScheduleType] = useState<"simple" | "sameday" | "">("");
   const [paymentType, setPaymentType] = useState<"full" | "perSession" | "">("");
+  const [selectedScheduleIdx, setSelectedScheduleIdx] = useState<number | null>(null);
 
   // Get available styles for selected position
   const availableStyles = position ? getStyles(variants, position) : [];
@@ -67,6 +68,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       ? findVariant(variants, position, style || undefined)
       : undefined;
 
+  const hasScheduleOptions = !!(selectedVariant?.scheduleOptions && selectedVariant.scheduleOptions.length > 0);
+
   // Check if same-day is available
   const hasSameDay = selectedVariant?.priceSameDay != null && selectedVariant.priceSameDay > 0;
 
@@ -75,21 +78,50 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     setStyle("");
     setScheduleType("");
     setPaymentType("");
+    setSelectedScheduleIdx(null);
   }, [position]);
   useEffect(() => {
     setScheduleType("");
     setPaymentType("");
+    setSelectedScheduleIdx(null);
   }, [style]);
   useEffect(() => {
-    if (isMini) {
+    if (isMini || hasScheduleOptions) {
       setPaymentType("full");
     } else {
       setPaymentType("");
     }
-  }, [scheduleType]);
+  }, [scheduleType, isMini, hasScheduleOptions]);
+
+  // When schedule option is selected, auto-set schedule and payment
+  useEffect(() => {
+    if (selectedScheduleIdx !== null && hasScheduleOptions) {
+      setScheduleType("simple");
+      setPaymentType("full");
+    }
+  }, [selectedScheduleIdx, hasScheduleOptions]);
 
   // Calculate final price & notify parent
   useEffect(() => {
+    // For schedule options mode
+    if (hasScheduleOptions) {
+      if (selectedScheduleIdx === null || !selectedVariant) {
+        onOptionsChange(null);
+        return;
+      }
+      const opt = selectedVariant.scheduleOptions![selectedScheduleIdx];
+      onOptionsChange({
+        position,
+        style: style || position,
+        scheduleType: "simple",
+        paymentType: "full",
+        variant: selectedVariant,
+        finalPrice: opt.price,
+        sessionsLabel: opt.label,
+      });
+      return;
+    }
+
     if (!selectedVariant || !scheduleType || !paymentType) {
       onOptionsChange(null);
       return;
@@ -106,7 +138,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       sessionsLabel = selectedVariant.sessions;
     }
 
-    // For "per session" payment, we parse session count
     let finalPrice = price;
     if (paymentType === "perSession" && scheduleType === "simple") {
       const match = selectedVariant.sessions.match(/(\d+)/);
@@ -125,10 +156,13 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       finalPrice,
       sessionsLabel,
     });
-  }, [selectedVariant, scheduleType, paymentType]);
+  }, [selectedVariant, scheduleType, paymentType, selectedScheduleIdx]);
 
   // Compute display price
   const displayFinalPrice = (() => {
+    if (hasScheduleOptions && selectedScheduleIdx !== null && selectedVariant) {
+      return { total: selectedVariant.scheduleOptions![selectedScheduleIdx].price };
+    }
     if (!selectedVariant || !scheduleType) return null;
     const price =
       scheduleType === "sameday"
@@ -145,12 +179,14 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     return { total: price };
   })();
 
+  const showPrice = hasScheduleOptions ? selectedScheduleIdx !== null : !!paymentType;
+
   return (
     <div className="space-y-5">
       <h2 className="font-serif text-xl font-semibold text-foreground">Chọn tùy chọn</h2>
 
       {/* Step 1: Position */}
-      <OptionGroup label={isMini ? "Vị trí" : "Vị trí"}>
+      <OptionGroup label="Vị trí">
         {positions.map((p) => (
           <OptionButton key={p} selected={position === p} onClick={() => setPosition(p)}>
             {p}
@@ -158,7 +194,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         ))}
       </OptionGroup>
 
-      {/* Step 2: Style (for full body) or Size (for mini) */}
+      {/* Step 2: Style/Size */}
       {position && availableStyles.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label={isMini ? "Kích thước" : "Thể loại"}>
@@ -171,8 +207,20 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 3: Schedule type */}
-      {selectedVariant && (
+      {/* Step 3: Schedule */}
+      {selectedVariant && hasScheduleOptions && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <OptionGroup label="Tiến độ">
+            {selectedVariant.scheduleOptions!.map((opt, idx) => (
+              <OptionButton key={idx} selected={selectedScheduleIdx === idx} onClick={() => setSelectedScheduleIdx(idx)}>
+                {opt.label} – {formatVNDShort(opt.price)}
+              </OptionButton>
+            ))}
+          </OptionGroup>
+        </motion.div>
+      )}
+
+      {selectedVariant && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
             <OptionButton selected={scheduleType === "simple"} onClick={() => setScheduleType("simple")}>
@@ -187,8 +235,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 4: Payment type */}
-      {scheduleType && !isMini && (
+      {/* Step 4: Payment type (hidden for mini & scheduleOptions) */}
+      {scheduleType && !isMini && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Thanh toán">
             <OptionButton selected={paymentType === "full"} onClick={() => setPaymentType("full")}>
@@ -209,7 +257,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       )}
 
       {/* Price display */}
-      {displayFinalPrice && paymentType && (
+      {displayFinalPrice && showPrice && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -229,7 +277,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
           ) : (
             <p className="text-2xl font-bold text-primary">{formatVNDShort(displayFinalPrice.total)}</p>
           )}
-          {selectedVariant && selectedVariant.priceDifficult > 0 && (
+          {selectedVariant && selectedVariant.priceDifficult > 0 && !hasScheduleOptions && (
             <p className="mt-2 text-xs text-muted-foreground">
               Hình khó: {formatVNDShort(selectedVariant.priceDifficult)}
               {selectedVariant.priceDifficultSessions ? ` / ${selectedVariant.priceDifficultSessions}` : ""}
