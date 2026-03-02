@@ -178,8 +178,8 @@ export const tattooDesigns: TattooDesign[] = [
     duration: "1-6 giờ",
     isMiniType: true,
     variants: [
-      { position: "Trắng đen", style: "Mini", sessions: "2 giờ", priceSimple: 1000000, priceDifficult: 1500000 },
-      { position: "Màu", style: "Mini", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
+      { position: "Trắng đen", style: "Dưới 10cm", sessions: "2 giờ", priceSimple: 1000000, priceDifficult: 1500000 },
+      { position: "Màu", style: "Dưới 10cm", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
       { position: "Trắng đen", style: "A5", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
       { position: "Màu", style: "A5", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
       { position: "Trắng đen", style: "A4", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
