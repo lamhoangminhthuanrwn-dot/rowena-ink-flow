@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { formatContent } from "@/lib/formatContent";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 
@@ -53,6 +54,7 @@ const AdminPosts = () => {
   const [form, setForm] = useState<PostForm>(emptyForm);
   const [uploading, setUploading] = useState(false);
   const [contentUploading, setContentUploading] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const contentImageRef = useRef<HTMLInputElement>(null);
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -367,7 +369,23 @@ const AdminPosts = () => {
               <div className="sm:col-span-2">
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-medium text-muted-foreground">Nội dung * (hỗ trợ markdown cơ bản)</label>
-                  <div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex rounded-md border border-border overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewMode(false)}
+                        className={`px-2.5 py-1 text-xs font-medium transition-colors ${!previewMode ? 'bg-primary text-primary-foreground' : 'bg-secondary/30 text-muted-foreground hover:text-foreground'}`}
+                      >
+                        Viết
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewMode(true)}
+                        className={`px-2.5 py-1 text-xs font-medium transition-colors ${previewMode ? 'bg-primary text-primary-foreground' : 'bg-secondary/30 text-muted-foreground hover:text-foreground'}`}
+                      >
+                        Xem trước
+                      </button>
+                    </div>
                     <input
                       ref={contentImageRef}
                       type="file"
@@ -388,14 +406,21 @@ const AdminPosts = () => {
                     </Button>
                   </div>
                 </div>
-                <textarea
-                  ref={contentTextareaRef}
-                  value={form.content}
-                  onChange={(e) => setForm({ ...form, content: e.target.value })}
-                  rows={12}
-                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                  placeholder="## Tiêu đề&#10;&#10;Nội dung bài viết...&#10;&#10;**In đậm**, [Link](url)"
-                />
+                {previewMode ? (
+                  <div
+                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm min-h-[288px] overflow-auto prose-custom"
+                    dangerouslySetInnerHTML={{ __html: form.content ? formatContent(form.content) : '<p class="text-muted-foreground italic">Chưa có nội dung để xem trước</p>' }}
+                  />
+                ) : (
+                  <textarea
+                    ref={contentTextareaRef}
+                    value={form.content}
+                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    rows={12}
+                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    placeholder="## Tiêu đề&#10;&#10;Nội dung bài viết...&#10;&#10;**In đậm**, [Link](url)"
+                  />
+                )}
               </div>
             </div>
 
