@@ -396,6 +396,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      admin_update_booking_payment: {
+        Args: {
+          _booking_id: string
+          _payment_status: string
+          _reject_reason?: string
+        }
+        Returns: undefined
+      }
+      admin_update_booking_status: {
+        Args: { _booking_id: string; _booking_status: string }
+        Returns: undefined
+      }
+      admin_update_withdrawal_status: {
+        Args: { _note?: string; _status: string; _withdrawal_id: string }
+        Returns: undefined
+      }
       complete_withdrawal: {
         Args: { _withdrawal_id: string }
         Returns: undefined
