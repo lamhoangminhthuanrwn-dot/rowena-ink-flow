@@ -1,0 +1,138 @@
+import { useParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowLeft, Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+
+const NewsDetail = () => {
+  const { slug } = useParams<{ slug: string }>();
+
+  const { data: post, isLoading } = useQuery({
+    queryKey: ["post", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("slug", slug!)
+        .eq("is_published", true)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!slug,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="pt-24 pb-16">
+        <div className="mx-auto max-w-3xl px-4 animate-pulse space-y-6">
+          <div className="h-4 w-32 rounded bg-secondary/50" />
+          <div className="h-8 w-3/4 rounded bg-secondary/50" />
+          <div className="h-64 rounded-lg bg-secondary/50" />
+          <div className="space-y-3">
+            <div className="h-4 w-full rounded bg-secondary/50" />
+            <div className="h-4 w-5/6 rounded bg-secondary/50" />
+            <div className="h-4 w-4/6 rounded bg-secondary/50" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="flex min-h-screen items-center justify-center pt-16">
+        <div className="text-center">
+          <h1 className="font-sans text-2xl font-bold text-foreground">Bài viết không tồn tại</h1>
+          <Link to="/tin-tuc" className="mt-4 inline-block text-sm text-primary hover:underline">
+            ← Quay lại tin tức
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pt-24 pb-16">
+      <article className="mx-auto max-w-3xl px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <Link
+            to="/tin-tuc"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+          >
+            <ArrowLeft size={14} /> Tin tức
+          </Link>
+
+          <div className="flex items-center gap-3 mb-4">
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              {post.category}
+            </span>
+            {post.published_at && (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar size={12} />
+                {format(new Date(post.published_at), "dd MMMM yyyy", { locale: vi })}
+              </span>
+            )}
+          </div>
+
+          <h1 className="font-sans text-3xl font-bold text-foreground leading-tight md:text-4xl">
+            {post.title}
+          </h1>
+
+          {post.excerpt && (
+            <p className="mt-4 text-lg text-muted-foreground leading-relaxed">{post.excerpt}</p>
+          )}
+        </motion.div>
+
+        {post.cover_image && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-8"
+          >
+            <img
+              src={post.cover_image}
+              alt={post.title}
+              className="w-full rounded-lg object-cover"
+            />
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="prose-custom mt-10"
+          dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+        />
+      </article>
+    </div>
+  );
+};
+
+/** Simple markdown-like content formatter */
+function formatContent(content: string): string {
+  return content
+    .split("\n\n")
+    .map((block) => {
+      const trimmed = block.trim();
+      if (trimmed.startsWith("### ")) return `<h3 class="font-sans text-lg font-semibold text-foreground mt-8 mb-3">${trimmed.slice(4)}</h3>`;
+      if (trimmed.startsWith("## ")) return `<h2 class="font-sans text-xl font-semibold text-foreground mt-10 mb-4">${trimmed.slice(3)}</h2>`;
+      if (trimmed.startsWith("# ")) return `<h1 class="font-sans text-2xl font-bold text-foreground mt-10 mb-4">${trimmed.slice(2)}</h1>`;
+      if (trimmed.startsWith("![")) {
+        const match = trimmed.match(/!\[(.*?)\]\((.*?)\)/);
+        if (match) return `<img src="${match[2]}" alt="${match[1]}" class="w-full rounded-lg my-6" loading="lazy" />`;
+      }
+      // Process inline bold and links
+      const processed = trimmed
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary underline hover:no-underline">$1</a>');
+      return `<p class="text-muted-foreground leading-relaxed mb-4">${processed}</p>`;
+    })
+    .join("");
+}
+
+export default NewsDetail;
