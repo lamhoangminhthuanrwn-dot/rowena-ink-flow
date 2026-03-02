@@ -81,7 +81,11 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     setPaymentType("");
   }, [style]);
   useEffect(() => {
-    setPaymentType("");
+    if (isMini) {
+      setPaymentType("full");
+    } else {
+      setPaymentType("");
+    }
   }, [scheduleType]);
 
   // Calculate final price & notify parent
@@ -184,7 +188,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       )}
 
       {/* Step 4: Payment type */}
-      {scheduleType && (
+      {scheduleType && !isMini && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Thanh toán">
             <OptionButton selected={paymentType === "full"} onClick={() => setPaymentType("full")}>
