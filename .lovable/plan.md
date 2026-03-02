@@ -1,20 +1,30 @@
 
 
-## Plan: Unify thank-you view for both "skip deposit" and "submitted receipt"
+## Plan: Update pricing model for Xăm full ngực & Xăm full bụng
 
 ### Problem
-Currently when `submitted` is true (after uploading deposit receipt), the user sees a small confirmation card but the deposit instructions and action buttons remain visible. The user wants this to transition to the same full thank-you view as the "skip" flow -- with phone notification reminder and a clean "Về trang chủ" button.
+Ngực and bụng currently use the standard 2-option schedule (sessions + "Xong trong ngày"). The user wants a 3-option schedule for both BW and Color:
+- **Trả hết** (1 buổi) — 3,500,000 (BW) / 5,200,000 (Color)
+- **1,5 buổi** — 5,500,000 (both)
+- **2 buổi** — 7,000,000 (both)
 
 ### Changes
 
-**`src/pages/Success.tsx`**
+**`src/data/tattooDesigns.ts`**
 
-1. Change the outer conditional from `skipped ? (thankyou) : (deposit flow)` to `(skipped || submitted) ? (thankyou) : (deposit flow)`
-2. In the thank-you branch, adjust the message based on which path was taken:
-   - If `submitted`: show "Biên lai đã được gửi!" message + phone notice
-   - If `skipped`: show existing phone notice (as-is)
-3. Remove the old `submitted` inline confirmation card (lines 450-459) since it's now handled by the shared thank-you view
-4. Remove the `submitted` check around the skip button (lines 464-469) since this section only renders when neither submitted nor skipped
+1. Add optional `scheduleOptions` field to `TattooVariant`:
+   ```ts
+   scheduleOptions?: { label: string; price: number }[];
+   ```
+2. Replace `makeFullBodyVariants` for ngực (id=4) and bụng (id=5) with manual variants that include `scheduleOptions`. Each variant (per position × style) will have:
+   - BW: `scheduleOptions: [{ label: "Trả hết", price: 3500000 }, { label: "1,5 buổi", price: 5500000 }, { label: "2 buổi", price: 7000000 }]`
+   - Color: `scheduleOptions: [{ label: "Trả hết", price: 5200000 }, { label: "1,5 buổi", price: 5500000 }, { label: "2 buổi", price: 7000000 }]`
 
-This reuses the existing thank-you UI block and simply extends it to also trigger on `submitted`.
+**`src/components/BookingOptionStep.tsx`**
+
+3. In the **Tiến độ** step: when `selectedVariant.scheduleOptions` exists, render those as buttons instead of the current simple/sameday pair. Track selected schedule index instead of `scheduleType`.
+4. When `scheduleOptions` is used, auto-set `paymentType = "full"` and hide the payment step (similar to mini behavior). The selected option's price becomes the final price directly.
+5. Hide the "Hình khó" note when `scheduleOptions` is present (prices are already explicit).
+
+No other files need changes — the `SelectedOptions` output to the parent remains compatible.
 
