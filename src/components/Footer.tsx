@@ -29,7 +29,7 @@ const Footer = () => {
   return (
   <footer className="border-t border-border/50 bg-card/50 pt-16 pb-8">
     <div className="mx-auto max-w-6xl px-4">
-      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
         {/* Brand */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
@@ -67,6 +67,12 @@ const Footer = () => {
             <li><Link to="/booking" className="transition-colors hover:text-primary">Đặt lịch xăm</Link></li>
             <li><Link to="/account" className="transition-colors hover:text-primary">Tài khoản</Link></li>
           </ul>
+          <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2.5">
+              <Clock size={15} className="mt-0.5 shrink-0 text-primary/70" />
+              <p>Thứ 2 – Chủ nhật : 9:00 – 19:00</p>
+            </div>
+          </div>
         </div>
 
         {/* Contact */}
@@ -84,55 +90,40 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Studio Info */}
-        <div className="space-y-4">
-          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Studio</h4>
-          <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-start gap-2.5">
-              <MapPin size={15} className="mt-0.5 shrink-0 text-primary/70" />
-              <span>Hồ Chí Minh, Việt Nam</span>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <Clock size={15} className="mt-0.5 shrink-0 text-primary/70" />
-              <p>Thứ 2 – Chủ nhật : 9:00 – 19:00</p>
-            </li>
-          </ul>
+        {/* Google Maps with branch selector - spans 2 columns */}
+        <div className="sm:col-span-2 space-y-4">
+          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Chi nhánh Studio</h4>
+          <div className="flex flex-wrap gap-2">
+            {branches.map((branch, index) => (
+              <button
+                key={branch.name}
+                onClick={() => setActiveBranch(index)}
+                className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
+                  activeBranch === index
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary"
+                }`}
+              >
+                {branch.name}
+              </button>
+            ))}
+          </div>
+          <iframe
+            src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
+            width="100%"
+            height="200"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="rounded-lg border border-border/30"
+            title={`Vị trí ${branches[activeBranch].name}`}
+          />
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <MapPin size={12} className="shrink-0 text-primary/70" />
+            {branches[activeBranch].address}
+          </p>
         </div>
-      </div>
-
-      {/* Google Maps with branch selector */}
-      <div className="mt-10">
-        <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Chi nhánh Studio</h4>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {branches.map((branch, index) => (
-            <button
-              key={branch.name}
-              onClick={() => setActiveBranch(index)}
-              className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
-                activeBranch === index
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary"
-              }`}
-            >
-              {branch.name}
-            </button>
-          ))}
-        </div>
-        <iframe
-          src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
-          width="100%"
-          height="200"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="rounded-lg border border-border/30"
-          title={`Vị trí ${branches[activeBranch].name}`}
-        />
-        <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-          <MapPin size={12} className="shrink-0 text-primary/70" />
-          {branches[activeBranch].address}
-        </p>
       </div>
 
       <Separator className="my-8 bg-border/30" />
