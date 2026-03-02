@@ -70,8 +70,8 @@ const Footer = () => {
           <div className="mt-4 space-y-3 text-sm text-muted-foreground">
             <div className="flex items-start gap-2.5">
               <Clock size={15} className="mt-0.5 shrink-0 text-primary/70" />
-              <p>Thứ 2 – Chủ nhật :
-8:00 – 18:00</p>
+              <p className="text-muted-foreground text-justify text-xs font-medium">Thứ 2 – Chủ nhật: 8:00 – 18:00
+                </p>
             </div>
           </div>
         </div>
@@ -96,13 +96,13 @@ const Footer = () => {
           <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground">Chi nhánh Studio</h4>
           <div className="flex flex-wrap gap-2">
             {branches.map((branch, index) => <button
-                  key={branch.name}
-                  onClick={() => setActiveBranch(index)}
-                  className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
-                  activeBranch === index ?
-                  "bg-primary text-primary-foreground shadow-sm" :
-                  "border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary"}`
-                  }>
+                key={branch.name}
+                onClick={() => setActiveBranch(index)}
+                className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
+                activeBranch === index ?
+                "bg-primary text-primary-foreground shadow-sm" :
+                "border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary"}`
+                }>
 
                 {branch.name}
               </button>
