@@ -36,7 +36,7 @@ const Footer = () => {
             <span className="flex h-9 w-9 items-center justify-center rounded-sm border border-primary/30 font-serif text-base font-bold text-primary">
               R
             </span>
-            <span className="font-serif text-lg font-semibold tracking-wide text-foreground">
+            <span className="font-serif font-semibold tracking-wide text-foreground text-base">
               ROWENA <span className="font-sans text-[10px] font-light uppercase tracking-[0.2em] text-muted-foreground">tattoo club</span>
             </span>
           </div>
