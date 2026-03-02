@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, MapPin, Phone, Clock, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -15,7 +16,17 @@ const socialLinks = [
   { href: "https://www.tiktok.com/@rosaigontattoo?lang=vi-VN", icon: TikTokIcon, label: "TikTok" },
 ];
 
-const Footer = () => (
+const branches = [
+  { name: "Gò Vấp, HCM", address: "99 đường số 18, Phường 8, Quận Gò Vấp, TP. Hồ Chí Minh", mapQuery: "99+đường+số+18+Phường+8+Quận+Gò+Vấp+Hồ+Chí+Minh" },
+  { name: "Hà Đông, Hà Nội", address: "Sh41 KPark Văn Phú, Phú La, Hà Đông, Hà Nội", mapQuery: "Sh41+KPark+Văn+Phú+Phú+La+Hà+Đông+Hà+Nội" },
+  { name: "Buôn Ma Thuột", address: "250 Trần Phú, Buôn Ma Thuột, Đắk Lắk", mapQuery: "250+Trần+Phú+Buôn+Ma+Thuột+Đắk+Lắk" },
+  { name: "Kuala Lumpur", address: "Level 1, Lot F112, Sungei Wang Plaza, Jalan Sultan Ismail, 50250 Kuala Lumpur", mapQuery: "Sungei+Wang+Plaza+Jalan+Sultan+Ismail+Kuala+Lumpur" },
+];
+
+const Footer = () => {
+  const [activeBranch, setActiveBranch] = useState(0);
+
+  return (
   <footer className="border-t border-border/50 bg-card/50 pt-16 pb-8">
     <div className="mx-auto max-w-6xl px-4">
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -89,11 +100,26 @@ const Footer = () => (
         </div>
       </div>
 
-      {/* Google Maps */}
+      {/* Google Maps with branch selector */}
       <div className="mt-10">
-        <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Vị trí Studio</h4>
+        <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Chi nhánh Studio</h4>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {branches.map((branch, index) => (
+            <button
+              key={branch.name}
+              onClick={() => setActiveBranch(index)}
+              className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
+                activeBranch === index
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary"
+              }`}
+            >
+              {branch.name}
+            </button>
+          ))}
+        </div>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125418.77791228806!2d106.62966791640625!3d10.823098600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2sHo%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+          src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
           width="100%"
           height="200"
           style={{ border: 0 }}
@@ -101,8 +127,12 @@ const Footer = () => (
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           className="rounded-lg border border-border/30"
-          title="Vị trí Studio Rowena Tattoo"
+          title={`Vị trí ${branches[activeBranch].name}`}
         />
+        <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+          <MapPin size={12} className="shrink-0 text-primary/70" />
+          {branches[activeBranch].address}
+        </p>
       </div>
 
       <Separator className="my-8 bg-border/30" />
@@ -113,6 +143,7 @@ const Footer = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default Footer;
