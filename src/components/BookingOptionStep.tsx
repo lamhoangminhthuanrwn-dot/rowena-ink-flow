@@ -161,12 +161,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
               </OptionButton>
             )}
           </OptionGroup>
-          {selectedVariant.priceDifficult > 0 && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Hình khó: {formatVNDShort(selectedVariant.priceDifficult)}
-              {selectedVariant.priceDifficultSessions ? ` / ${selectedVariant.priceDifficultSessions}` : ""}
-            </p>
-          )}
         </motion.div>
       )}
 
@@ -209,6 +203,12 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
             </>
           ) : (
             <p className="text-2xl font-bold text-primary">{formatVNDShort(displayFinalPrice.total)}</p>
+          )}
+          {selectedVariant && selectedVariant.priceDifficult > 0 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Hình khó: {formatVNDShort(selectedVariant.priceDifficult)}
+              {selectedVariant.priceDifficultSessions ? ` / ${selectedVariant.priceDifficultSessions}` : ""}
+            </p>
           )}
         </motion.div>
       )}
