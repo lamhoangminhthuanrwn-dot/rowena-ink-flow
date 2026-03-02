@@ -1,3 +1,8 @@
+export interface ScheduleOption {
+  label: string;
+  price: number;
+}
+
 export interface TattooVariant {
   position: string;
   style?: string;
@@ -6,6 +11,7 @@ export interface TattooVariant {
   priceSameDay?: number;
   priceDifficult: number;
   priceDifficultSessions?: string;
+  scheduleOptions?: ScheduleOption[];
 }
 
 export interface TattooDesign {
@@ -56,6 +62,39 @@ function makeFullBodyVariants(
       priceSameDay: colorSameDay,
       priceDifficult: colorDifficult,
       priceDifficultSessions: colorDifficultSessions,
+    })),
+  ];
+}
+
+const bwScheduleOptions: ScheduleOption[] = [
+  { label: "Trả hết", price: 3500000 },
+  { label: "1,5 buổi", price: 5500000 },
+  { label: "2 buổi", price: 7000000 },
+];
+
+const colorScheduleOptions: ScheduleOption[] = [
+  { label: "Trả hết", price: 5200000 },
+  { label: "1,5 buổi", price: 5500000 },
+  { label: "2 buổi", price: 7000000 },
+];
+
+function makeChestBellyVariants(): TattooVariant[] {
+  return [
+    ...fullBodyStyles.map((style) => ({
+      position: "Trắng đen",
+      style,
+      sessions: "1 buổi",
+      priceSimple: 3500000,
+      priceDifficult: 0,
+      scheduleOptions: bwScheduleOptions,
+    })),
+    ...fullBodyStyles.map((style) => ({
+      position: "Màu",
+      style,
+      sessions: "1 buổi",
+      priceSimple: 5200000,
+      priceDifficult: 0,
+      scheduleOptions: colorScheduleOptions,
     })),
   ];
 }
@@ -137,10 +176,7 @@ export const tattooDesigns: TattooDesign[] = [
     images: ["/assets/tattoo-chest-1.jpg", "/assets/tattoo-chest-2.jpg"],
     size: "Full ngực",
     duration: "8-12 giờ",
-    variants: makeFullBodyVariants(
-      "1 buổi", 3500000, 5500000, 7000000, "2 buổi",
-      "1.5 buổi", 5200000, 5500000, 7000000, "2 buổi",
-    ),
+    variants: makeChestBellyVariants(),
   },
   {
     id: "5",
@@ -151,10 +187,7 @@ export const tattooDesigns: TattooDesign[] = [
     image: "https://images.unsplash.com/photo-1604941059800-a2c0aee40e77?w=600&h=800&fit=crop",
     size: "Full bụng",
     duration: "8-12 giờ",
-    variants: makeFullBodyVariants(
-      "1 buổi", 3500000, 5500000, 7000000, "2 buổi",
-      "1.5 buổi", 5200000, 5500000, 7000000, "2 buổi",
-    ),
+    variants: makeChestBellyVariants(),
   },
   {
     id: "6",
