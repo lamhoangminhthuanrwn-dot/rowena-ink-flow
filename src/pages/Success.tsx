@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, Copy, Home, Upload, Wallet, SkipForward, Phone } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { bankInfo, generateTransferContent, generateVietQRUrl, generateZaloPayUrl } from "@/data/bankInfo";
+import { bankInfo, generateTransferContent, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -153,7 +153,7 @@ const Success = () => {
   }
 
   const transferContent = generateTransferContent(state.bookingCode);
-  const qrUrl = generateVietQRUrl(state.bookingCode);
+  const qrUrl = "/assets/qr-deposit.png";
 
   const copyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
