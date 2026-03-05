@@ -1,17 +1,14 @@
 
 
-## Plan: Replace deposit QR code with custom QR image
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### What
-Replace the dynamically generated VietQR URL on the Success page with the uploaded static QR image (ZaloPay QR for ROWENA TATTOO GO VAP).
+### Changes in `src/data/tattooDesigns.ts`
 
-### Changes
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-**Copy asset**
-- Copy `user-uploads://image-18.png` → `public/assets/qr-deposit.png`
-
-**`src/pages/Success.tsx`**
-- Replace the dynamic `qrUrl` (`generateVietQRUrl(...)`) with the static path `/assets/qr-deposit.png`
-- Remove the `generateVietQRUrl` import since it's no longer used
-- Keep the transfer content and bank details section as-is for manual transfer option
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
