@@ -136,6 +136,7 @@ export const tattooDesigns: TattooDesign[] = [
     category: "Full body",
     description: "Xăm full chân từ đùi đến mắt cá, thiết kế tùy chỉnh theo ý tưởng của bạn.",
     image: "/assets/tattoo-full-leg.jpg",
+    images: ["/assets/tattoo-full-leg.jpg", "/assets/tattoo-full-leg-2.jpg"],
     size: "Full chân",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
