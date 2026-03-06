@@ -9,6 +9,7 @@ interface ImageSlideshowProps {
   interval?: number;
   showDots?: boolean;
   showArrows?: boolean;
+  objectFit?: "cover" | "contain";
 }
 
 const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true }: ImageSlideshowProps) => {
