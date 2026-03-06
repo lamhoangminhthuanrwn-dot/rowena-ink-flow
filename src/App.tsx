@@ -19,6 +19,7 @@ import AdminPosts from "./pages/AdminPosts";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
+import AdminBookingNotifier from "@/components/AdminBookingNotifier";
 
 const queryClient = new QueryClient();
 
