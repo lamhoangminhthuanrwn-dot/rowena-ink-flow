@@ -12,7 +12,7 @@ interface ImageSlideshowProps {
   objectFit?: "cover" | "contain";
 }
 
-const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover" }: ImageSlideshowProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = useCallback(() => {
