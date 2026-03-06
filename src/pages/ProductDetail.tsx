@@ -122,7 +122,7 @@ const ProductDetail = () => {
                 <ImageSlideshow images={design.images!} alt={design.name} objectFit="contain" />
               </div>
             ) : (
-              <img src={design.image} alt={design.name} className="w-full object-contain bg-secondary/30" style={{ minHeight: 400 }} />
+              <img src={design.image} alt={design.name} className="w-full object-contain bg-secondary/30 aspect-[3/4]" />
             )}
           </motion.div>
 
