@@ -63,7 +63,10 @@ const App = () => (
 const ReferralRedirect = () => {
   const path = window.location.pathname;
   const code = path.includes("/inv/") ? path.split("/inv/")[1] : path.split("/r/")[1];
-  return <Navigate to={`/auth?ref=${code}`} replace />;
+  if (code) {
+    localStorage.setItem("ref_code", code);
+  }
+  return <Navigate to="/" replace />;
 };
 
 export default App;

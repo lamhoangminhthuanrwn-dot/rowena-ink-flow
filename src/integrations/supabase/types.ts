@@ -74,6 +74,7 @@ export type Database = {
           product_id: string | null
           product_name: string | null
           reference_images: string[] | null
+          referral_code: string | null
           reject_reason: string | null
           size: string | null
           updated_at: string
@@ -100,6 +101,7 @@ export type Database = {
           product_id?: string | null
           product_name?: string | null
           reference_images?: string[] | null
+          referral_code?: string | null
           reject_reason?: string | null
           size?: string | null
           updated_at?: string
@@ -126,6 +128,7 @@ export type Database = {
           product_id?: string | null
           product_name?: string | null
           reference_images?: string[] | null
+          referral_code?: string | null
           reject_reason?: string | null
           size?: string | null
           updated_at?: string
