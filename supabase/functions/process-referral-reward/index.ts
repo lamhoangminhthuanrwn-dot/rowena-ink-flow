@@ -43,19 +43,41 @@ Deno.serve(async (req) => {
     }
 
     const { data: booking } = await supabase.from('bookings').select('*').eq('id', booking_id).single();
-    if (!booking || !booking.user_id) {
-      return new Response(JSON.stringify({ message: 'No user_id on booking, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (!booking) {
+      return new Response(JSON.stringify({ message: 'Booking not found, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { data: profile } = await supabase.from('profiles').select('referred_by_user_id').eq('id', booking.user_id).single();
-    if (!profile?.referred_by_user_id) {
-      return new Response(JSON.stringify({ message: 'User not referred, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    let referrerId: string | null = null;
+    let referredId: string | null = booking.user_id || null;
+
+    // Path 1: Check profile's referred_by_user_id (registered user)
+    if (booking.user_id) {
+      const { data: profile } = await supabase.from('profiles').select('referred_by_user_id').eq('id', booking.user_id).single();
+      if (profile?.referred_by_user_id) {
+        referrerId = profile.referred_by_user_id;
+      }
+    }
+
+    // Path 2: Check booking's referral_code (guest or registered user without profile ref)
+    if (!referrerId && booking.referral_code) {
+      const { data: referrerProfile } = await supabase.from('profiles').select('id').eq('referral_code', booking.referral_code).single();
+      if (referrerProfile) {
+        referrerId = referrerProfile.id;
+        // For guest bookings, use a deterministic pseudo-ID based on booking
+        if (!referredId) {
+          referredId = booking.id;
+        }
+      }
+    }
+
+    if (!referrerId) {
+      return new Response(JSON.stringify({ message: 'No referrer found, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // Use atomic DB function to prevent race conditions
     const { data: rewarded, error: rpcError } = await supabase.rpc('add_referral_reward', {
-      _referrer_id: profile.referred_by_user_id,
-      _referred_id: booking.user_id,
+      _referrer_id: referrerId,
+      _referred_id: referredId!,
       _booking_code: booking.booking_code,
     });
 

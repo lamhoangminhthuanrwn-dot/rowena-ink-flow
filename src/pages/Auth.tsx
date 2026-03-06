@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const refCode = searchParams.get("ref") || "";
+  const refCode = searchParams.get("ref") || localStorage.getItem("ref_code") || "";
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,11 +69,6 @@ const Auth = () => {
           </p>
         </div>
 
-        {refCode && tab === "signup" && (
-          <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-3 text-center text-sm text-primary">
-            Bạn được giới thiệu bởi <span className="font-semibold">{refCode}</span>
-          </div>
-        )}
 
         <div className="mb-6 flex rounded-lg border border-border bg-secondary/30 p-1">
           <button

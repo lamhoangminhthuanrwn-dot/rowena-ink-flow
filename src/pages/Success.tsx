@@ -50,6 +50,7 @@ const Success = () => {
     insertingRef.current = true;
 
     try {
+      const savedRefCode = localStorage.getItem("ref_code") || null;
       const { error } = await supabase.from("bookings").insert([
         {
           booking_code: state.bookingCode,
@@ -69,6 +70,7 @@ const Success = () => {
           branch_id: state.branchId || null,
           branch_name: state.branchName || null,
           artist_id: state.artistId || null,
+          referral_code: savedRefCode,
         },
       ]);
 
