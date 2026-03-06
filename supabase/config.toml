@@ -2,3 +2,6 @@ project_id = "qbbvnjnpbbpskhwngsrq"
 
 [functions.og-meta]
 verify_jwt = false
+
+[functions.send-withdrawal-email]
+verify_jwt = false

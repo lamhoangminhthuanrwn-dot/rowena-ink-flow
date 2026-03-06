@@ -29,7 +29,7 @@ const AdminBookingNotifier = () => {
   useEffect(() => {
     if (!isAdmin) return;
 
-    const channel = supabase
+    const bookingChannel = supabase
       .channel("admin-booking-alerts")
       .on(
         "postgres_changes",
@@ -49,8 +49,30 @@ const AdminBookingNotifier = () => {
       )
       .subscribe();
 
+    const withdrawalChannel = supabase
+      .channel("admin-withdrawal-alerts")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "withdrawals" },
+        (payload) => {
+          playNotificationSound();
+          const w = payload.new as Record<string, unknown>;
+          const amount = new Intl.NumberFormat("vi-VN").format(Number(w.amount_vnd)) + "đ";
+          toast(`Yêu cầu rút tiền: ${amount}`, {
+            description: `MoMo: ${w.momo_phone}${w.momo_name ? ` - ${w.momo_name}` : ""}`,
+            duration: 10000,
+            action: {
+              label: "Xem",
+              onClick: () => navigate("/ketoan"),
+            },
+          });
+        }
+      )
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(bookingChannel);
+      supabase.removeChannel(withdrawalChannel);
     };
   }, [isAdmin, navigate]);
 

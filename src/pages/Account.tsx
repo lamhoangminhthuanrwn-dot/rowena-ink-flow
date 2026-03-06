@@ -124,6 +124,14 @@ const Account = () => {
         toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
       } else {
         toast.success("Yêu cầu rút tiền đã được gửi!");
+        // Send email notification to admin
+        try {
+          await supabase.functions.invoke("send-withdrawal-email", {
+            body: { amount_vnd: amount, momo_phone: wdPhone, momo_name: wdName || "" },
+          });
+        } catch (emailErr) {
+          console.error("Email notification failed:", emailErr);
+        }
         setWdAmount("");
         setWdPhone("");
         setWdName("");
