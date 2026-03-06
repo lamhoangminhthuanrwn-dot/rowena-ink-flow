@@ -1,15 +1,14 @@
 
 
-## Plan: Thêm hình vào "Cover hình xăm cũ"
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Changes
+### Changes in `src/data/tattooDesigns.ts`
 
-**Copy 2 uploaded images to `public/assets/`**
-- `user-uploads://Screenshot_2026-03-05_160713.png` → `public/assets/tattoo-cover-1.png`
-- `user-uploads://花胸龙_遮盖_完成度百分之65_1_远刺_来自小红书网页版.jpg` → `public/assets/tattoo-cover-2.jpg`
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-**Update `src/data/tattooDesigns.ts`** (item id="6")
-- Set `image` to `/assets/tattoo-cover-1.png`
-- Add `images` array with both new paths
-- Remove the old Unsplash URL
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
