@@ -30,6 +30,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <AdminBookingNotifier />
           <div className="grain">
             <Navbar />
             <main className="min-h-screen">
