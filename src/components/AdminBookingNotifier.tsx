@@ -35,6 +35,7 @@ const AdminBookingNotifier = () => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "bookings" },
         (payload) => {
+          playNotificationSound();
           const booking = payload.new as Record<string, unknown>;
           toast(`Booking mới: ${booking.booking_code}`, {
             description: `${booking.customer_name} - ${booking.product_name || "Tự thiết kế"}`,
