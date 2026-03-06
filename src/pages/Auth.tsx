@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const refCode = searchParams.get("ref") || "";
+  const refCode = searchParams.get("ref") || localStorage.getItem("ref_code") || "";
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
