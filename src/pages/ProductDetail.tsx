@@ -118,7 +118,7 @@ const ProductDetail = () => {
             className="overflow-hidden rounded-lg border border-border/50"
           >
             {hasSlideshow ? (
-              <div className="relative w-full bg-secondary/30" style={{ minHeight: 400 }}>
+              <div className="relative w-full bg-secondary/30 aspect-[3/4]">
                 <ImageSlideshow images={design.images!} alt={design.name} objectFit="contain" />
               </div>
             ) : (
