@@ -1,21 +1,14 @@
 
 
-## Plan: Điều chỉnh khung hình cho phù hợp với hình gốc
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Vấn đề
-Hiện tại khung hình trong trang chi tiết sản phẩm dùng `aspect-[3/4]` (tỷ lệ dọc) và `object-cover`, khiến hình bị crop mất phần nội dung khi hình gốc có tỷ lệ khác.
+### Changes in `src/data/tattooDesigns.ts`
 
-### Giải pháp
-Thay đổi cách hiển thị hình ảnh để fit theo chiều ngang mà không bị crop:
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-**`src/pages/ProductDetail.tsx`**
-- Bỏ `aspect-[3/4]` trên container slideshow, thay bằng container không cố định tỷ lệ
-- Đổi `object-cover` thành `object-contain` trong ImageSlideshow để hình không bị cắt
-
-**`src/components/ImageSlideshow.tsx`**
-- Thêm prop `objectFit` (mặc định `"cover"`) để linh hoạt cho từng nơi sử dụng
-- Trang ProductDetail sẽ truyền `objectFit="contain"` kèm background tối để hình hiển thị đẹp
-
-**`src/components/CatalogCard.tsx`**
-- Giữ nguyên `object-cover` cho card trong catalog (vì card cần tỷ lệ đồng nhất)
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
