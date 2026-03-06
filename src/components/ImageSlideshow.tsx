@@ -36,7 +36,8 @@ const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = tr
           src={src}
           alt={`${alt} ${i + 1}`}
           className={cn(
-            "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
+            "absolute inset-0 h-full w-full transition-opacity duration-700",
+            objectFit === "contain" ? "object-contain" : "object-cover",
             i === currentIndex ? "opacity-100" : "opacity-0"
           )}
           loading={i === 0 ? "eager" : "lazy"}
