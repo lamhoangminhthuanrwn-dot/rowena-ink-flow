@@ -26,6 +26,7 @@ interface BookingState {
   branchName?: string;
   artistId?: string | null;
   artistName?: string;
+  selectedPrice?: number | null;
 }
 
 const Success = () => {
