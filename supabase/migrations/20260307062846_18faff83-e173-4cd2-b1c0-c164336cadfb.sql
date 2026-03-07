@@ -1,0 +1,1 @@
+ALTER TABLE public.referral_rewards DROP CONSTRAINT referral_rewards_referred_id_fkey;
