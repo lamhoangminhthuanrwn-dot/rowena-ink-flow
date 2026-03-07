@@ -379,11 +379,11 @@ const Account = () => {
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-6 text-center">
                 <Share2 className="mx-auto mb-3 text-primary" size={32} />
                 <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
-                  Giới thiệu bạn bè — Nhận 300.000đ
+                  Giới thiệu bạn bè — Nhận 10% hoa hồng
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Chia sẻ link giới thiệu. Khi bạn bè đặt lịch và cọc thành công lần đầu, bạn nhận{" "}
-                  <span className="font-semibold text-primary">300.000đ</span> vào ví.
+                  <span className="font-semibold text-primary">10% giá trị đơn đặt</span> vào ví.
                 </p>
 
                 {profile?.referral_code ? (

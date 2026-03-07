@@ -77,6 +77,7 @@ export type Database = {
           referral_code: string | null
           reject_reason: string | null
           size: string | null
+          total_price: number | null
           updated_at: string
           user_id: string | null
         }
@@ -104,6 +105,7 @@ export type Database = {
           referral_code?: string | null
           reject_reason?: string | null
           size?: string | null
+          total_price?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -131,6 +133,7 @@ export type Database = {
           referral_code?: string | null
           reject_reason?: string | null
           size?: string | null
+          total_price?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -444,14 +447,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      add_referral_reward: {
-        Args: {
-          _booking_code: string
-          _referred_id: string
-          _referrer_id: string
-        }
-        Returns: boolean
-      }
+      add_referral_reward:
+        | {
+            Args: {
+              _booking_code: string
+              _referred_id: string
+              _referrer_id: string
+            }
+            Returns: boolean
+          }
+        | {
+            Args: {
+              _booking_amount?: number
+              _booking_code: string
+              _referred_id: string
+              _referrer_id: string
+            }
+            Returns: boolean
+          }
       admin_update_booking_payment: {
         Args: {
           _booking_id: string

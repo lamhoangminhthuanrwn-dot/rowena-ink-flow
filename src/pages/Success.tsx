@@ -26,6 +26,7 @@ interface BookingState {
   branchName?: string;
   artistId?: string | null;
   artistName?: string;
+  selectedPrice?: number | null;
 }
 
 const Success = () => {
@@ -71,6 +72,7 @@ const Success = () => {
           branch_name: state.branchName || null,
           artist_id: state.artistId || null,
           referral_code: savedRefCode,
+          total_price: state.selectedPrice || null,
         },
       ]);
 
