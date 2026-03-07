@@ -72,6 +72,7 @@ const Success = () => {
           branch_name: state.branchName || null,
           artist_id: state.artistId || null,
           referral_code: savedRefCode,
+          total_price: state.selectedPrice || null,
         },
       ]);
 

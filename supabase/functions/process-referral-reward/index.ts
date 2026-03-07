@@ -47,6 +47,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'Booking not found, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    // Need total_price to calculate 10% reward
+    const bookingAmount = booking.total_price || 0;
+    if (bookingAmount <= 0) {
+      return new Response(JSON.stringify({ message: 'No total_price on booking, skipping reward' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     let referrerId: string | null = null;
     let referredId: string | null = booking.user_id || null;
 
@@ -63,7 +69,6 @@ Deno.serve(async (req) => {
       const { data: referrerProfile } = await supabase.from('profiles').select('id').eq('referral_code', booking.referral_code).single();
       if (referrerProfile) {
         referrerId = referrerProfile.id;
-        // For guest bookings, use a deterministic pseudo-ID based on booking
         if (!referredId) {
           referredId = booking.id;
         }
@@ -74,11 +79,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'No referrer found, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Use atomic DB function to prevent race conditions
+    // Use atomic DB function with booking amount for 10% calculation
     const { data: rewarded, error: rpcError } = await supabase.rpc('add_referral_reward', {
       _referrer_id: referrerId,
       _referred_id: referredId!,
       _booking_code: booking.booking_code,
+      _booking_amount: bookingAmount,
     });
 
     if (rpcError) {
@@ -89,10 +95,11 @@ Deno.serve(async (req) => {
     }
 
     if (!rewarded) {
-      return new Response(JSON.stringify({ message: 'Reward already granted for this referred user' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ message: 'Reward already granted or amount is 0' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    return new Response(JSON.stringify({ success: true, amount: 300000 }), {
+    const rewardAmount = Math.floor(bookingAmount * 10 / 100);
+    return new Response(JSON.stringify({ success: true, amount: rewardAmount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
