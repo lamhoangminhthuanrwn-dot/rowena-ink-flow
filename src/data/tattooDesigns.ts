@@ -52,10 +52,18 @@ function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
   ];
 }
 
+interface DifficultPricing {
+  price: number;
+  sessions: string;
+}
+
 function makeFullBodyVariants(
   bw: FullBodyPricing,
   color: FullBodyPricing,
   colorLinework?: FullBodyPricing,
+  bwDifficult: DifficultPricing = { price: 10000000, sessions: "3 buổi" },
+  colorDifficult: DifficultPricing = { price: 10000000, sessions: "3 buổi" },
+  colorLineworkDifficult?: DifficultPricing,
 ): TattooVariant[] {
   const variants: TattooVariant[] = [];
   for (const style of fullBodyStyles) {
@@ -64,18 +72,19 @@ function makeFullBodyVariants(
       style,
       sessions: bw.fullSessions,
       priceSimple: bw.fullPrice,
-      priceDifficult: 10000000, priceDifficultSessions: "3 buổi",
+      priceDifficult: bwDifficult.price, priceDifficultSessions: bwDifficult.sessions,
       scheduleOptions: makeScheduleOptions(bw),
     });
   }
   for (const style of fullBodyStyles) {
     const pricing = (colorLinework && style === "Linework") ? colorLinework : color;
+    const difficult = (colorLineworkDifficult && style === "Linework") ? colorLineworkDifficult : colorDifficult;
     variants.push({
       position: "Màu",
       style,
       sessions: pricing.fullSessions,
       priceSimple: pricing.fullPrice,
-      priceDifficult: 10000000, priceDifficultSessions: "3 buổi",
+      priceDifficult: difficult.price, priceDifficultSessions: difficult.sessions,
       scheduleOptions: makeScheduleOptions(pricing),
     });
   }
@@ -108,6 +117,9 @@ export const tattooDesigns: TattooDesign[] = [
     variants: makeFullBodyVariants(
       { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10500000, sameDayPrice: 7500000 },
       { fullSessions: "4 buổi", fullPrice: 13200000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 15000000, sameDayNote: "Bắt buộc 2 buổi" },
+      undefined,
+      { price: 10500000, sessions: "3 buổi" },
+      { price: 18000000, sessions: "6 buổi" },
     ),
   },
   {
@@ -127,6 +139,9 @@ export const tattooDesigns: TattooDesign[] = [
     variants: makeFullBodyVariants(
       { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
       { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
+      undefined,
+      { price: 10000000, sessions: "3 buổi" },
+      { price: 10000000, sessions: "3 buổi" },
     ),
   },
   {
@@ -143,6 +158,9 @@ export const tattooDesigns: TattooDesign[] = [
       { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "4 buổi", perSessionPrice: 13200000, sameDayPrice: 11500000 },
       { fullSessions: "4 buổi", fullPrice: 13500000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
       { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "5 buổi", perSessionPrice: 16500000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
+      { price: 13200000, sessions: "4 buổi" },
+      { price: 18000000, sessions: "6 buổi" },
+      { price: 16500000, sessions: "5 buổi" },
     ),
   },
   {
@@ -168,6 +186,9 @@ export const tattooDesigns: TattooDesign[] = [
     variants: makeFullBodyVariants(
       { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
       { fullSessions: "1,5 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5500000 },
+      undefined,
+      { price: 7000000, sessions: "2 buổi" },
+      { price: 7000000, sessions: "2 buổi" },
     ),
   },
   {
@@ -193,10 +214,12 @@ export const tattooDesigns: TattooDesign[] = [
     duration: "1-6 giờ",
     isMiniType: true,
     variants: [
-      { position: "Trắng đen", style: "Dưới 10cm", sessions: "2 giờ", priceSimple: 1000000, priceDifficult: 1500000 },
-      { position: "Màu", style: "Dưới 10cm", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
-      { position: "Trắng đen", style: "A5", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000 },
-      { position: "Màu", style: "A5", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
+      { position: "Trắng đen", style: "Dưới 10cm", sessions: "2 giờ", priceSimple: 1000000, priceDifficult: 1500000, priceDifficultSessions: "3 giờ" },
+      { position: "Màu", style: "Dưới 10cm", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000, priceDifficultSessions: "4 giờ" },
+      { position: "Trắng đen", style: "A5", sessions: "3 giờ", priceSimple: 1500000, priceDifficult: 2000000, priceDifficultSessions: "4 giờ" },
+      { position: "Màu", style: "A5", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000, priceDifficultSessions: "6 giờ" },
+      { position: "Trắng đen", style: "A4", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000, priceDifficultSessions: "6 giờ" },
+      { position: "Màu", style: "A4", sessions: "6 giờ", priceSimple: 3500000, priceDifficult: 3500000, priceDifficultSessions: "1 buổi" },
       { position: "Trắng đen", style: "A4", sessions: "4 giờ", priceSimple: 2000000, priceDifficult: 3000000 },
       { position: "Màu", style: "A4", sessions: "6 giờ", priceSimple: 3500000, priceDifficult: 3500000, priceDifficultSessions: "1 buổi" },
     ],
