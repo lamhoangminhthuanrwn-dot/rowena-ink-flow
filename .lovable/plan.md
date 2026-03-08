@@ -1,14 +1,7 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Thêm hình mới vào "Xăm full lưng"
 
-### Changes in `src/data/tattooDesigns.ts`
-
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
-
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+1. Copy ảnh `user-uploads://Gemini_Generated_Image_vxhnslvxhnslvxhn.png` vào `public/assets/tattoo-back-new-11.jpg`
+2. Thêm path `/assets/tattoo-back-new-11.jpg` vào cuối mảng `images` của design ID `"1"` trong `src/data/tattooDesigns.ts`
 
