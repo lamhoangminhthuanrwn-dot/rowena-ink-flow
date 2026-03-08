@@ -51,17 +51,17 @@ const Booking = () => {
 
   // Dynamic steps: insert "Chọn tùy chọn" if design has variants
   const stepLabels = hasVariants
-    ? ["Chọn mẫu", "Tùy chọn", "Lịch hẹn", "Thông tin"]
-    : ["Chọn mẫu", "Lịch hẹn", "Thông tin"];
+    ? ["Chọn mẫu", "Tùy chọn", "Thông tin", "Lịch hẹn"]
+    : ["Chọn mẫu", "Thông tin", "Lịch hẹn"];
 
   // Map logical step to content step
   const getContentStep = () => {
     if (!hasVariants) {
-      // 0=design, 1=schedule, 2=info
-      return step === 0 ? "design" : step === 1 ? "schedule" : "info";
+      // 0=design, 1=info, 2=schedule
+      return step === 0 ? "design" : step === 1 ? "info" : "schedule";
     }
-    // 0=design, 1=options, 2=schedule, 3=info
-    return step === 0 ? "design" : step === 1 ? "options" : step === 2 ? "schedule" : "info";
+    // 0=design, 1=options, 2=info, 3=schedule
+    return step === 0 ? "design" : step === 1 ? "options" : step === 2 ? "info" : "schedule";
   };
 
   const contentStep = getContentStep();
