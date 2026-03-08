@@ -70,8 +70,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
 
   const hasScheduleOptions = !!(selectedVariant?.scheduleOptions && selectedVariant.scheduleOptions.length > 0);
 
-  // Check if same-day is available
-  const hasSameDay = selectedVariant?.priceSameDay != null && selectedVariant.priceSameDay > 0;
 
   // Reset downstream when upstream changes
   useEffect(() => {
@@ -130,13 +128,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     let price: number;
     let sessionsLabel: string;
 
-    if (scheduleType === "sameday") {
-      price = selectedVariant.priceSameDay || selectedVariant.priceSimple;
-      sessionsLabel = "Xong trong ngày";
-    } else {
-      price = selectedVariant.priceSimple;
-      sessionsLabel = selectedVariant.sessions;
-    }
+    price = selectedVariant.priceSimple;
+    sessionsLabel = selectedVariant.sessions;
 
     let finalPrice = price;
     if (paymentType === "perSession" && scheduleType === "simple") {
@@ -170,10 +163,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       return { total: opt.price, note: opt.note, sessions: opt.sessions };
     }
     if (!selectedVariant || !scheduleType) return null;
-    const price =
-      scheduleType === "sameday"
-        ? selectedVariant.priceSameDay || selectedVariant.priceSimple
-        : selectedVariant.priceSimple;
+    const price = selectedVariant.priceSimple;
 
     if (paymentType === "perSession" && scheduleType === "simple") {
       const match = selectedVariant.sessions.match(/(\d+)/);
@@ -233,11 +223,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
             <OptionButton selected={scheduleType === "simple"} onClick={() => setScheduleType("simple")}>
               {selectedVariant.sessions}
             </OptionButton>
-            {hasSameDay && (
-              <OptionButton selected={scheduleType === "sameday"} onClick={() => setScheduleType("sameday")}>
-                Xong trong ngày
-              </OptionButton>
-            )}
           </OptionGroup>
         </motion.div>
       )}

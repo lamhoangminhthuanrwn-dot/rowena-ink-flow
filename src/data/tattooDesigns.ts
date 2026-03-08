@@ -11,7 +11,6 @@ export interface TattooVariant {
   style?: string;
   sessions: string;
   priceSimple: number;
-  priceSameDay?: number;
   priceDifficult: number;
   priceDifficultSessions?: string;
   scheduleOptions?: ScheduleOption[];
@@ -40,15 +39,12 @@ interface FullBodyPricing {
   fullPrice: number;
   perSessionSessions: string;
   perSessionPrice: number;
-  sameDayPrice: number;
-  sameDayNote?: string;
 }
 
 function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
   return [
     { label: "Trả hết 1 lần", price: p.fullPrice, sessions: p.fullSessions },
     { label: "Trả theo buổi", price: p.perSessionPrice, sessions: p.perSessionSessions, isPerSession: true },
-    { label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote },
   ];
 }
 
@@ -115,8 +111,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full lưng",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10500000, sameDayPrice: 7500000 },
-      { fullSessions: "4 buổi", fullPrice: 13200000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 15000000, sameDayNote: "Bắt buộc 2 buổi" },
+      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10500000 },
+      { fullSessions: "4 buổi", fullPrice: 13200000, perSessionSessions: "6 buổi", perSessionPrice: 18000000 },
       undefined,
       { price: 10500000, sessions: "3 buổi" },
       { price: 18000000, sessions: "6 buổi" },
@@ -137,8 +133,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full tay",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
-      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
+      { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000 },
+      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10000000 },
       undefined,
       { price: 10000000, sessions: "3 buổi" },
       { price: 10000000, sessions: "3 buổi" },
@@ -155,9 +151,9 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full chân",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "4 buổi", perSessionPrice: 13200000, sameDayPrice: 11500000 },
-      { fullSessions: "4 buổi", fullPrice: 13500000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
-      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "5 buổi", perSessionPrice: 16500000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
+      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "4 buổi", perSessionPrice: 13200000 },
+      { fullSessions: "4 buổi", fullPrice: 13500000, perSessionSessions: "6 buổi", perSessionPrice: 18000000 },
+      { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "5 buổi", perSessionPrice: 16500000 },
       { price: 13200000, sessions: "4 buổi" },
       { price: 18000000, sessions: "6 buổi" },
       { price: 16500000, sessions: "5 buổi" },
@@ -184,8 +180,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full ngực & bụng",
     duration: "8-12 giờ",
     variants: makeFullBodyVariants(
-      { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 0 },
-      { fullSessions: "1 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5200000 },
+      { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000 },
+      { fullSessions: "1 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000 },
       undefined,
       { price: 7000000, sessions: "2 buổi" },
       { price: 7000000, sessions: "2 buổi" },
