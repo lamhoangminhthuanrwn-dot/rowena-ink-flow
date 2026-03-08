@@ -227,18 +227,6 @@ export const tattooDesigns: TattooDesign[] = [
     note: "Bán thêm 4 giờ = 2tr",
   },
   {
-    id: "8",
-    name: "Xăm che sẹo",
-    price: 0,
-    priceText: "Liên hệ",
-    category: "Đặc biệt",
-    description: "Xăm che sẹo chuyên nghiệp, giúp bạn tự tin hơn với thiết kế nghệ thuật phủ lên vùng sẹo.",
-    image: "https://images.unsplash.com/photo-1530982011887-3cc11cc85693?w=600&h=800&fit=crop",
-    size: "Tùy vùng",
-    duration: "Tùy kích thước",
-    note: "Giá tùy theo kích thước và độ phức tạp. Liên hệ để báo giá.",
-  },
-  {
     id: "9",
     name: "Xăm theo yêu cầu khác",
     price: 0,
