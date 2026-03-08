@@ -40,15 +40,12 @@ interface FullBodyPricing {
   fullPrice: number;
   perSessionSessions: string;
   perSessionPrice: number;
-  sameDayPrice: number;
-  sameDayNote?: string;
 }
 
 function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
   return [
     { label: "Trả hết 1 lần", price: p.fullPrice, sessions: p.fullSessions },
     { label: "Trả theo buổi", price: p.perSessionPrice, sessions: p.perSessionSessions, isPerSession: true },
-    { label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote },
   ];
 }
 
