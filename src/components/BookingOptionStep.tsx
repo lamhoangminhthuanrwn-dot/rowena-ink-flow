@@ -93,6 +93,13 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     }
   }, [scheduleType, isMini, hasScheduleOptions]);
 
+  // Auto-select when only 1 schedule option
+  useEffect(() => {
+    if (selectedVariant?.scheduleOptions?.length === 1) {
+      setSelectedScheduleIdx(0);
+    }
+  }, [selectedVariant]);
+
   // When schedule option is selected, auto-set schedule and payment
   useEffect(() => {
     if (selectedScheduleIdx !== null && hasScheduleOptions) {
