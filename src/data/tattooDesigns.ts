@@ -114,6 +114,7 @@ export const tattooDesigns: TattooDesign[] = [
       "/assets/tattoo-back-new-8.png",
       "/assets/tattoo-back-new-9.png",
       "/assets/tattoo-back-new-10.jpg",
+      "/assets/tattoo-back-new-11.jpg",
     ],
     size: "Full lưng",
     duration: "10-15 giờ",
