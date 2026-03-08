@@ -45,11 +45,14 @@ interface FullBodyPricing {
 }
 
 function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
-  return [
+  const options: ScheduleOption[] = [
     { label: "Trả hết 1 lần", price: p.fullPrice, sessions: p.fullSessions },
     { label: "Trả theo buổi", price: p.perSessionPrice, sessions: p.perSessionSessions, isPerSession: true },
-    { label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote },
   ];
+  if (p.sameDayPrice > 0) {
+    options.push({ label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote });
+  }
+  return options;
 }
 
 interface DifficultPricing {
