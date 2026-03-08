@@ -1,14 +1,23 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Xóa "Xong trong ngày" cho vị trí Trắng đen của Xăm full ngực hoặc full bụng
 
 ### Changes in `src/data/tattooDesigns.ts`
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+**Update `makeScheduleOptions` function** (line 47-53): Filter out the "Xong trong ngày" option when `sameDayPrice` is 0 or undefined.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+```typescript
+function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
+  const options: ScheduleOption[] = [
+    { label: "Trả hết 1 lần", price: p.fullPrice, sessions: p.fullSessions },
+    { label: "Trả theo buổi", price: p.perSessionPrice, sessions: p.perSessionSessions, isPerSession: true },
+  ];
+  if (p.sameDayPrice > 0) {
+    options.push({ label: "Xong trong ngày", price: p.sameDayPrice, note: p.sameDayNote });
+  }
+  return options;
+}
+```
+
+This leverages the existing `sameDayPrice: 0` already set for BW of design "4", so no other data changes needed.
 
