@@ -194,7 +194,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "6",
     name: "Cover hình xăm cũ",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description: "Cover up hình xăm cũ bằng thiết kế mới, che phủ hoàn toàn hình cũ với tác phẩm ấn tượng hơn.",
     image: "/assets/tattoo-cover-1.png",
@@ -228,7 +229,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "8",
     name: "Xăm che sẹo",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description: "Xăm che sẹo chuyên nghiệp, giúp bạn tự tin hơn với thiết kế nghệ thuật phủ lên vùng sẹo.",
     image: "https://images.unsplash.com/photo-1530982011887-3cc11cc85693?w=600&h=800&fit=crop",
@@ -239,7 +241,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "9",
     name: "Xăm theo yêu cầu khác",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description:
       "Thiết kế và xăm theo yêu cầu riêng của bạn. Liên hệ để tư vấn chi tiết về ý tưởng, kích thước và giá.",
