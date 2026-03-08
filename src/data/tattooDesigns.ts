@@ -229,7 +229,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "8",
     name: "Xăm che sẹo",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description: "Xăm che sẹo chuyên nghiệp, giúp bạn tự tin hơn với thiết kế nghệ thuật phủ lên vùng sẹo.",
     image: "https://images.unsplash.com/photo-1530982011887-3cc11cc85693?w=600&h=800&fit=crop",
