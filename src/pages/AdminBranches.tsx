@@ -44,12 +44,6 @@ const AdminBranches = () => {
   const [editingArtist, setEditingArtist] = useState<string | null>(null);
   const [addingArtistBranch, setAddingArtistBranch] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
-      navigate("/auth");
-      toast.error("Bạn không có quyền truy cập trang này.");
-    }
-  }, [user, authLoading, isAdmin, navigate]);
 
   const fetchAll = async () => {
     const [{ data: b }, { data: a }] = await Promise.all([

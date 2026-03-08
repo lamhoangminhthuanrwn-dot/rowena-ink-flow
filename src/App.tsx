@@ -20,6 +20,7 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
 import AdminBookingNotifier from "@/components/AdminBookingNotifier";
+import AdminRoute from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -42,9 +43,9 @@ const App = () => (
                 <Route path="/success" element={<Success />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/account" element={<Account />} />
-                <Route path="/ketoan" element={<Ketoan />} />
-                <Route path="/admin/branches" element={<AdminBranches />} />
-                <Route path="/admin/posts" element={<AdminPosts />} />
+                <Route path="/ketoan" element={<AdminRoute><Ketoan /></AdminRoute>} />
+                <Route path="/admin/branches" element={<AdminRoute><AdminBranches /></AdminRoute>} />
+                <Route path="/admin/posts" element={<AdminRoute><AdminPosts /></AdminRoute>} />
                 <Route path="/tin-tuc" element={<News />} />
                 <Route path="/tin-tuc/:slug" element={<NewsDetail />} />
                 <Route path="/r/:code" element={<ReferralRedirect />} />
