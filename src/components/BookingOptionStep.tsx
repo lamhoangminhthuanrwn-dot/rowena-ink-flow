@@ -70,8 +70,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
 
   const hasScheduleOptions = !!(selectedVariant?.scheduleOptions && selectedVariant.scheduleOptions.length > 0);
 
-  // Check if same-day is available
-  const hasSameDay = selectedVariant?.priceSameDay != null && selectedVariant.priceSameDay > 0;
 
   // Reset downstream when upstream changes
   useEffect(() => {
