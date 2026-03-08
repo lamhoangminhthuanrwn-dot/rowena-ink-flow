@@ -277,9 +277,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
                 {formatVNDShort(displayFinalPrice.perSession)}
                 <span className="text-base font-normal text-muted-foreground"> / buổi</span>
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Tổng {displayFinalPrice.sessions} buổi thực hiện: {formatVNDShort(displayFinalPrice.total)}
-              </p>
             </>
           ) : (
             <>
