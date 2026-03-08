@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import FloatingCTA from "@/components/FloatingCTA";
 import CatalogCard from "@/components/CatalogCard";
@@ -5,9 +6,19 @@ import { tattooDesigns } from "@/data/tattooDesigns";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { setSEO, resetSEO, buildLocalBusinessJsonLd } from "@/lib/seo";
 
 const Index = () => {
   const featured = tattooDesigns.slice(0, 3);
+
+  useEffect(() => {
+    setSEO({
+      title: undefined,
+      description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM. Đặt lịch online, xem mẫu xăm và giá.",
+      jsonLd: buildLocalBusinessJsonLd(),
+    });
+    return () => resetSEO();
+  }, []);
 
   return (
     <>
