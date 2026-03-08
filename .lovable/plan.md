@@ -1,27 +1,14 @@
 
 
-## Plan: Bỏ dòng tổng số buổi khi chọn "Trả theo buổi"
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Changes in `src/components/BookingOptionStep.tsx`
+### Changes in `src/data/tattooDesigns.ts`
 
-**Price display section (lines 274-283)**: When `perSession` is selected, remove the line showing "Tổng X buổi thực hiện: Y đ" — only show `3.500.000đ / buổi`.
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-```tsx
-// Before
-<p className="text-2xl font-bold text-primary">
-  {formatVNDShort(displayFinalPrice.perSession)}
-  <span className="text-base font-normal text-muted-foreground"> / buổi</span>
-</p>
-<p className="mt-1 text-xs text-muted-foreground">
-  Tổng {displayFinalPrice.sessions} buổi thực hiện: {formatVNDShort(displayFinalPrice.total)}
-</p>
-
-// After
-<p className="text-2xl font-bold text-primary">
-  {formatVNDShort(displayFinalPrice.perSession)}
-  <span className="text-base font-normal text-muted-foreground"> / buổi</span>
-</p>
-```
-
-Single line removal, no other changes needed.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
