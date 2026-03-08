@@ -158,6 +158,9 @@ export const tattooDesigns: TattooDesign[] = [
       { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "4 buổi", perSessionPrice: 13200000, sameDayPrice: 11500000 },
       { fullSessions: "4 buổi", fullPrice: 13500000, perSessionSessions: "6 buổi", perSessionPrice: 18000000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
       { fullSessions: "3 buổi", fullPrice: 9900000, perSessionSessions: "5 buổi", perSessionPrice: 16500000, sameDayPrice: 14000000, sameDayNote: "Bắt buộc 2 buổi" },
+      { price: 13200000, sessions: "4 buổi" },
+      { price: 18000000, sessions: "6 buổi" },
+      { price: 16500000, sessions: "5 buổi" },
     ),
   },
   {
