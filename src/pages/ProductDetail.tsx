@@ -26,7 +26,7 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
             <TableHead className="text-xs font-semibold">Thể loại</TableHead>
             <TableHead className="text-xs font-semibold">Số buổi</TableHead>
             <TableHead className="text-xs font-semibold">Trả hết</TableHead>
-            <TableHead className="text-xs font-semibold">Trong ngày</TableHead>
+            
             <TableHead className="text-xs font-semibold">Hình khó</TableHead>
           </TableRow>
         </TableHeader>
