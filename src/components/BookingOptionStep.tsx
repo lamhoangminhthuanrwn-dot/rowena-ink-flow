@@ -128,13 +128,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     let price: number;
     let sessionsLabel: string;
 
-    if (scheduleType === "sameday") {
-      price = selectedVariant.priceSameDay || selectedVariant.priceSimple;
-      sessionsLabel = "Xong trong ngày";
-    } else {
-      price = selectedVariant.priceSimple;
-      sessionsLabel = selectedVariant.sessions;
-    }
+    price = selectedVariant.priceSimple;
+    sessionsLabel = selectedVariant.sessions;
 
     let finalPrice = price;
     if (paymentType === "perSession" && scheduleType === "simple") {
