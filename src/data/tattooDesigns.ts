@@ -241,7 +241,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "9",
     name: "Xăm theo yêu cầu khác",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description:
       "Thiết kế và xăm theo yêu cầu riêng của bạn. Liên hệ để tư vấn chi tiết về ý tưởng, kích thước và giá.",
