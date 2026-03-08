@@ -181,7 +181,7 @@ export const tattooDesigns: TattooDesign[] = [
       "/assets/tattoo-chest-new-8.png",
       "/assets/tattoo-chest-new-9.jpg",
     ],
-    size: "Full ngực & bụng",
+    size: "Full ngực hoặc full bụng",
     duration: "8-12 giờ",
     variants: makeFullBodyVariants(
       { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 0 },
