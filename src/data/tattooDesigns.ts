@@ -165,10 +165,10 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "4",
-    name: "Xăm full ngực & bụng",
+    name: "Xăm full ngực hoặc full bụng",
     price: 3500000,
     category: "Full body",
-    description: "Xăm full ngực & bụng với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết trên toàn bộ vùng ngực và bụng.",
+    description: "Xăm full ngực hoặc full bụng với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết trên vùng ngực hoặc bụng.",
     image: "/assets/tattoo-chest-new-1.png",
     images: [
       "/assets/tattoo-chest-new-1.png",
@@ -181,7 +181,7 @@ export const tattooDesigns: TattooDesign[] = [
       "/assets/tattoo-chest-new-8.png",
       "/assets/tattoo-chest-new-9.jpg",
     ],
-    size: "Full ngực & bụng",
+    size: "Full ngực hoặc full bụng",
     duration: "8-12 giờ",
     variants: makeFullBodyVariants(
       { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 0 },
