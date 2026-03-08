@@ -165,10 +165,10 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "4",
-    name: "Xăm full ngực & bụng",
+    name: "Xăm full ngực hoặc full bụng",
     price: 3500000,
     category: "Full body",
-    description: "Xăm full ngực & bụng với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết trên toàn bộ vùng ngực và bụng.",
+    description: "Xăm full ngực hoặc full bụng với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết trên vùng ngực hoặc bụng.",
     image: "/assets/tattoo-chest-new-1.png",
     images: [
       "/assets/tattoo-chest-new-1.png",
