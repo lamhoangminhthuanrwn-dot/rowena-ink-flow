@@ -221,7 +221,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       )}
 
       {/* Step 3: Schedule — scheduleOptions mode (full body) */}
-      {selectedVariant && hasScheduleOptions && (
+      {selectedVariant && hasScheduleOptions && selectedVariant.scheduleOptions!.length > 1 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
             {selectedVariant.scheduleOptions!.map((opt, idx) => (
