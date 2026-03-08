@@ -235,6 +235,7 @@ export function formatVND(amount: number): string {
 }
 
 export function formatVNDShort(amount: number): string {
+  if (amount <= 0) return "Liên hệ";
   return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
 }
 
