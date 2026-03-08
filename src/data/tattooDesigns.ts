@@ -134,8 +134,8 @@ export const tattooDesigns: TattooDesign[] = [
     size: "Full tay",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
-      { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
-      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10000000, sameDayPrice: 7500000 },
+      { fullSessions: "2 buổi", fullPrice: 6600000, perSessionSessions: "3 buổi", perSessionPrice: 10000000 },
+      { fullSessions: "2 buổi", fullPrice: 7000000, perSessionSessions: "3 buổi", perSessionPrice: 10000000 },
       undefined,
       { price: 10000000, sessions: "3 buổi" },
       { price: 10000000, sessions: "3 buổi" },
