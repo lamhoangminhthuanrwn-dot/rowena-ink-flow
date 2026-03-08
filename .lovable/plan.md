@@ -1,22 +1,14 @@
 
 
-## Plan: Đổi thứ tự bước — Chọn chi nhánh & giờ xăm ngay sau tùy chọn
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Thay đổi
-Hiện tại: Chọn mẫu → Tùy chọn → **Thông tin** → **Lịch hẹn**
-Mới: Chọn mẫu → Tùy chọn → **Lịch hẹn** → **Thông tin**
+### Changes in `src/data/tattooDesigns.ts`
 
-### File: `src/pages/Booking.tsx`
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-1. **Đổi stepLabels**: Swap "Thông tin" và "Lịch hẹn"
-   - Có variants: `["Chọn mẫu", "Tùy chọn", "Lịch hẹn", "Thông tin"]`
-   - Không variants: `["Chọn mẫu", "Lịch hẹn", "Thông tin"]`
-
-2. **Đổi getContentStep mapping**: Swap thứ tự `"info"` và `"schedule"`
-   - Không variants: `0=design, 1=schedule, 2=info`
-   - Có variants: `0=design, 1=options, 2=schedule, 3=info`
-
-3. **Đổi canNext validation**: Đảm bảo `"schedule"` check branch/date/time vẫn đúng, `"info"` check name/phone vẫn đúng — không cần thay đổi logic, chỉ thứ tự render đã đổi.
-
-Không thay đổi UI hay logic nội bộ của từng bước, chỉ swap thứ tự hiển thị.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
