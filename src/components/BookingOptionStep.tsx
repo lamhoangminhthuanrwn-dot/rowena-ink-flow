@@ -163,10 +163,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       return { total: opt.price, note: opt.note, sessions: opt.sessions };
     }
     if (!selectedVariant || !scheduleType) return null;
-    const price =
-      scheduleType === "sameday"
-        ? selectedVariant.priceSameDay || selectedVariant.priceSimple
-        : selectedVariant.priceSimple;
+    const price = selectedVariant.priceSimple;
 
     if (paymentType === "perSession" && scheduleType === "simple") {
       const match = selectedVariant.sessions.match(/(\d+)/);
