@@ -223,11 +223,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
             <OptionButton selected={scheduleType === "simple"} onClick={() => setScheduleType("simple")}>
               {selectedVariant.sessions}
             </OptionButton>
-            {hasSameDay && (
-              <OptionButton selected={scheduleType === "sameday"} onClick={() => setScheduleType("sameday")}>
-                Xong trong ngày
-              </OptionButton>
-            )}
           </OptionGroup>
         </motion.div>
       )}

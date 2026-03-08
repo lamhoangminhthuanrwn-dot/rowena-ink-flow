@@ -11,7 +11,6 @@ export interface TattooVariant {
   style?: string;
   sessions: string;
   priceSimple: number;
-  priceSameDay?: number;
   priceDifficult: number;
   priceDifficultSessions?: string;
   scheduleOptions?: ScheduleOption[];
