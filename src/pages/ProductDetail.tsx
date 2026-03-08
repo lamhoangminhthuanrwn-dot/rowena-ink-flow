@@ -26,7 +26,7 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
             <TableHead className="text-xs font-semibold">Thể loại</TableHead>
             <TableHead className="text-xs font-semibold">Số buổi</TableHead>
             <TableHead className="text-xs font-semibold">Trả hết</TableHead>
-            
+            <TableHead className="text-xs font-semibold">Trong ngày</TableHead>
             <TableHead className="text-xs font-semibold">Hình khó</TableHead>
           </TableRow>
         </TableHeader>
@@ -43,6 +43,15 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
                 <TableCell className="text-xs">{v.style}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
                 <TableCell className="text-xs font-semibold text-primary">{formatVNDShort(v.priceSimple)}</TableCell>
+                <TableCell className="text-xs">
+                  {(() => {
+                    const sameDayOpt = v.scheduleOptions?.find(o => o.label === "Xong trong ngày");
+                    const price = v.priceSameDay || sameDayOpt?.price;
+                    if (!price) return "—";
+                    const note = sameDayOpt?.note;
+                    return note ? `${formatVNDShort(price)} (tối thiểu 2 buổi)` : formatVNDShort(price);
+                  })()}
+                </TableCell>
                 <TableCell className="text-xs">
                   {formatVNDShort(v.priceDifficult)}
                   {v.priceDifficultSessions ? ` (${v.priceDifficultSessions})` : ""}
