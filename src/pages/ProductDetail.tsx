@@ -54,7 +54,7 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
                 </TableCell>
                 <TableCell className="text-xs">
                   {formatVNDShort(v.priceDifficult)}
-                  {v.priceDifficultSessions ? ` / ${v.priceDifficultSessions}` : ""}
+                  {v.priceDifficultSessions ? ` (${v.priceDifficultSessions})` : ""}
                 </TableCell>
               </TableRow>
             ));
