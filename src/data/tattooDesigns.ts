@@ -194,7 +194,8 @@ export const tattooDesigns: TattooDesign[] = [
   {
     id: "6",
     name: "Cover hình xăm cũ",
-    price: 12000000,
+    price: 0,
+    priceText: "Liên hệ",
     category: "Đặc biệt",
     description: "Cover up hình xăm cũ bằng thiết kế mới, che phủ hoàn toàn hình cũ với tác phẩm ấn tượng hơn.",
     image: "/assets/tattoo-cover-1.png",
