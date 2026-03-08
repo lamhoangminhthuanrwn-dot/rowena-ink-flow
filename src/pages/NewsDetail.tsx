@@ -48,6 +48,7 @@ const NewsDetail = () => {
         image: post.cover_image || undefined,
         type: "article",
         url: window.location.href,
+        jsonLd: buildArticleJsonLd(post),
       });
     }
     return () => resetSEO();
