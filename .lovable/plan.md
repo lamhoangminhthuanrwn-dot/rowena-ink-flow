@@ -1,7 +1,14 @@
 
 
-## Plan: Thêm hình mới vào "Xăm hình mini & A4"
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-1. Copy ảnh từ `user-uploads://534345.png` vào `public/assets/tattoo-mini-6.png`
-2. Thêm path `/assets/tattoo-mini-6.png` vào mảng `images` của design ID `"7"` trong `src/data/tattooDesigns.ts`
+### Changes in `src/data/tattooDesigns.ts`
+
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
+
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
