@@ -211,6 +211,13 @@ export const tattooDesigns: TattooDesign[] = [
     category: "Mini",
     description: "Hình xăm nhỏ từ mini đến khổ A4, phù hợp cho cổ tay, mắt cá chân, sau tai hoặc bất kỳ vị trí nào.",
     image: "/assets/tattoo-mini-1.jpg",
+    images: [
+      "/assets/tattoo-mini-1.jpg",
+      "/assets/tattoo-mini-2.png",
+      "/assets/tattoo-mini-3.png",
+      "/assets/tattoo-mini-4.png",
+      "/assets/tattoo-mini-5.png",
+    ],
     size: "Mini – A4",
     duration: "1-6 giờ",
     isMiniType: true,
