@@ -1,9 +1,11 @@
 const defaults = {
   title: "ROWENA TATTOO CLUB",
-  description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp",
+  description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM. Đặt lịch online, xem mẫu xăm và giá.",
   image: "https://lovable.dev/opengraph-image-p98pqg.png",
   type: "website",
 };
+
+const SITE_URL = "https://rowena-ink-flow.lovable.app";
 
 function setMeta(attr: "name" | "property", key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
@@ -15,11 +17,44 @@ function setMeta(attr: "name" | "property", key: string, content: string) {
   el.setAttribute("content", content);
 }
 
-export function setSEO(opts: { title?: string; description?: string; image?: string; url?: string; type?: string }) {
+function setCanonical(url: string) {
+  let el = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", "canonical");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", url);
+}
+
+function setJsonLd(id: string, data: Record<string, unknown>) {
+  let el = document.getElementById(id) as HTMLScriptElement | null;
+  if (!el) {
+    el = document.createElement("script");
+    el.id = id;
+    el.type = "application/ld+json";
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
+}
+
+function removeJsonLd(id: string) {
+  document.getElementById(id)?.remove();
+}
+
+export function setSEO(opts: {
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  type?: string;
+  jsonLd?: Record<string, unknown>;
+}) {
   const title = opts.title ? `${opts.title} | ROWENA TATTOO CLUB` : defaults.title;
   const desc = opts.description || defaults.description;
   const image = opts.image || defaults.image;
   const type = opts.type || defaults.type;
+  const url = opts.url || `${SITE_URL}${window.location.pathname}`;
 
   document.title = title;
   setMeta("name", "description", desc);
@@ -27,10 +62,17 @@ export function setSEO(opts: { title?: string; description?: string; image?: str
   setMeta("property", "og:description", desc);
   setMeta("property", "og:image", image);
   setMeta("property", "og:type", type);
-  if (opts.url) setMeta("property", "og:url", opts.url);
+  setMeta("property", "og:url", url);
+  setMeta("property", "og:site_name", "ROWENA TATTOO CLUB");
   setMeta("name", "twitter:title", title);
   setMeta("name", "twitter:description", desc);
   setMeta("name", "twitter:image", image);
+  setMeta("name", "twitter:card", "summary_large_image");
+  setCanonical(url);
+
+  if (opts.jsonLd) {
+    setJsonLd("seo-jsonld", opts.jsonLd);
+  }
 }
 
 export function resetSEO() {
@@ -40,7 +82,73 @@ export function resetSEO() {
   setMeta("property", "og:description", defaults.description);
   setMeta("property", "og:image", defaults.image);
   setMeta("property", "og:type", defaults.type);
+  setMeta("property", "og:url", SITE_URL);
+  setMeta("property", "og:site_name", "ROWENA TATTOO CLUB");
   setMeta("name", "twitter:title", defaults.title);
   setMeta("name", "twitter:description", defaults.description);
   setMeta("name", "twitter:image", defaults.image);
+  setMeta("name", "twitter:card", "summary_large_image");
+  setCanonical(SITE_URL);
+  removeJsonLd("seo-jsonld");
+}
+
+// JSON-LD builders
+export function buildLocalBusinessJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TattooParlor",
+    name: "ROWENA TATTOO CLUB",
+    description: defaults.description,
+    url: SITE_URL,
+    image: defaults.image,
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Hồ Chí Minh",
+      addressCountry: "VN",
+    },
+    sameAs: [],
+  };
+}
+
+export function buildArticleJsonLd(post: {
+  title: string;
+  excerpt?: string | null;
+  cover_image?: string | null;
+  published_at?: string | null;
+  updated_at?: string;
+  slug: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt || defaults.description,
+    image: post.cover_image || defaults.image,
+    datePublished: post.published_at,
+    dateModified: post.updated_at,
+    url: `${SITE_URL}/tin-tuc/${post.slug}`,
+    publisher: {
+      "@type": "Organization",
+      name: "ROWENA TATTOO CLUB",
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/tin-tuc/${post.slug}`,
+    },
+  };
+}
+
+export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.url}`,
+    })),
+  };
 }
