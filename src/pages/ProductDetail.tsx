@@ -43,7 +43,15 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
                 <TableCell className="text-xs">{v.style}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{v.sessions}</TableCell>
                 <TableCell className="text-xs font-semibold text-primary">{formatVNDShort(v.priceSimple)}</TableCell>
-                <TableCell className="text-xs">{v.priceSameDay ? formatVNDShort(v.priceSameDay) : "—"}</TableCell>
+                <TableCell className="text-xs">
+                  {(() => {
+                    const sameDayOpt = v.scheduleOptions?.find(o => o.label === "Xong trong ngày");
+                    const price = v.priceSameDay || sameDayOpt?.price;
+                    if (!price) return "—";
+                    const note = sameDayOpt?.note;
+                    return note ? `${formatVNDShort(price)} x 2 buổi` : formatVNDShort(price);
+                  })()}
+                </TableCell>
                 <TableCell className="text-xs">
                   {formatVNDShort(v.priceDifficult)}
                   {v.priceDifficultSessions ? ` / ${v.priceDifficultSessions}` : ""}
