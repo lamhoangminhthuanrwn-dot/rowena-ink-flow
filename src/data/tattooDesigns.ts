@@ -52,10 +52,18 @@ function makeScheduleOptions(p: FullBodyPricing): ScheduleOption[] {
   ];
 }
 
+interface DifficultPricing {
+  price: number;
+  sessions: string;
+}
+
 function makeFullBodyVariants(
   bw: FullBodyPricing,
   color: FullBodyPricing,
   colorLinework?: FullBodyPricing,
+  bwDifficult: DifficultPricing = { price: 10000000, sessions: "3 buổi" },
+  colorDifficult: DifficultPricing = { price: 10000000, sessions: "3 buổi" },
+  colorLineworkDifficult?: DifficultPricing,
 ): TattooVariant[] {
   const variants: TattooVariant[] = [];
   for (const style of fullBodyStyles) {
@@ -64,18 +72,19 @@ function makeFullBodyVariants(
       style,
       sessions: bw.fullSessions,
       priceSimple: bw.fullPrice,
-      priceDifficult: 10000000, priceDifficultSessions: "3 buổi",
+      priceDifficult: bwDifficult.price, priceDifficultSessions: bwDifficult.sessions,
       scheduleOptions: makeScheduleOptions(bw),
     });
   }
   for (const style of fullBodyStyles) {
     const pricing = (colorLinework && style === "Linework") ? colorLinework : color;
+    const difficult = (colorLineworkDifficult && style === "Linework") ? colorLineworkDifficult : colorDifficult;
     variants.push({
       position: "Màu",
       style,
       sessions: pricing.fullSessions,
       priceSimple: pricing.fullPrice,
-      priceDifficult: 10000000, priceDifficultSessions: "3 buổi",
+      priceDifficult: difficult.price, priceDifficultSessions: difficult.sessions,
       scheduleOptions: makeScheduleOptions(pricing),
     });
   }
