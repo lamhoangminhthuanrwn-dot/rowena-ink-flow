@@ -49,7 +49,7 @@ const PriceTableFullBody = ({ variants }: { variants: TattooVariant[] }) => {
                     const price = v.priceSameDay || sameDayOpt?.price;
                     if (!price) return "—";
                     const note = sameDayOpt?.note;
-                    return note ? `${formatVNDShort(price)} (2 buổi)` : formatVNDShort(price);
+                    return note ? `${formatVNDShort(price)} (tối thiểu 2 buổi)` : formatVNDShort(price);
                   })()}
                 </TableCell>
                 <TableCell className="text-xs">
