@@ -186,13 +186,31 @@ export const tattooDesigns: TattooDesign[] = [
     ],
     size: "Full ngực hoặc full bụng",
     duration: "8-12 giờ",
-    variants: makeFullBodyVariants(
-      { fullSessions: "1 buổi", fullPrice: 3500000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 0 },
-      { fullSessions: "1 buổi", fullPrice: 5200000, perSessionSessions: "2 buổi", perSessionPrice: 7000000, sameDayPrice: 5200000 },
-      undefined,
-      { price: 7000000, sessions: "2 buổi" },
-      { price: 7000000, sessions: "2 buổi" },
-    ),
+    variants: (() => {
+      const styles = ["Á nét", "Á tả", "Âu", "Nhật", "Linework"];
+      const v: TattooVariant[] = [];
+      // Trắng đen: 1 schedule option → auto-select, ẩn tiến độ
+      for (const s of styles) {
+        v.push({
+          position: "Trắng đen", style: s, sessions: "1 buổi",
+          priceSimple: 3500000, priceDifficult: 7000000, priceDifficultSessions: "2 buổi",
+          scheduleOptions: [{ label: "Trả hết 1 lần", price: 3500000, sessions: "1 buổi" }],
+        });
+      }
+      // Màu: sameDayPrice=0 → ẩn "Xong trong ngày", còn 2 options
+      for (const s of styles) {
+        v.push({
+          position: "Màu", style: s, sessions: "1 buổi",
+          priceSimple: 5200000, priceDifficult: 7000000, priceDifficultSessions: "2 buổi",
+          scheduleOptions: makeScheduleOptions({
+            fullSessions: "1 buổi", fullPrice: 5200000,
+            perSessionSessions: "2 buổi", perSessionPrice: 7000000,
+            sameDayPrice: 0,
+          }),
+        });
+      }
+      return v;
+    })(),
   },
   {
     id: "6",

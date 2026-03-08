@@ -93,6 +93,13 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     }
   }, [scheduleType, isMini, hasScheduleOptions]);
 
+  // Auto-select when only 1 schedule option
+  useEffect(() => {
+    if (selectedVariant?.scheduleOptions?.length === 1) {
+      setSelectedScheduleIdx(0);
+    }
+  }, [selectedVariant]);
+
   // When schedule option is selected, auto-set schedule and payment
   useEffect(() => {
     if (selectedScheduleIdx !== null && hasScheduleOptions) {
@@ -214,7 +221,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
       )}
 
       {/* Step 3: Schedule — scheduleOptions mode (full body) */}
-      {selectedVariant && hasScheduleOptions && (
+      {selectedVariant && hasScheduleOptions && selectedVariant.scheduleOptions!.length > 1 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
             {selectedVariant.scheduleOptions!.map((opt, idx) => (
