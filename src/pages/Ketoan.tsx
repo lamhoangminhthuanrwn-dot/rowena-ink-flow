@@ -43,12 +43,6 @@ const Ketoan = () => {
   const [receiptModal, setReceiptModal] = useState<string[] | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
-      navigate("/auth");
-      toast.error("Bạn không có quyền truy cập trang này.");
-    }
-  }, [user, authLoading, isAdmin, navigate]);
 
   const fetchBookings = async () => {
     const { data } = await supabase.from("bookings").select("*, artists(name)").order("created_at", { ascending: false });
