@@ -75,7 +75,7 @@ function makeFullBodyVariants(
       style,
       sessions: pricing.fullSessions,
       priceSimple: pricing.fullPrice,
-      priceDifficult: 18000000, priceDifficultSessions: "6 buổi",
+      priceDifficult: 10000000, priceDifficultSessions: "3 buổi",
       scheduleOptions: makeScheduleOptions(pricing),
     });
   }
