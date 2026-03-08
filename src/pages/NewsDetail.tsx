@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { setSEO, resetSEO } from "@/lib/seo";
+import { setSEO, resetSEO, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/seo";
 import { toast } from "sonner";
 import { formatContent } from "@/lib/formatContent";
 
