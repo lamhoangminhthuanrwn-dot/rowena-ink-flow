@@ -367,6 +367,46 @@ const Ketoan = () => {
                           </td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.branch_name || "—"}</td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{(b as any).artists?.name || "—"}</td>
+                          {/* Giá trị column */}
+                          <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                            {editPriceId === b.id ? (
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={editPriceValue}
+                                  onChange={(e) => setEditPriceValue(e.target.value)}
+                                  className="w-24 rounded border border-border bg-secondary/30 px-2 py-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                                  autoFocus
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") savePrice(b.id);
+                                    if (e.key === "Escape") { setEditPriceId(null); setEditPriceValue(""); }
+                                  }}
+                                />
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-primary" onClick={() => savePrice(b.id)} title="Lưu">
+                                  <Check size={13} />
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-muted-foreground" onClick={() => { setEditPriceId(null); setEditPriceValue(""); }} title="Hủy">
+                                  <X size={13} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <span className="text-foreground text-xs">{b.total_price ? formatVND(b.total_price) : "—"}</span>
+                                {b.booking_status !== "completed" && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-5 w-5 p-0 text-muted-foreground hover:text-primary"
+                                    onClick={() => { setEditPriceId(b.id); setEditPriceValue(b.total_price?.toString() || ""); }}
+                                    title="Chỉnh sửa giá"
+                                  >
+                                    <Pencil size={11} />
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </td>
                           {/* Hóa đơn column */}
                           <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                             {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
