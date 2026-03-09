@@ -98,6 +98,7 @@ function makeFullBodyVariants(
 export const tattooDesigns: TattooDesign[] = [
   {
     id: "1",
+    slug: "xam-full-lung",
     name: "Xăm full lưng",
     price: 7000000,
     category: "Full body",
