@@ -1,14 +1,12 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Cập nhật Sitemap sang domain `thuanlam.id.vn`
 
-### Changes in `src/data/tattooDesigns.ts`
+Thay tất cả URL trong `public/sitemap.xml` và `public/robots.txt` từ `https://rowena-ink-flow.lovable.app` sang `https://thuanlam.id.vn`.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Thay đổi
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+1. **`public/sitemap.xml`** — Đổi 5 URL `loc` sang domain `thuanlam.id.vn`
+2. **`public/robots.txt`** — Đổi dòng `Sitemap:` sang `https://thuanlam.id.vn/sitemap.xml`
+3. **`supabase/functions/sitemap/index.ts`** — Đổi `SITE_URL` sang `https://thuanlam.id.vn`
 
