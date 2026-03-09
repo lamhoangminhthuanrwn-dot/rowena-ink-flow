@@ -42,6 +42,8 @@ const Ketoan = () => {
   const [rejectReason, setRejectReason] = useState("");
   const [receiptModal, setReceiptModal] = useState<string[] | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editPriceId, setEditPriceId] = useState<string | null>(null);
+  const [editPriceValue, setEditPriceValue] = useState<string>("");
 
 
   const fetchBookings = async () => {
