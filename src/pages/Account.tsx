@@ -38,7 +38,7 @@ const Account = () => {
   const [wdLoading, setWdLoading] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth");
+    if (!authLoading && !user) navigate("/dang-nhap");
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
