@@ -137,6 +137,27 @@ const Ketoan = () => {
     fetchBookings();
   };
 
+  const savePrice = async (id: string) => {
+    const price = parseInt(editPriceValue, 10);
+    if (isNaN(price) || price < 0) {
+      toast.error("Giá trị không hợp lệ");
+      return;
+    }
+    const { error } = await supabase.rpc("admin_update_booking_price", {
+      _booking_id: id,
+      _total_price: price,
+    });
+    if (error) {
+      console.error("savePrice error:", error);
+      toast.error("Không thể cập nhật giá. Vui lòng thử lại.");
+      return;
+    }
+    toast.success("Đã cập nhật giá trị đơn hàng!");
+    setEditPriceId(null);
+    setEditPriceValue("");
+    fetchBookings();
+  };
+
   const approveWithdrawal = async (id: string) => {
     const { error } = await supabase.rpc("admin_update_withdrawal_status", {
       _withdrawal_id: id, _status: "approved",
