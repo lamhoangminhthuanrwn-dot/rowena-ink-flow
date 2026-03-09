@@ -173,6 +173,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "4",
+    slug: "xam-full-nguc-hoac-full-bung",
     name: "Xăm full ngực hoặc full bụng",
     price: 3500000,
     category: "Full body",
