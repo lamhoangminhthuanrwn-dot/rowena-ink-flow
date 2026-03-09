@@ -51,9 +51,9 @@ const Navbar = () => {
           {!loading && (
             user ? (
               <button
-                onClick={() => navigate("/account")}
+                onClick={() => navigate("/tai-khoan")}
                 className={`flex items-center gap-1.5 text-sm font-medium tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === "/account" ? "text-primary" : "text-muted-foreground"
+                  location.pathname === "/tai-khoan" ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 <User size={16} />
