@@ -148,7 +148,7 @@ const Success = () => {
       <div className="flex min-h-screen items-center justify-center pt-16">
         <div className="text-center">
           <p className="text-muted-foreground">Không tìm thấy thông tin booking.</p>
-          <Button className="mt-4" onClick={() => navigate("/")}>
+          <Button className="mt-4" onClick={() => navigate("/trang-chu")}>
             Về trang chủ
           </Button>
         </div>
