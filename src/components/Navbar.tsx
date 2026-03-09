@@ -11,8 +11,8 @@ const Navbar = () => {
   const { user, isAdmin, loading } = useAuth();
 
   const links = [
-    { to: "/", label: "Trang chủ" },
-    { to: "/catalog", label: "Mẫu xăm" },
+    { to: "/trang-chu", label: "Trang chủ" },
+    { to: "/mau-xam", label: "Mẫu xăm" },
     { to: "/tin-tuc", label: "Tin tức" },
     { to: "/booking", label: "Đặt lịch" },
   ];
