@@ -432,6 +432,15 @@ const Ketoan = () => {
                                     <Pencil size={11} />
                                   </Button>
                                 )}
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-5 w-5 p-0 text-muted-foreground hover:text-primary"
+                                  onClick={() => fetchPriceHistory(b.id)}
+                                  title="Lịch sử chỉnh sửa giá"
+                                >
+                                  <History size={11} />
+                                </Button>
                               </div>
                             )}
                           </td>
