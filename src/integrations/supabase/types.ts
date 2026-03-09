@@ -52,6 +52,41 @@ export type Database = {
           },
         ]
       }
+      booking_price_history: {
+        Row: {
+          booking_id: string
+          changed_by: string
+          created_at: string
+          id: string
+          new_price: number
+          old_price: number | null
+        }
+        Insert: {
+          booking_id: string
+          changed_by: string
+          created_at?: string
+          id?: string
+          new_price: number
+          old_price?: number | null
+        }
+        Update: {
+          booking_id?: string
+          changed_by?: string
+          created_at?: string
+          id?: string
+          new_price?: number
+          old_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_price_history_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           artist_id: string | null

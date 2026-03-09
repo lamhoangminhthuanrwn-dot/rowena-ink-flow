@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText, Pencil } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText, Pencil, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -44,6 +45,33 @@ const Ketoan = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editPriceId, setEditPriceId] = useState<string | null>(null);
   const [editPriceValue, setEditPriceValue] = useState<string>("");
+  const [priceHistoryBookingId, setPriceHistoryBookingId] = useState<string | null>(null);
+  const [priceHistory, setPriceHistory] = useState<any[]>([]);
+  const [priceHistoryLoading, setPriceHistoryLoading] = useState(false);
+
+  const fetchPriceHistory = async (bookingId: string) => {
+    setPriceHistoryLoading(true);
+    setPriceHistoryBookingId(bookingId);
+    const { data } = await supabase
+      .from("booking_price_history" as any)
+      .select("*")
+      .eq("booking_id", bookingId)
+      .order("created_at", { ascending: false });
+    
+    if (data && (data as any[]).length > 0) {
+      // Fetch profile names for changed_by
+      const userIds = [...new Set((data as any[]).map((h: any) => h.changed_by))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", userIds);
+      const profileMap = new Map((profiles || []).map((p) => [p.id, p.full_name]));
+      setPriceHistory((data as any[]).map((h: any) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
+    } else {
+      setPriceHistory([]);
+    }
+    setPriceHistoryLoading(false);
+  };
 
 
   const fetchBookings = async () => {
@@ -404,6 +432,15 @@ const Ketoan = () => {
                                     <Pencil size={11} />
                                   </Button>
                                 )}
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-5 w-5 p-0 text-muted-foreground hover:text-primary"
+                                  onClick={() => fetchPriceHistory(b.id)}
+                                  title="Lịch sử chỉnh sửa giá"
+                                >
+                                  <History size={11} />
+                                </Button>
                               </div>
                             )}
                           </td>
@@ -733,6 +770,38 @@ const Ketoan = () => {
             </div>
           </div>
         )}
+
+        {/* Price History Dialog */}
+        <Dialog open={!!priceHistoryBookingId} onOpenChange={(open) => { if (!open) setPriceHistoryBookingId(null); }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-foreground">Lịch sử chỉnh sửa giá</DialogTitle>
+            </DialogHeader>
+            {priceHistoryLoading ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">Đang tải...</p>
+            ) : priceHistory.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">Chưa có lịch sử chỉnh sửa giá.</p>
+            ) : (
+              <div className="max-h-80 overflow-y-auto space-y-3">
+                {priceHistory.map((h: any) => (
+                  <div key={h.id} className="rounded-lg border border-border p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(h.created_at).toLocaleString("vi-VN")}
+                      </span>
+                      <span className="text-xs font-medium text-foreground">{h.changed_by_name}</span>
+                    </div>
+                    <div className="mt-1.5 flex items-center gap-2 text-sm">
+                      <span className="text-muted-foreground">{h.old_price != null ? formatVND(h.old_price) : "—"}</span>
+                      <span className="text-muted-foreground">→</span>
+                      <span className="font-medium text-primary">{formatVND(h.new_price)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
