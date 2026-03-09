@@ -61,9 +61,9 @@ const Navbar = () => {
               </button>
             ) : (
               <Link
-                to="/auth"
+                to="/dang-nhap"
                 className={`text-sm font-medium tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === "/auth" ? "text-primary" : "text-muted-foreground"
+                  location.pathname === "/dang-nhap" ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 Đăng nhập
