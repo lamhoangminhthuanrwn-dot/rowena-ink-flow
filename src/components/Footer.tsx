@@ -62,7 +62,7 @@ const Footer = () => {
         <div className="space-y-4">
           <h4 className="font-sans text-sm font-semibold uppercase tracking-wider text-foreground">Liên kết</h4>
           <ul className="space-y-2.5 text-sm text-muted-foreground">
-            <li><Link to="/catalog" className="transition-colors hover:text-primary">Mẫu xăm</Link></li>
+            <li><Link to="/mau-xam" className="transition-colors hover:text-primary">Mẫu xăm</Link></li>
             <li><Link to="/tin-tuc" className="transition-colors hover:text-primary">Tin tức</Link></li>
             <li><Link to="/booking" className="transition-colors hover:text-primary">Đặt lịch xăm</Link></li>
             <li><Link to="/account" className="transition-colors hover:text-primary">Tài khoản</Link></li>

@@ -226,7 +226,7 @@ const AdminPosts = () => {
 
   if (loading) return null;
   if (!canManagePosts) {
-    navigate("/");
+    navigate("/trang-chu");
     return null;
   }
 

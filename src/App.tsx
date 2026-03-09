@@ -67,7 +67,12 @@ const ReferralRedirect = () => {
   if (code) {
     localStorage.setItem("ref_code", code);
   }
-  return <Navigate to="/" replace />;
+  return <Navigate to="/trang-chu" replace />;
+};
+
+const OldCatalogRedirect = () => {
+  const slug = window.location.pathname.split("/catalog/")[1];
+  return <Navigate to={`/mau-xam/${slug}`} replace />;
 };
 
 export default App;

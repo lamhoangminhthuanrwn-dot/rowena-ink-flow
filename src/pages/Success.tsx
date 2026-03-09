@@ -322,7 +322,7 @@ const Success = () => {
             </motion.div>
 
             <div className="flex justify-center">
-              <Button className="gap-2" onClick={() => navigate("/")}>
+              <Button className="gap-2" onClick={() => navigate("/trang-chu")}>
                 <Home size={16} /> Về trang chủ
               </Button>
             </div>

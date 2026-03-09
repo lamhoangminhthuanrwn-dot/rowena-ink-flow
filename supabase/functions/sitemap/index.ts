@@ -47,7 +47,7 @@ Deno.serve(async () => {
   // Product pages
   if (products) {
     for (const p of products) {
-      entries.push(urlEntry(`/catalog/${p.slug}`, p.created_at?.split("T")[0], "weekly", "0.7"));
+      entries.push(urlEntry(`/mau-xam/${p.slug}`, p.created_at?.split("T")[0], "weekly", "0.7"));
     }
   }
 

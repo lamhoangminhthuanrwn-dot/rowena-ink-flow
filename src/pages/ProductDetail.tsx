@@ -113,7 +113,7 @@ const ProductDetail = () => {
   return (
     <div className="pt-20 pb-16">
       <div className="mx-auto max-w-6xl px-4">
-        <Link to="/catalog" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+        <Link to="/mau-xam" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
           <ArrowLeft size={16} />
           Quay lại
         </Link>
