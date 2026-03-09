@@ -5,9 +5,9 @@ const SITE_URL = "https://thuanlam.id.vn";
 const staticRoutes = [
   { loc: "/trang-chu", changefreq: "weekly", priority: "1.0" },
   { loc: "/mau-xam", changefreq: "weekly", priority: "0.9" },
-  { loc: "/booking", changefreq: "monthly", priority: "0.8" },
+  { loc: "/dat-lich", changefreq: "monthly", priority: "0.8" },
   { loc: "/tin-tuc", changefreq: "daily", priority: "0.8" },
-  { loc: "/auth", changefreq: "monthly", priority: "0.3" },
+  { loc: "/dang-nhap", changefreq: "monthly", priority: "0.3" },
 ];
 
 function urlEntry(loc: string, lastmod?: string, changefreq = "weekly", priority = "0.5") {

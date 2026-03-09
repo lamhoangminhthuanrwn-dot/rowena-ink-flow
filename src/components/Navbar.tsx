@@ -105,10 +105,10 @@ const Navbar = () => {
                 </Link>
               ) : (
                 <Link
-                  to="/auth"
+                  to="/dang-nhap"
                   onClick={() => setOpen(false)}
                   className={`rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
-                    location.pathname === "/auth" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    location.pathname === "/dang-nhap" ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Đăng nhập
