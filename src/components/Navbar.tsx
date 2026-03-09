@@ -95,10 +95,10 @@ const Navbar = () => {
             {!loading && (
               user ? (
                 <Link
-                  to="/account"
+                  to="/tai-khoan"
                   onClick={() => setOpen(false)}
                   className={`rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
-                    location.pathname === "/account" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    location.pathname === "/tai-khoan" ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Tài khoản
