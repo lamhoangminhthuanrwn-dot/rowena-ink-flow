@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
