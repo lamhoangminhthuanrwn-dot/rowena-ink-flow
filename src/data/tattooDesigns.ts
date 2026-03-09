@@ -220,6 +220,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "6",
+    slug: "cover-hinh-xam-cu",
     name: "Cover hình xăm cũ",
     price: 0,
     priceText: "Liên hệ",
