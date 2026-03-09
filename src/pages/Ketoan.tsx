@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { formatVND } from "@/data/tattooDesigns";
-import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText } from "lucide-react";
+import { Check, X, Download, Search, Eye, ChevronDown, ChevronUp, CheckCircle, XCircle, MapPin, FileText, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -42,6 +42,8 @@ const Ketoan = () => {
   const [rejectReason, setRejectReason] = useState("");
   const [receiptModal, setReceiptModal] = useState<string[] | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editPriceId, setEditPriceId] = useState<string | null>(null);
+  const [editPriceValue, setEditPriceValue] = useState<string>("");
 
 
   const fetchBookings = async () => {
@@ -132,6 +134,27 @@ const Ketoan = () => {
       return;
     }
     toast.success("Đã hủy đơn!");
+    fetchBookings();
+  };
+
+  const savePrice = async (id: string) => {
+    const price = parseInt(editPriceValue, 10);
+    if (isNaN(price) || price < 0) {
+      toast.error("Giá trị không hợp lệ");
+      return;
+    }
+    const { error } = await supabase.rpc("admin_update_booking_price", {
+      _booking_id: id,
+      _total_price: price,
+    });
+    if (error) {
+      console.error("savePrice error:", error);
+      toast.error("Không thể cập nhật giá. Vui lòng thử lại.");
+      return;
+    }
+    toast.success("Đã cập nhật giá trị đơn hàng!");
+    setEditPriceId(null);
+    setEditPriceValue("");
     fetchBookings();
   };
 
@@ -317,6 +340,7 @@ const Ketoan = () => {
                     <th className="px-3 py-3">Ngày</th>
                     <th className="px-3 py-3">Chi nhánh</th>
                     <th className="px-3 py-3">Thợ xăm</th>
+                    <th className="px-3 py-3">Giá trị</th>
                     <th className="px-3 py-3">Hóa đơn</th>
                     <th className="px-3 py-3">Thanh toán</th>
                     <th className="px-3 py-3">Trạng thái</th>
@@ -343,6 +367,46 @@ const Ketoan = () => {
                           </td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.branch_name || "—"}</td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{(b as any).artists?.name || "—"}</td>
+                          {/* Giá trị column */}
+                          <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                            {editPriceId === b.id ? (
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={editPriceValue}
+                                  onChange={(e) => setEditPriceValue(e.target.value)}
+                                  className="w-24 rounded border border-border bg-secondary/30 px-2 py-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                                  autoFocus
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") savePrice(b.id);
+                                    if (e.key === "Escape") { setEditPriceId(null); setEditPriceValue(""); }
+                                  }}
+                                />
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-primary" onClick={() => savePrice(b.id)} title="Lưu">
+                                  <Check size={13} />
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-muted-foreground" onClick={() => { setEditPriceId(null); setEditPriceValue(""); }} title="Hủy">
+                                  <X size={13} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <span className="text-foreground text-xs">{b.total_price ? formatVND(b.total_price) : "—"}</span>
+                                {b.booking_status !== "completed" && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-5 w-5 p-0 text-muted-foreground hover:text-primary"
+                                    onClick={() => { setEditPriceId(b.id); setEditPriceValue(b.total_price?.toString() || ""); }}
+                                    title="Chỉnh sửa giá"
+                                  >
+                                    <Pencil size={11} />
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </td>
                           {/* Hóa đơn column */}
                           <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                             {b.deposit_receipts && b.deposit_receipts.length > 0 ? (
@@ -478,7 +542,7 @@ const Ketoan = () => {
                         {/* Expanded detail row */}
                         {expandedId === b.id && (
                           <tr className="border-b border-border/50 bg-secondary/10">
-                            <td colSpan={9} className="px-4 py-4">
+                            <td colSpan={10} className="px-4 py-4">
                               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
                                 <div>
                                   <span className="text-muted-foreground">Email:</span>{" "}
@@ -527,7 +591,7 @@ const Ketoan = () => {
                   })}
                   {filteredBookings.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="py-8 text-center text-muted-foreground">
                         Không có booking nào.
                       </td>
                     </tr>
