@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://rowena-ink-flow.lovable.app/sitemap.xml
+Sitemap: https://thuanlam.id.vn/sitemap.xml

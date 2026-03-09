@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SITE_URL = "https://rowena-ink-flow.lovable.app";
+const SITE_URL = "https://thuanlam.id.vn";
 
 const staticRoutes = [
   { loc: "/", changefreq: "weekly", priority: "1.0" },
