@@ -473,6 +473,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_update_booking_price: {
+        Args: { _booking_id: string; _total_price: number }
+        Returns: undefined
+      }
       admin_update_booking_status: {
         Args: { _booking_id: string; _booking_status: string }
         Returns: undefined
