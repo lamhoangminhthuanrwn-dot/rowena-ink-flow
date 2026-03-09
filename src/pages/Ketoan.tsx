@@ -181,6 +181,19 @@ const Ketoan = () => {
       return;
     }
     toast.success("Đã cập nhật giá trị đơn hàng!");
+    // Fire-and-forget email notification
+    const booking = bookings.find((b) => b.id === id);
+    if (booking?.customer_email) {
+      supabase.functions.invoke("send-price-update-email", {
+        body: {
+          booking_code: booking.booking_code,
+          customer_name: booking.customer_name,
+          customer_email: booking.customer_email,
+          old_price: booking.total_price,
+          new_price: price,
+        },
+      }).catch((err) => console.warn("Price update email failed:", err));
+    }
     setEditPriceId(null);
     setEditPriceValue("");
     fetchBookings();
