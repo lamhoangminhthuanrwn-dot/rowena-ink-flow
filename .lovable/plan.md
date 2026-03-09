@@ -1,17 +1,14 @@
 
 
-## Thêm email thông báo admin khi giá đơn hàng thay đổi
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Thay đổi
+### Changes in `src/data/tattooDesigns.ts`
 
-1. **Tạo Edge Function `send-price-update-email`** (`supabase/functions/send-price-update-email/index.ts`)
-   - Theo pattern giống `send-withdrawal-email` và `send-booking-email`
-   - Nhận: `booking_code`, `customer_name`, `old_price`, `new_price`
-   - Gửi email đến `lamhoangminhthuan@gmail.com` qua Resend với nội dung: mã booking, tên khách, giá cũ → giá mới, thời gian thay đổi
-   - Yêu cầu Authorization Bearer token
-   - Sanitize tất cả input
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-2. **Cập nhật `supabase/config.toml`** — thêm `[functions.send-price-update-email]` với `verify_jwt = false`
-
-3. **Cập nhật `src/pages/Ketoan.tsx`** — trong hàm `savePrice`, sau khi RPC thành công, gọi Edge Function `send-price-update-email` với thông tin booking (lấy từ danh sách bookings hiện có trong state). Không block UI nếu email thất bại.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
