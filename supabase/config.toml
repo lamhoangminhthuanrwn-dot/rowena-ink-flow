@@ -5,6 +5,3 @@ verify_jwt = false
 
 [functions.send-withdrawal-email]
 verify_jwt = false
-
-[functions.send-price-update-email]
-verify_jwt = false
