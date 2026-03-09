@@ -19,6 +19,7 @@ export interface TattooVariant {
 
 export interface TattooDesign {
   id: string;
+  slug: string;
   name: string;
   price: number;
   priceText?: string;
