@@ -14,7 +14,7 @@ const Navbar = () => {
     { to: "/trang-chu", label: "Trang chủ" },
     { to: "/mau-xam", label: "Mẫu xăm" },
     { to: "/tin-tuc", label: "Tin tức" },
-    { to: "/booking", label: "Đặt lịch" },
+    { to: "/dat-lich", label: "Đặt lịch" },
   ];
 
   const { canManagePosts } = useAuth();
