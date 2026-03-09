@@ -3,8 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SITE_URL = "https://thuanlam.id.vn";
 
 const staticRoutes = [
-  { loc: "/", changefreq: "weekly", priority: "1.0" },
-  { loc: "/catalog", changefreq: "weekly", priority: "0.9" },
+  { loc: "/trang-chu", changefreq: "weekly", priority: "1.0" },
+  { loc: "/mau-xam", changefreq: "weekly", priority: "0.9" },
   { loc: "/booking", changefreq: "monthly", priority: "0.8" },
   { loc: "/tin-tuc", changefreq: "daily", priority: "0.8" },
   { loc: "/auth", changefreq: "monthly", priority: "0.3" },
