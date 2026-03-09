@@ -13,7 +13,7 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/dang-nhap" replace />;
   }
 
   return <>{children}</>;

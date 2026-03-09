@@ -203,7 +203,7 @@ const Account = () => {
                   <p className="text-muted-foreground">Bạn chưa có lịch hẹn nào.</p>
                   <Button
                     className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
-                    onClick={() => navigate("/booking")}
+                    onClick={() => navigate("/dat-lich")}
                   >
                     Đặt lịch ngay
                   </Button>
