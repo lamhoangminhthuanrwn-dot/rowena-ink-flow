@@ -45,6 +45,33 @@ const Ketoan = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editPriceId, setEditPriceId] = useState<string | null>(null);
   const [editPriceValue, setEditPriceValue] = useState<string>("");
+  const [priceHistoryBookingId, setPriceHistoryBookingId] = useState<string | null>(null);
+  const [priceHistory, setPriceHistory] = useState<any[]>([]);
+  const [priceHistoryLoading, setPriceHistoryLoading] = useState(false);
+
+  const fetchPriceHistory = async (bookingId: string) => {
+    setPriceHistoryLoading(true);
+    setPriceHistoryBookingId(bookingId);
+    const { data } = await supabase
+      .from("booking_price_history" as any)
+      .select("*")
+      .eq("booking_id", bookingId)
+      .order("created_at", { ascending: false });
+    
+    if (data && (data as any[]).length > 0) {
+      // Fetch profile names for changed_by
+      const userIds = [...new Set((data as any[]).map((h: any) => h.changed_by))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", userIds);
+      const profileMap = new Map((profiles || []).map((p) => [p.id, p.full_name]));
+      setPriceHistory((data as any[]).map((h: any) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
+    } else {
+      setPriceHistory([]);
+    }
+    setPriceHistoryLoading(false);
+  };
 
 
   const fetchBookings = async () => {
