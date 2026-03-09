@@ -234,6 +234,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "7",
+    slug: "xam-hinh-mini-a4",
     name: "Xăm hình mini & A4",
     price: 1000000,
     category: "Mini",
