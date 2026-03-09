@@ -1,14 +1,23 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Thêm lịch sử chỉnh sửa giá đơn hàng
 
-### Changes in `src/data/tattooDesigns.ts`
+### Thay đổi
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+1. **Tạo bảng `booking_price_history`** (migration)
+   - `id` uuid PK
+   - `booking_id` uuid FK → bookings
+   - `old_price` integer (nullable, giá cũ)
+   - `new_price` integer (giá mới)
+   - `changed_by` uuid (user_id của admin thực hiện)
+   - `created_at` timestamptz
+   - RLS: chỉ admin được xem
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+2. **Cập nhật function `admin_update_booking_price`** (migration)
+   - Trước khi update, ghi 1 dòng vào `booking_price_history` với giá cũ, giá mới, và `auth.uid()`
+
+3. **Cập nhật UI trang Ketoan** (`src/pages/Ketoan.tsx`)
+   - Thêm icon lịch sử (History) bên cạnh nút chỉnh sửa giá
+   - Click vào → hiện dialog/popover liệt kê các lần thay đổi giá: thời gian, giá cũ → giá mới, người thay đổi
+   - Query join `booking_price_history` với `profiles` để lấy tên người thay đổi
 
