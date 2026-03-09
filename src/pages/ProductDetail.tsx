@@ -95,8 +95,8 @@ const PriceTableMini = ({ variants }: { variants: TattooVariant[] }) => {
 };
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const design = tattooDesigns.find((d) => d.id === id);
+  const { slug } = useParams();
+  const design = tattooDesigns.find((d) => d.slug === slug);
 
   if (!design) {
     return (

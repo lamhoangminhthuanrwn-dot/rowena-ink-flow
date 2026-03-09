@@ -265,6 +265,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "9",
+    slug: "xam-theo-yeu-cau-khac",
     name: "Xăm theo yêu cầu khác",
     price: 0,
     priceText: "Liên hệ",
