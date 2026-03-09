@@ -11,8 +11,8 @@ const Navbar = () => {
   const { user, isAdmin, loading } = useAuth();
 
   const links = [
-    { to: "/", label: "Trang chủ" },
-    { to: "/catalog", label: "Mẫu xăm" },
+    { to: "/trang-chu", label: "Trang chủ" },
+    { to: "/mau-xam", label: "Mẫu xăm" },
     { to: "/tin-tuc", label: "Tin tức" },
     { to: "/booking", label: "Đặt lịch" },
   ];
@@ -29,7 +29,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/trang-chu" className="flex items-center gap-3">
           <img src={logoRowena} alt="ROWENA Tattoo" className="h-10 w-auto" />
           <span className="font-serif text-lg font-semibold tracking-wide text-foreground">
             ROWENA <span className="font-sans text-xs font-light uppercase tracking-[0.2em] text-muted-foreground">tattoo</span>

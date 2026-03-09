@@ -17,7 +17,7 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
     viewport={{ once: true, margin: "-50px" }}
   >
     <Link
-      to={`/catalog/${design.slug}`}
+      to={`/mau-xam/${design.slug}`}
       className="group block overflow-hidden rounded-lg border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
     >
       <div className="aspect-[3/4] overflow-hidden">

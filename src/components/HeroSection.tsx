@@ -43,7 +43,7 @@ const HeroSection = () => (
           <Link to="/booking">Đặt lịch xăm</Link>
         </Button>
         <Button size="lg" variant="outline" asChild className="rounded-full border-primary/30 px-8 font-semibold uppercase tracking-wider text-primary hover:bg-primary/10">
-          <Link to="/catalog">Xem mẫu & giá</Link>
+          <Link to="/mau-xam">Xem mẫu & giá</Link>
         </Button>
       </motion.div>
     </div>

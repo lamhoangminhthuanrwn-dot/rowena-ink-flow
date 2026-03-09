@@ -46,7 +46,7 @@ const Index = () => {
 
           <div className="mt-12 text-center">
             <Button size="lg" variant="outline" asChild className="rounded-full border-primary/30 px-8 font-semibold uppercase tracking-wider text-primary hover:bg-primary/10">
-              <Link to="/catalog">Xem tất cả mẫu</Link>
+              <Link to="/mau-xam">Xem tất cả mẫu</Link>
             </Button>
           </div>
         </div>
