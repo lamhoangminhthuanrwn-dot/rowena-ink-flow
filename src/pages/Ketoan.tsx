@@ -340,6 +340,7 @@ const Ketoan = () => {
                     <th className="px-3 py-3">Ngày</th>
                     <th className="px-3 py-3">Chi nhánh</th>
                     <th className="px-3 py-3">Thợ xăm</th>
+                    <th className="px-3 py-3">Giá trị</th>
                     <th className="px-3 py-3">Hóa đơn</th>
                     <th className="px-3 py-3">Thanh toán</th>
                     <th className="px-3 py-3">Trạng thái</th>
