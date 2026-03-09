@@ -591,7 +591,7 @@ const Ketoan = () => {
                   })}
                   {filteredBookings.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="py-8 text-center text-muted-foreground">
                         Không có booking nào.
                       </td>
                     </tr>
