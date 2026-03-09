@@ -542,7 +542,7 @@ const Ketoan = () => {
                         {/* Expanded detail row */}
                         {expandedId === b.id && (
                           <tr className="border-b border-border/50 bg-secondary/10">
-                            <td colSpan={9} className="px-4 py-4">
+                            <td colSpan={10} className="px-4 py-4">
                               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
                                 <div>
                                   <span className="text-muted-foreground">Email:</span>{" "}
