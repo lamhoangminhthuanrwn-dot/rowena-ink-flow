@@ -130,6 +130,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "2",
+    slug: "xam-full-tay",
     name: "Xăm full tay",
     price: 6600000,
     category: "Full body",
