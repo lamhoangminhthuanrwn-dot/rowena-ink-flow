@@ -1,17 +1,14 @@
 
 
-## Cập nhật sitemap
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Vấn đề
-- Edge function `sitemap/index.ts` — đã đúng với routes mới (`/trang-chu`, `/mau-xam`, `/dat-lich`, `/dang-nhap`)
-- `public/sitemap.xml` (fallback tĩnh) — còn dùng URL cũ (`/catalog`, `/booking`, `/auth`, `/`)
+### Changes in `src/data/tattooDesigns.ts`
 
-### Thay đổi
-1. **`public/sitemap.xml`** — Cập nhật tất cả URL để khớp với routes mới:
-   - `/` → `/trang-chu`
-   - `/catalog` → `/mau-xam`
-   - `/booking` → `/dat-lich`
-   - `/auth` → `/dang-nhap`
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-Chỉ cần sửa 1 file duy nhất.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
