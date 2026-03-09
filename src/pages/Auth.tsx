@@ -26,7 +26,7 @@ const Auth = () => {
       toast.error(error.message);
     } else {
       toast.success("Đăng nhập thành công!");
-      navigate("/account");
+      navigate("/tai-khoan");
     }
   };
 

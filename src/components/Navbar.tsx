@@ -14,7 +14,7 @@ const Navbar = () => {
     { to: "/trang-chu", label: "Trang chủ" },
     { to: "/mau-xam", label: "Mẫu xăm" },
     { to: "/tin-tuc", label: "Tin tức" },
-    { to: "/booking", label: "Đặt lịch" },
+    { to: "/dat-lich", label: "Đặt lịch" },
   ];
 
   const { canManagePosts } = useAuth();
@@ -51,9 +51,9 @@ const Navbar = () => {
           {!loading && (
             user ? (
               <button
-                onClick={() => navigate("/account")}
+                onClick={() => navigate("/tai-khoan")}
                 className={`flex items-center gap-1.5 text-sm font-medium tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === "/account" ? "text-primary" : "text-muted-foreground"
+                  location.pathname === "/tai-khoan" ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 <User size={16} />
@@ -61,9 +61,9 @@ const Navbar = () => {
               </button>
             ) : (
               <Link
-                to="/auth"
+                to="/dang-nhap"
                 className={`text-sm font-medium tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === "/auth" ? "text-primary" : "text-muted-foreground"
+                  location.pathname === "/dang-nhap" ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 Đăng nhập
@@ -95,20 +95,20 @@ const Navbar = () => {
             {!loading && (
               user ? (
                 <Link
-                  to="/account"
+                  to="/tai-khoan"
                   onClick={() => setOpen(false)}
                   className={`rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
-                    location.pathname === "/account" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    location.pathname === "/tai-khoan" ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Tài khoản
                 </Link>
               ) : (
                 <Link
-                  to="/auth"
+                  to="/dang-nhap"
                   onClick={() => setOpen(false)}
                   className={`rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
-                    location.pathname === "/auth" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    location.pathname === "/dang-nhap" ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Đăng nhập

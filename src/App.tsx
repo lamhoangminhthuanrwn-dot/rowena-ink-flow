@@ -43,10 +43,14 @@ const App = () => (
                 <Route path="/" element={<Navigate to="/trang-chu" replace />} />
                 <Route path="/catalog" element={<Navigate to="/mau-xam" replace />} />
                 <Route path="/catalog/:slug" element={<OldCatalogRedirect />} />
-                <Route path="/booking" element={<Booking />} />
+                <Route path="/dat-lich" element={<Booking />} />
                 <Route path="/success" element={<Success />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/account" element={<Account />} />
+                <Route path="/dang-nhap" element={<Auth />} />
+                <Route path="/tai-khoan" element={<Account />} />
+                {/* Redirects from old URLs */}
+                <Route path="/booking" element={<Navigate to="/dat-lich" replace />} />
+                <Route path="/auth" element={<Navigate to="/dang-nhap" replace />} />
+                <Route path="/account" element={<Navigate to="/tai-khoan" replace />} />
                 <Route path="/ketoan" element={<AdminRoute><Ketoan /></AdminRoute>} />
                 <Route path="/admin/branches" element={<AdminRoute><AdminBranches /></AdminRoute>} />
                 <Route path="/admin/posts" element={<AdminRoute><AdminPosts /></AdminRoute>} />

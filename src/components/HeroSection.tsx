@@ -40,7 +40,7 @@ const HeroSection = () => (
         className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
       >
         <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 font-semibold uppercase tracking-wider shadow-lg shadow-primary/25">
-          <Link to="/booking">Đặt lịch xăm</Link>
+          <Link to="/dat-lich">Đặt lịch xăm</Link>
         </Button>
         <Button size="lg" variant="outline" asChild className="rounded-full border-primary/30 px-8 font-semibold uppercase tracking-wider text-primary hover:bg-primary/10">
           <Link to="/mau-xam">Xem mẫu & giá</Link>

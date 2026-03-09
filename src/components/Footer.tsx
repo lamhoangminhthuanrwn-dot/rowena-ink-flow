@@ -64,8 +64,8 @@ const Footer = () => {
           <ul className="space-y-2.5 text-sm text-muted-foreground">
             <li><Link to="/mau-xam" className="transition-colors hover:text-primary">Mẫu xăm</Link></li>
             <li><Link to="/tin-tuc" className="transition-colors hover:text-primary">Tin tức</Link></li>
-            <li><Link to="/booking" className="transition-colors hover:text-primary">Đặt lịch xăm</Link></li>
-            <li><Link to="/account" className="transition-colors hover:text-primary">Tài khoản</Link></li>
+            <li><Link to="/dat-lich" className="transition-colors hover:text-primary">Đặt lịch xăm</Link></li>
+            <li><Link to="/tai-khoan" className="transition-colors hover:text-primary">Tài khoản</Link></li>
           </ul>
           <div className="mt-4 space-y-3 text-sm text-muted-foreground">
             <div className="flex items-start gap-2.5">

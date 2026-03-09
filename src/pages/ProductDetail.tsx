@@ -183,7 +183,7 @@ const ProductDetail = () => {
 
             <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/95 backdrop-blur-sm p-4 sm:static sm:border-0 sm:bg-transparent sm:backdrop-blur-none sm:p-0 sm:mt-8">
               <Button size="lg" asChild className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 font-semibold uppercase tracking-wider shadow-lg shadow-primary/25">
-                <Link to={`/booking?design=${design.id}`}>Đặt lịch xăm mẫu này</Link>
+                <Link to={`/dat-lich?design=${design.id}`}>Đặt lịch xăm mẫu này</Link>
               </Button>
             </div>
 
