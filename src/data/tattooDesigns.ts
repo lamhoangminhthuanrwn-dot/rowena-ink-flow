@@ -19,6 +19,7 @@ export interface TattooVariant {
 
 export interface TattooDesign {
   id: string;
+  slug: string;
   name: string;
   price: number;
   priceText?: string;
@@ -97,6 +98,7 @@ function makeFullBodyVariants(
 export const tattooDesigns: TattooDesign[] = [
   {
     id: "1",
+    slug: "xam-full-lung",
     name: "Xăm full lưng",
     price: 7000000,
     category: "Full body",
@@ -128,6 +130,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "2",
+    slug: "xam-full-tay",
     name: "Xăm full tay",
     price: 6600000,
     category: "Full body",
@@ -150,6 +153,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "3",
+    slug: "xam-full-chan",
     name: "Xăm full chân",
     price: 9900000,
     category: "Full body",
@@ -169,6 +173,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "4",
+    slug: "xam-full-nguc-hoac-full-bung",
     name: "Xăm full ngực hoặc full bụng",
     price: 3500000,
     category: "Full body",
@@ -215,6 +220,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "6",
+    slug: "cover-hinh-xam-cu",
     name: "Cover hình xăm cũ",
     price: 0,
     priceText: "Liên hệ",
@@ -228,6 +234,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "7",
+    slug: "xam-hinh-mini-a4",
     name: "Xăm hình mini & A4",
     price: 1000000,
     category: "Mini",
@@ -258,6 +265,7 @@ export const tattooDesigns: TattooDesign[] = [
   },
   {
     id: "9",
+    slug: "xam-theo-yeu-cau-khac",
     name: "Xăm theo yêu cầu khác",
     price: 0,
     priceText: "Liên hệ",
