@@ -1,28 +1,14 @@
 
 
-## Bắt buộc nhập giá trước khi hoàn thành đơn
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Thay đổi
+### Changes in `src/data/tattooDesigns.ts`
 
-**`src/pages/Ketoan.tsx`**:
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-1. Trong hàm `markCompleted`: thêm check `total_price` của booking. Nếu `total_price` là null hoặc 0, hiển thị toast lỗi yêu cầu nhập giá trước, không cho tiếp tục.
-
-2. Tại nút "Hoàn thành" (dòng 571-579): thêm điều kiện disable hoặc ẩn nút nếu `b.total_price` chưa có, kèm tooltip giải thích.
-
-### Logic cụ thể
-
-```typescript
-const markCompleted = async (id: string) => {
-  const booking = bookings.find(b => b.id === id);
-  if (!booking?.total_price || booking.total_price <= 0) {
-    toast.error("Vui lòng nhập giá trị đơn hàng trước khi hoàn thành.");
-    return;
-  }
-  // ... existing logic
-};
-```
-
-### Files thay đổi
-- `src/pages/Ketoan.tsx` - thêm validation trong `markCompleted` và disable nút khi chưa có giá
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
