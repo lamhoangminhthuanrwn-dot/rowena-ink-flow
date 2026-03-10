@@ -2,6 +2,16 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SITE_URL = "https://thuanlam.id.vn";
 
+const hardcodedProductSlugs = [
+  "xam-full-lung",
+  "xam-full-tay",
+  "xam-full-chan",
+  "xam-full-nguc-hoac-full-bung",
+  "cover-hinh-xam-cu",
+  "xam-hinh-mini-a4",
+  "xam-theo-yeu-cau-khac",
+];
+
 const staticRoutes = [
   { loc: "/trang-chu", changefreq: "weekly", priority: "1.0" },
   { loc: "/mau-xam", changefreq: "weekly", priority: "0.9" },
@@ -24,14 +34,12 @@ Deno.serve(async () => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
-  // Fetch published posts
   const { data: posts } = await supabase
     .from("posts")
     .select("slug, updated_at")
     .eq("is_published", true)
     .order("published_at", { ascending: false });
 
-  // Fetch active products
   const { data: products } = await supabase
     .from("products")
     .select("slug, created_at")
@@ -39,18 +47,23 @@ Deno.serve(async () => {
 
   const entries: string[] = [];
 
-  // Static routes
   for (const r of staticRoutes) {
     entries.push(urlEntry(r.loc, undefined, r.changefreq, r.priority));
   }
 
-  // Product pages
+  const dbSlugs = new Set<string>();
   if (products) {
     for (const p of products) {
+      dbSlugs.add(p.slug);
       entries.push(urlEntry(`/mau-xam/${p.slug}`, p.created_at?.split("T")[0], "weekly", "0.7"));
     }
   }
 
+  for (const slug of hardcodedProductSlugs) {
+    if (!dbSlugs.has(slug)) {
+      entries.push(urlEntry(`/mau-xam/${slug}`, undefined, "weekly", "0.7"));
+    }
+  }
   // News articles
   if (posts) {
     for (const p of posts) {
