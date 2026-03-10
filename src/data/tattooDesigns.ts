@@ -95,6 +95,8 @@ function makeFullBodyVariants(
   return variants;
 }
 
+const img = (f: string) => f; // filename only, resolved at render time
+
 export const tattooDesigns: TattooDesign[] = [
   {
     id: "1",
@@ -104,19 +106,19 @@ export const tattooDesigns: TattooDesign[] = [
     category: "Full body",
     description:
       "Xăm full lưng với thiết kế theo yêu cầu, chi tiết tinh xảo. Tác phẩm nghệ thuật lớn trên toàn bộ vùng lưng.",
-    image: "/assets/tattoo-back-new-1.png",
+    image: img("tattoo-back-new-1.png"),
     images: [
-      "/assets/tattoo-back-new-1.png",
-      "/assets/tattoo-back-new-2.png",
-      "/assets/tattoo-back-new-3.png",
-      "/assets/tattoo-back-new-4.png",
-      "/assets/tattoo-back-new-5.png",
-      "/assets/tattoo-back-new-6.png",
-      "/assets/tattoo-back-new-7.png",
-      "/assets/tattoo-back-new-8.png",
-      "/assets/tattoo-back-new-9.png",
-      "/assets/tattoo-back-new-10.jpg",
-      "/assets/tattoo-back-new-11.jpg",
+      img("tattoo-back-new-1.png"),
+      img("tattoo-back-new-2.png"),
+      img("tattoo-back-new-3.png"),
+      img("tattoo-back-new-4.png"),
+      img("tattoo-back-new-5.png"),
+      img("tattoo-back-new-6.png"),
+      img("tattoo-back-new-7.png"),
+      img("tattoo-back-new-8.png"),
+      img("tattoo-back-new-9.png"),
+      img("tattoo-back-new-10.jpg"),
+      img("tattoo-back-new-11.jpg"),
     ],
     size: "Full lưng",
     duration: "10-15 giờ",
@@ -135,11 +137,11 @@ export const tattooDesigns: TattooDesign[] = [
     price: 6600000,
     category: "Full body",
     description: "Xăm full tay (sleeve) từ vai đến cổ tay, thiết kế liền mạch theo phong cách bạn yêu thích.",
-    image: "/assets/tattoo-arm-1.jpg",
+    image: img("tattoo-arm-1.jpg"),
     images: [
-      "/assets/tattoo-arm-1.jpg",
-      "/assets/tattoo-arm-2.jpg",
-      "/assets/tattoo-arm-4.jpg",
+      img("tattoo-arm-1.jpg"),
+      img("tattoo-arm-2.jpg"),
+      img("tattoo-arm-4.jpg"),
     ],
     size: "Full tay",
     duration: "10-15 giờ",
@@ -158,8 +160,8 @@ export const tattooDesigns: TattooDesign[] = [
     price: 9900000,
     category: "Full body",
     description: "Xăm full chân từ đùi đến mắt cá, thiết kế tùy chỉnh theo ý tưởng của bạn.",
-    image: "/assets/tattoo-full-leg.jpg",
-    images: ["/assets/tattoo-full-leg.jpg", "/assets/tattoo-full-leg-2.jpg"],
+    image: img("tattoo-full-leg.jpg"),
+    images: [img("tattoo-full-leg.jpg"), img("tattoo-full-leg-2.jpg")],
     size: "Full chân",
     duration: "10-15 giờ",
     variants: makeFullBodyVariants(
@@ -178,24 +180,23 @@ export const tattooDesigns: TattooDesign[] = [
     price: 3500000,
     category: "Full body",
     description: "Xăm full ngực hoặc full bụng với thiết kế ấn tượng, phù hợp cho các tác phẩm lớn và chi tiết trên vùng ngực hoặc bụng.",
-    image: "/assets/tattoo-chest-new-1.png",
+    image: img("tattoo-chest-new-1.png"),
     images: [
-      "/assets/tattoo-chest-new-1.png",
-      "/assets/tattoo-chest-new-2.png",
-      "/assets/tattoo-chest-new-3.png",
-      "/assets/tattoo-chest-new-4.png",
-      "/assets/tattoo-chest-new-5.png",
-      "/assets/tattoo-chest-new-6.png",
-      "/assets/tattoo-chest-new-7.png",
-      "/assets/tattoo-chest-new-8.png",
-      "/assets/tattoo-chest-new-9.jpg",
+      img("tattoo-chest-new-1.png"),
+      img("tattoo-chest-new-2.png"),
+      img("tattoo-chest-new-3.png"),
+      img("tattoo-chest-new-4.png"),
+      img("tattoo-chest-new-5.png"),
+      img("tattoo-chest-new-6.png"),
+      img("tattoo-chest-new-7.png"),
+      img("tattoo-chest-new-8.png"),
+      img("tattoo-chest-new-9.jpg"),
     ],
     size: "Full ngực hoặc full bụng",
     duration: "8-12 giờ",
     variants: (() => {
       const styles = ["Á nét", "Á tả", "Âu", "Nhật", "Linework"];
       const v: TattooVariant[] = [];
-      // Trắng đen: 1 schedule option → auto-select, ẩn tiến độ
       for (const s of styles) {
         v.push({
           position: "Trắng đen", style: s, sessions: "1 buổi",
@@ -203,7 +204,6 @@ export const tattooDesigns: TattooDesign[] = [
           scheduleOptions: [{ label: "Trả hết 1 lần", price: 3500000, sessions: "1 buổi" }],
         });
       }
-      // Màu: sameDayPrice=0 → ẩn "Xong trong ngày", còn 2 options
       for (const s of styles) {
         v.push({
           position: "Màu", style: s, sessions: "1 buổi",
@@ -226,8 +226,8 @@ export const tattooDesigns: TattooDesign[] = [
     priceText: "Liên hệ",
     category: "Đặc biệt",
     description: "Cover up hình xăm cũ bằng thiết kế mới, che phủ hoàn toàn hình cũ với tác phẩm ấn tượng hơn.",
-    image: "/assets/tattoo-cover-1.png",
-    images: ["/assets/tattoo-cover-1.png", "/assets/tattoo-cover-2.jpg"],
+    image: img("tattoo-cover-1.png"),
+    images: [img("tattoo-cover-1.png"), img("tattoo-cover-2.jpg")],
     size: "Tùy vùng",
     duration: "Tùy kích thước",
     note: "Giá tùy theo kích thước và độ phức tạp. Liên hệ để báo giá.",
@@ -239,15 +239,15 @@ export const tattooDesigns: TattooDesign[] = [
     price: 1000000,
     category: "Mini",
     description: "Hình xăm nhỏ từ mini đến khổ A4, phù hợp cho cổ tay, mắt cá chân, sau tai hoặc bất kỳ vị trí nào.",
-    image: "/assets/tattoo-mini-1.jpg",
+    image: img("tattoo-mini-1.jpg"),
     images: [
-      "/assets/tattoo-mini-1.jpg",
-      "/assets/tattoo-mini-2.png",
-      "/assets/tattoo-mini-3.png",
-      "/assets/tattoo-mini-4.png",
-      "/assets/tattoo-mini-5.png",
-      "/assets/tattoo-mini-6.png",
-      "/assets/tattoo-mini-7.png",
+      img("tattoo-mini-1.jpg"),
+      img("tattoo-mini-2.png"),
+      img("tattoo-mini-3.png"),
+      img("tattoo-mini-4.png"),
+      img("tattoo-mini-5.png"),
+      img("tattoo-mini-6.png"),
+      img("tattoo-mini-7.png"),
     ],
     size: "Mini – A4",
     duration: "1-6 giờ",
@@ -273,8 +273,8 @@ export const tattooDesigns: TattooDesign[] = [
     category: "Đặc biệt",
     description:
       "Thiết kế và xăm theo yêu cầu riêng của bạn. Liên hệ để tư vấn chi tiết về ý tưởng, kích thước và giá.",
-    image: "/assets/tattoo-custom-1.jpg",
-    images: ["/assets/tattoo-custom-1.jpg", "/assets/tattoo-custom-2.jpg", "/assets/tattoo-custom-3.jpg"],
+    image: img("tattoo-custom-1.jpg"),
+    images: [img("tattoo-custom-1.jpg"), img("tattoo-custom-2.jpg"), img("tattoo-custom-3.jpg")],
     size: "Tùy yêu cầu",
     duration: "Tùy yêu cầu",
     note: "Giá tùy theo yêu cầu. Liên hệ để báo giá chi tiết.",

@@ -5,6 +5,7 @@ import { tattooDesigns, displayPrice, formatVNDShort } from "@/data/tattooDesign
 import type { TattooVariant } from "@/data/tattooDesigns";
 import { ArrowLeft, Clock, Ruler, Info } from "lucide-react";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import { getImageUrl, IMG_WIDTH } from "@/lib/imageUrl";
 import {
   Table,
   TableHeader,
