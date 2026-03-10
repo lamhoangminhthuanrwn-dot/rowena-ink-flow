@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Home, Upload, Wallet, SkipForward, Phone } from "lucide-react";
+import { Check, Copy, Home, Upload, Wallet, SkipForward, Phone, Share2 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { bankInfo, generateTransferContent, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,6 +46,20 @@ const Success = () => {
 
   const state = location.state as BookingState | null;
   const savedRefCode = useRef(localStorage.getItem("ref_code")).current;
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  // Fetch referral code for logged-in user
+  useEffect(() => {
+    if (!state?.userId) return;
+    supabase
+      .from("profiles")
+      .select("referral_code")
+      .eq("id", state.userId)
+      .single()
+      .then(({ data }) => {
+        if (data?.referral_code) setReferralCode(data.referral_code);
+      });
+  }, [state?.userId]);
 
   // Insert booking into DB
   const insertBooking = useCallback(async () => {
@@ -292,6 +307,51 @@ const Success = () => {
                   </span>
                 </div>
               ))}
+          </div>
+        </motion.div>
+
+        {/* Referral Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/10 p-5 mb-6"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Share2 className="text-primary" size={20} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-serif text-base font-semibold text-foreground">
+                Giới thiệu bạn mới — nhận hoa hồng 10%
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Chia sẻ link giới thiệu, khi bạn bè đặt lịch và hoàn thành, bạn nhận 10% giá trị đơn.
+              </p>
+              {referralCode ? (
+                <div className="mt-3 flex items-center gap-2">
+                  <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
+                    {`${window.location.origin}/inv/${referralCode}`}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="shrink-0 gap-1.5"
+                    onClick={() => copyText(`${window.location.origin}/inv/${referralCode}`, "referral")}
+                  >
+                    {copied === "referral" ? <Check size={14} /> : <Copy size={14} />}
+                    {copied === "referral" ? "Đã sao chép" : "Sao chép"}
+                  </Button>
+                </div>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Đăng ký tài khoản để nhận link giới thiệu
+                </Link>
+              )}
+            </div>
           </div>
         </motion.div>
 
