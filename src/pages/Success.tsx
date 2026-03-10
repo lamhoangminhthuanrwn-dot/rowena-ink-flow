@@ -322,7 +322,7 @@ const Success = () => {
               <Share2 className="text-primary" size={20} />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-serif text-base font-semibold text-foreground">
+              <h3 className="font-serif text-base font-semibold text-foreground break-words">
                 Giới thiệu bạn mới — nhận hoa hồng 10%
               </h3>
               <p className="mt-1 text-sm text-muted-foreground">
