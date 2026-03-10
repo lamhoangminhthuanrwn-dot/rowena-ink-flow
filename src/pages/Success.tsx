@@ -46,6 +46,20 @@ const Success = () => {
 
   const state = location.state as BookingState | null;
   const savedRefCode = useRef(localStorage.getItem("ref_code")).current;
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  // Fetch referral code for logged-in user
+  useEffect(() => {
+    if (!state?.userId) return;
+    supabase
+      .from("profiles")
+      .select("referral_code")
+      .eq("id", state.userId)
+      .single()
+      .then(({ data }) => {
+        if (data?.referral_code) setReferralCode(data.referral_code);
+      });
+  }, [state?.userId]);
 
   // Insert booking into DB
   const insertBooking = useCallback(async () => {
