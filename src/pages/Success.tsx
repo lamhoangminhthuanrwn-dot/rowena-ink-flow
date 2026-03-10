@@ -238,7 +238,7 @@ const Success = () => {
 
   const handleGoHome = async () => {
     await insertBooking();
-    navigate("/trang-chu");
+    navigate("/");
   };
 
   return (
