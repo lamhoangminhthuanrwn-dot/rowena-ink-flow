@@ -1,11 +1,14 @@
-## Fix: Bỏ hiển thị link giới thiệu, chỉ hiển thị thông tin chương trình + nút đăng ký
 
-nếu đã có tài khoản thì hiển thị link ref của tài khoản đó
+## Fix: Text overflow on referral link
 
-### Thay đổi
+The `<code>` element displaying the referral URL overflows its container because flex items have `min-width: auto` by default, preventing `truncate` from working properly.
 
-`**src/pages/Success.tsx**` (dòng 331-353):
+### Change
 
-- Xóa block conditional `{referralCode ? (...link...) : (...signup...)}` 
-- Thay bằng chỉ hiển thị nút "Đăng ký tài khoản để nhận link giới thiệu" (luôn luôn, không phân biệt đã đăng nhập hay chưa)
-- Có thể bỏ luôn state `referralCode` và useEffect fetch referral_code vì không còn dùng
+**`src/pages/Success.tsx`** (line 332-333):
+- Add `min-w-0` to the flex container `div` (line 332) so `truncate` on the `<code>` element works correctly
+- Also add `overflow-hidden` to the `flex-1` parent div (line 324) for safety
+
+Two classes to add:
+1. Line 324: `<div className="flex-1 min-w-0">` — prevent parent from expanding
+2. Line 332: `<div className="mt-3 flex items-center gap-2 min-w-0">` — allow truncation in flex child
