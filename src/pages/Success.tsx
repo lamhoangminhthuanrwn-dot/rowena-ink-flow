@@ -44,6 +44,7 @@ const Success = () => {
   const insertingRef = useRef(false);
 
   const state = location.state as BookingState | null;
+  const savedRefCode = useRef(localStorage.getItem("ref_code")).current;
 
   // Insert booking into DB
   const insertBooking = useCallback(async () => {
@@ -51,7 +52,6 @@ const Success = () => {
     insertingRef.current = true;
 
     try {
-      const savedRefCode = localStorage.getItem("ref_code") || null;
       const { error } = await supabase.from("bookings").insert([
         {
           booking_code: state.bookingCode,
@@ -129,6 +129,7 @@ const Success = () => {
           size: state.size,
           payment_status: "unpaid",
           booking_status: "new",
+          referral_code: savedRefCode,
         });
 
         const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/bookings`;
