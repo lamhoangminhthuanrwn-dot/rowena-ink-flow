@@ -1,14 +1,14 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Thêm lưu ý về số buổi phụ thuộc độ chịu đau
 
-### Changes in `src/data/tattooDesigns.ts`
+Thêm dòng lưu ý: *"Số buổi thực hiện phụ thuộc vào độ chịu đau của khách hàng (ủ tê chỉ giảm 1 phần sát thương 50-80%)"* vào 2 vị trí:
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### 1. `src/pages/ProductDetail.tsx`
+- Thêm một dòng lưu ý cố định ngay dưới bảng giá chi tiết (sau price table, trước `design.note`), dùng icon `Info` + style `bg-amber-50` để nổi bật.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+### 2. `src/components/BookingOptionStep.tsx`
+- Thêm dòng lưu ý tương tự ngay dưới phần hiển thị giá ước tính (sau price display block, trước `</div>` cuối).
+
+Cả hai nơi sẽ dùng cùng một đoạn text và style nhất quán.
 
