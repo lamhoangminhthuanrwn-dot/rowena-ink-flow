@@ -121,6 +121,11 @@ const Ketoan = () => {
   };
 
   const markCompleted = async (id: string) => {
+    const booking = bookings.find(b => b.id === id);
+    if (!booking?.total_price || booking.total_price <= 0) {
+      toast.error("Vui lòng nhập giá trị đơn hàng trước khi đánh dấu hoàn thành.");
+      return;
+    }
     const { error } = await supabase.rpc("admin_update_booking_status", {
       _booking_id: id, _booking_status: "completed",
     });
