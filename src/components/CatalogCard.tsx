@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { TattooDesign } from "@/data/tattooDesigns";
 import { displayPrice } from "@/data/tattooDesigns";
+import { getImageUrl, IMG_WIDTH } from "@/lib/imageUrl";
 import ImageSlideshow from "@/components/ImageSlideshow";
 
 interface CatalogCardProps {
@@ -22,10 +23,10 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
     >
       <div className="aspect-[3/4] overflow-hidden">
         {design.images && design.images.length > 1 ? (
-          <ImageSlideshow images={design.images} alt={design.name} />
+          <ImageSlideshow images={design.images} alt={design.name} imgWidth={IMG_WIDTH.CARD} />
         ) : (
           <img
-            src={design.image}
+            src={getImageUrl(design.image, IMG_WIDTH.CARD)}
             alt={design.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"

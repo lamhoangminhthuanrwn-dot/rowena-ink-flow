@@ -5,6 +5,7 @@ import { tattooDesigns, displayPrice, formatVNDShort } from "@/data/tattooDesign
 import type { TattooVariant } from "@/data/tattooDesigns";
 import { ArrowLeft, Clock, Ruler, Info } from "lucide-react";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import { getImageUrl, IMG_WIDTH } from "@/lib/imageUrl";
 import {
   Table,
   TableHeader,
@@ -127,10 +128,10 @@ const ProductDetail = () => {
           >
             {hasSlideshow ? (
               <div className="relative w-full bg-secondary/30 aspect-[3/4]">
-                <ImageSlideshow images={design.images!} alt={design.name} objectFit="contain" />
+                <ImageSlideshow images={design.images!} alt={design.name} objectFit="contain" imgWidth={IMG_WIDTH.DETAIL} />
               </div>
             ) : (
-              <img src={design.image} alt={design.name} className="w-full object-contain bg-secondary/30 aspect-[3/4]" />
+              <img src={getImageUrl(design.image, IMG_WIDTH.DETAIL)} alt={design.name} className="w-full object-contain bg-secondary/30 aspect-[3/4]" />
             )}
           </motion.div>
 

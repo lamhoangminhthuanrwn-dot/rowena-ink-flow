@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getImageUrl } from "@/lib/imageUrl";
 
 interface ImageSlideshowProps {
   images: string[];
@@ -10,9 +11,10 @@ interface ImageSlideshowProps {
   showDots?: boolean;
   showArrows?: boolean;
   objectFit?: "cover" | "contain";
+  imgWidth?: number;
 }
 
-const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover" }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover", imgWidth }: ImageSlideshowProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = useCallback(() => {
@@ -33,7 +35,7 @@ const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = tr
       {images.map((src, i) => (
         <img
           key={src}
-          src={src}
+          src={getImageUrl(src, imgWidth)}
           alt={`${alt} ${i + 1}`}
           className={cn(
             "absolute inset-0 h-full w-full transition-opacity duration-700",
