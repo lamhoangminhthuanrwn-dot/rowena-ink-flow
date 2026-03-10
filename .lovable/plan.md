@@ -1,14 +1,11 @@
+## Fix: Bỏ hiển thị link giới thiệu, chỉ hiển thị thông tin chương trình + nút đăng ký
 
+nếu đã có tài khoản thì hiển thị link ref của tài khoản đó
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+### Thay đổi
 
-### Changes in `src/data/tattooDesigns.ts`
+`**src/pages/Success.tsx**` (dòng 331-353):
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
-
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
-
+- Xóa block conditional `{referralCode ? (...link...) : (...signup...)}` 
+- Thay bằng chỉ hiển thị nút "Đăng ký tài khoản để nhận link giới thiệu" (luôn luôn, không phân biệt đã đăng nhập hay chưa)
+- Có thể bỏ luôn state `referralCode` và useEffect fetch referral_code vì không còn dùng
