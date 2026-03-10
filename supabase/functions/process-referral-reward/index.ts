@@ -53,22 +53,22 @@ Deno.serve(async (req) => {
     let referrerId: string | null = null;
     let referredId: string | null = booking.user_id || null;
 
-    // Path 1: Check profile's referred_by_user_id (registered user)
-    if (booking.user_id) {
-      const { data: profile } = await supabase.from('profiles').select('referred_by_user_id').eq('id', booking.user_id).single();
-      if (profile?.referred_by_user_id) {
-        referrerId = profile.referred_by_user_id;
-      }
-    }
-
-    // Path 2: Check booking's referral_code (guest or registered user without profile ref)
-    if (!referrerId && booking.referral_code) {
+    // Path 1 (Priority): Check booking's referral_code — last-click wins (Shopee-style affiliate)
+    if (booking.referral_code) {
       const { data: referrerProfile } = await supabase.from('profiles').select('id').eq('referral_code', booking.referral_code).single();
       if (referrerProfile) {
         referrerId = referrerProfile.id;
         if (!referredId) {
           referredId = booking.id;
         }
+      }
+    }
+
+    // Path 2 (Fallback): Check profile's referred_by_user_id if no ref code on booking
+    if (!referrerId && booking.user_id) {
+      const { data: profile } = await supabase.from('profiles').select('referred_by_user_id').eq('id', booking.user_id).single();
+      if (profile?.referred_by_user_id) {
+        referrerId = profile.referred_by_user_id;
       }
     }
 
