@@ -135,6 +135,12 @@ const Ketoan = () => {
       toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
       return;
     }
+    // Trigger referral reward as fallback (in case it wasn't processed at markPaid)
+    try {
+      await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
+    } catch (e) {
+      console.warn("Referral reward processing on complete:", e);
+    }
     toast.success("Đã đánh dấu hoàn thành!");
     fetchBookings();
   };
