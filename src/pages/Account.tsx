@@ -84,7 +84,7 @@ const Account = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/trang-chu");
+    navigate("/");
   };
 
   const handleCopyReferral = () => {
