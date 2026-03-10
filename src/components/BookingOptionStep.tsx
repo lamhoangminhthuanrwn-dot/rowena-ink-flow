@@ -304,6 +304,14 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
           )}
         </motion.div>
       )}
+
+      {/* Pain tolerance notice */}
+      {selectedVariant && (
+        <div className="flex items-start gap-2 rounded-md bg-amber-50 dark:bg-amber-950/30 px-3 py-2 border border-amber-200 dark:border-amber-800/50">
+          <Info size={14} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" />
+          <p className="text-xs text-amber-800 dark:text-amber-300">Số buổi thực hiện phụ thuộc vào độ chịu đau của khách hàng (ủ tê chỉ giảm 1 phần sát thương 50-80%)</p>
+        </div>
+      )}
     </div>
   );
 };
