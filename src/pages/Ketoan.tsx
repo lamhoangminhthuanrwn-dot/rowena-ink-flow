@@ -101,12 +101,6 @@ const Ketoan = () => {
       return;
     }
 
-    try {
-      await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
-    } catch (e) {
-      console.warn("Referral reward processing:", e);
-    }
-
     toast.success("Đã xác nhận thanh toán!");
     fetchBookings();
   };
@@ -135,7 +129,7 @@ const Ketoan = () => {
       toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
       return;
     }
-    // Trigger referral reward as fallback (in case it wasn't processed at markPaid)
+    // Trigger referral reward on completion (10% of total_price)
     try {
       await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
     } catch (e) {
@@ -200,11 +194,6 @@ const Ketoan = () => {
             new_price: price,
           },
         }).catch((err) => console.error("Price update email error:", err));
-        // Re-trigger referral reward with updated price (if booking already paid)
-        if (booking.payment_status === "paid" && booking.referral_code) {
-          supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } })
-            .catch((err) => console.warn("Referral reward re-process:", err));
-        }
       }
     }
     setEditPriceId(null);
