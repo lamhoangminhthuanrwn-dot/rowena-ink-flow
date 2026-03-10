@@ -1,17 +1,14 @@
 
 
-## Cập nhật Edge Function sitemap
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-Hiện tại Edge Function chỉ lấy sản phẩm từ bảng `products` trong database (không có dữ liệu active). Các mẫu xăm thực tế nằm trong `tattooDesigns.ts` với 7 slug hardcoded. Cần thêm các slug này trực tiếp vào Edge Function.
+### Changes in `src/data/tattooDesigns.ts`
 
-### Thay đổi
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-**`supabase/functions/sitemap/index.ts`**:
-- Thêm mảng `hardcodedProductSlugs` chứa 7 slug từ `tattooDesigns.ts`:
-  - `xam-full-lung`, `xam-full-tay`, `xam-full-chan`, `xam-full-nguc-hoac-full-bung`, `cover-hinh-xam-cu`, `xam-hinh-mini-a4`, `xam-theo-yeu-cau-khac`
-- Sau khi thêm products từ DB, thêm các slug hardcoded (loại trừ trùng lặp với DB) vào sitemap với priority `0.7`
-- Giữ nguyên logic lấy posts và products từ DB
-
-**`supabase/config.toml`**:
-- Thêm `[functions.sitemap]` với `verify_jwt = false` (function công khai)
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
