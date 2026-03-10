@@ -577,8 +577,10 @@ const Ketoan = () => {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80"
+                                  className="h-auto px-1.5 py-0.5 text-xs text-primary hover:text-primary/80 disabled:opacity-40 disabled:cursor-not-allowed"
                                   onClick={() => markCompleted(b.id)}
+                                  disabled={!b.total_price || b.total_price <= 0}
+                                  title={!b.total_price || b.total_price <= 0 ? "Cần nhập giá trước khi hoàn thành" : ""}
                                 >
                                   Hoàn thành
                                 </Button>
