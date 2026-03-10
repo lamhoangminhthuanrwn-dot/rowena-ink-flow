@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
     }
 
     // Use atomic DB function with booking amount for 10% calculation
-    const { data: rewarded, error: rpcError } = await supabase.rpc('add_referral_reward', {
+    const { data: rewarded, error: rpcError } = await anonClient.rpc('add_referral_reward', {
       _referrer_id: referrerId,
       _referred_id: referredId!,
       _booking_code: booking.booking_code,
