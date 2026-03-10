@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { TattooDesign, TattooVariant } from "@/data/tattooDesigns";
+import { Info } from "lucide-react";
 import { formatVNDShort, getPositions, getStyles, findVariant } from "@/data/tattooDesigns";
 
 export interface SelectedOptions {
