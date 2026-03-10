@@ -13,7 +13,7 @@ const hardcodedProductSlugs = [
 ];
 
 const staticRoutes = [
-  { loc: "/trang-chu", changefreq: "weekly", priority: "1.0" },
+  { loc: "/", changefreq: "weekly", priority: "1.0" },
   { loc: "/mau-xam", changefreq: "weekly", priority: "0.9" },
   { loc: "/dat-lich", changefreq: "monthly", priority: "0.8" },
   { loc: "/tin-tuc", changefreq: "daily", priority: "0.8" },
