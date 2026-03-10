@@ -247,6 +247,7 @@ export const tattooDesigns: TattooDesign[] = [
       "/assets/tattoo-mini-4.png",
       "/assets/tattoo-mini-5.png",
       "/assets/tattoo-mini-6.png",
+      "/assets/tattoo-mini-7.png",
     ],
     size: "Mini – A4",
     duration: "1-6 giờ",
