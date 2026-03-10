@@ -101,12 +101,6 @@ const Ketoan = () => {
       return;
     }
 
-    try {
-      await supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } });
-    } catch (e) {
-      console.warn("Referral reward processing:", e);
-    }
-
     toast.success("Đã xác nhận thanh toán!");
     fetchBookings();
   };
