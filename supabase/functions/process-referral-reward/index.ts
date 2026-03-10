@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'Reward already granted or amount is 0' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const rewardAmount = Math.floor(bookingAmount * 10 / 100);
+    const rewardAmount = bookingAmount > 0 ? Math.floor(bookingAmount * 10 / 100) : 300000;
     return new Response(JSON.stringify({ success: true, amount: rewardAmount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

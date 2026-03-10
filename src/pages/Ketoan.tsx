@@ -200,6 +200,11 @@ const Ketoan = () => {
             new_price: price,
           },
         }).catch((err) => console.error("Price update email error:", err));
+        // Re-trigger referral reward with updated price (if booking already paid)
+        if (booking.payment_status === "paid" && booking.referral_code) {
+          supabase.functions.invoke("process-referral-reward", { body: { booking_id: id } })
+            .catch((err) => console.warn("Referral reward re-process:", err));
+        }
       }
     }
     setEditPriceId(null);
