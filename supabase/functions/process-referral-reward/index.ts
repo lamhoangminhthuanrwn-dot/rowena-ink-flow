@@ -47,11 +47,8 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'Booking not found, skipping' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Need total_price to calculate 10% reward
+    // Calculate reward: 10% of total_price, or fallback to 300K if price not set yet
     const bookingAmount = booking.total_price || 0;
-    if (bookingAmount <= 0) {
-      return new Response(JSON.stringify({ message: 'No total_price on booking, skipping reward' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
 
     let referrerId: string | null = null;
     let referredId: string | null = booking.user_id || null;
@@ -98,7 +95,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'Reward already granted or amount is 0' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const rewardAmount = Math.floor(bookingAmount * 10 / 100);
+    const rewardAmount = bookingAmount > 0 ? Math.floor(bookingAmount * 10 / 100) : 300000;
     return new Response(JSON.stringify({ success: true, amount: rewardAmount }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
