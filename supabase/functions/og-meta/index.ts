@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
 </head>
 <body>
   <p>Redirecting to <a href="${escapedUrl}">${escapedUrl}</a>...</p>
-  <script>window.location.replace("${articleUrl}");</script>
+  <script>window.location.replace(${JSON.stringify(articleUrl)});</script>
 </body>
 </html>`;
 
