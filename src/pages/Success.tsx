@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Home, Upload, Wallet, SkipForward, Phone } from "lucide-react";
+import { Check, Copy, Home, Upload, Wallet, SkipForward, Phone, Share2 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { bankInfo, generateTransferContent, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
