@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,20 +8,22 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Index from "./pages/Index";
-import Catalog from "./pages/Catalog";
-import ProductDetail from "./pages/ProductDetail";
-import Booking from "./pages/Booking";
-import Success from "./pages/Success";
-import Auth from "./pages/Auth";
-import Account from "./pages/Account";
-import Ketoan from "./pages/Ketoan";
-import AdminBranches from "./pages/AdminBranches";
-import AdminPosts from "./pages/AdminPosts";
-import News from "./pages/News";
-import NewsDetail from "./pages/NewsDetail";
-import NotFound from "./pages/NotFound";
 import AdminBookingNotifier from "@/components/AdminBookingNotifier";
 import AdminRoute from "@/components/AdminRoute";
+
+// Lazy-loaded routes for code splitting
+const Catalog = lazy(() => import("./pages/Catalog"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Booking = lazy(() => import("./pages/Booking"));
+const Success = lazy(() => import("./pages/Success"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Account = lazy(() => import("./pages/Account"));
+const Ketoan = lazy(() => import("./pages/Ketoan"));
+const AdminBranches = lazy(() => import("./pages/AdminBranches"));
+const AdminPosts = lazy(() => import("./pages/AdminPosts"));
+const News = lazy(() => import("./pages/News"));
+const NewsDetail = lazy(() => import("./pages/NewsDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
