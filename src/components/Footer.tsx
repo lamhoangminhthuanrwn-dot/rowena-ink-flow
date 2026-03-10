@@ -120,16 +120,22 @@ const Footer = () => {
               </button>
               )}
           </div>
-          <iframe
-              src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
-              width="100%"
-              height="200"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="rounded-lg border border-border/30"
-              title={`Vị trí ${branches[activeBranch].name}`} />
+          <div ref={mapRef}>
+            {mapVisible ? (
+              <iframe
+                src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
+                width="100%"
+                height="200"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="rounded-lg border border-border/30"
+                title={`Vị trí ${branches[activeBranch].name}`} />
+            ) : (
+              <div className="h-[200px] rounded-lg border border-border/30 bg-secondary/30" />
+            )}
+          </div>
 
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin size={12} className="shrink-0 text-primary/70" />
