@@ -1,14 +1,15 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Fix: Text bị cắt do `min-w-0` + `truncate` ảnh hưởng đến tiêu đề
 
-### Changes in `src/data/tattooDesigns.ts`
+### Vấn đề
+Tiêu đề "Giới thiệu bạn mới — nhận hoa hồng 10%" bị cắt/tràn vì parent div có `min-w-0` (đã thêm ở fix trước), kết hợp với layout flex khiến text bị ép quá hẹp trên mobile.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Thay đổi
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+**`src/pages/Success.tsx`** (line 325):
+- Thêm `break-words` vào thẻ `<h3>` để text tự xuống dòng thay vì bị cắt:
+  ```tsx
+  <h3 className="font-serif text-base font-semibold text-foreground break-words">
+  ```
 
