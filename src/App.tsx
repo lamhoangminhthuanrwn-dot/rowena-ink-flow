@@ -75,7 +75,7 @@ const ReferralRedirect = () => {
   if (code) {
     localStorage.setItem("ref_code", code);
   }
-  return <Navigate to="/trang-chu" replace />;
+  return <Navigate to="/" replace />;
 };
 
 const OldCatalogRedirect = () => {
