@@ -321,7 +321,7 @@ const Success = () => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <Share2 className="text-primary" size={20} />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <h3 className="font-serif text-base font-semibold text-foreground">
                 Giới thiệu bạn mới — nhận hoa hồng 10%
               </h3>
