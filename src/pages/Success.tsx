@@ -329,7 +329,7 @@ const Success = () => {
                 Chia sẻ link giới thiệu, khi bạn bè đặt lịch và hoàn thành, bạn nhận 10% giá trị đơn.
               </p>
               {referralCode ? (
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-3 flex items-center gap-2 min-w-0">
                   <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
                     {`${window.location.origin}/inv/${referralCode}`}
                   </code>
