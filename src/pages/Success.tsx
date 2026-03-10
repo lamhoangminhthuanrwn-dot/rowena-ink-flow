@@ -321,7 +321,7 @@ const Success = () => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <Share2 className="text-primary" size={20} />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <h3 className="font-serif text-base font-semibold text-foreground">
                 Giới thiệu bạn mới — nhận hoa hồng 10%
               </h3>
@@ -329,7 +329,7 @@ const Success = () => {
                 Chia sẻ link giới thiệu, khi bạn bè đặt lịch và hoàn thành, bạn nhận 10% giá trị đơn.
               </p>
               {referralCode ? (
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-3 flex items-center gap-2 min-w-0">
                   <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
                     {`${window.location.origin}/inv/${referralCode}`}
                   </code>
