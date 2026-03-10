@@ -36,11 +36,11 @@ const App = () => (
             <Navbar />
             <main className="min-h-screen">
               <Routes>
-                <Route path="/trang-chu" element={<Index />} />
+                <Route path="/" element={<Index />} />
                 <Route path="/mau-xam" element={<Catalog />} />
                 <Route path="/mau-xam/:slug" element={<ProductDetail />} />
                 {/* Redirects from old URLs */}
-                <Route path="/" element={<Navigate to="/trang-chu" replace />} />
+                <Route path="/trang-chu" element={<Navigate to="/" replace />} />
                 <Route path="/catalog" element={<Navigate to="/mau-xam" replace />} />
                 <Route path="/catalog/:slug" element={<OldCatalogRedirect />} />
                 <Route path="/dat-lich" element={<Booking />} />
