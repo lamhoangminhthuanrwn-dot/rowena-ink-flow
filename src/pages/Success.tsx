@@ -129,6 +129,7 @@ const Success = () => {
           size: state.size,
           payment_status: "unpaid",
           booking_status: "new",
+          referral_code: savedRefCode,
         });
 
         const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/bookings`;
