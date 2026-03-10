@@ -1,13 +1,14 @@
 
 
-## Fix: Referral link domain on Success page
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Problem
-Success page uses `window.location.origin` which shows the preview/Lovable domain instead of the production domain `https://thuanlam.id.vn`.
+### Changes in `src/data/tattooDesigns.ts`
 
-### Change
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-**`src/pages/Success.tsx`** (lines 334, 340):
-- Replace `${window.location.origin}/inv/${referralCode}` with `https://thuanlam.id.vn/inv/${referralCode}`
-- Matches the pattern already used in `Account.tsx`
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 

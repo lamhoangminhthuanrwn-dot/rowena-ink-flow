@@ -331,13 +331,13 @@ const Success = () => {
               {referralCode ? (
                 <div className="mt-3 flex items-center gap-2 min-w-0">
                   <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
-                    {`${window.location.origin}/inv/${referralCode}`}
+                    {`https://thuanlam.id.vn/inv/${referralCode}`}
                   </code>
                   <Button
                     size="sm"
                     variant="outline"
                     className="shrink-0 gap-1.5"
-                    onClick={() => copyText(`${window.location.origin}/inv/${referralCode}`, "referral")}
+                    onClick={() => copyText(`https://thuanlam.id.vn/inv/${referralCode}`, "referral")}
                   >
                     {copied === "referral" ? <Check size={14} /> : <Copy size={14} />}
                     {copied === "referral" ? "Đã sao chép" : "Sao chép"}
