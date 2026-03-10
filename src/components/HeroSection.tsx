@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { getImageUrl, IMG_WIDTH } from "@/lib/imageUrl";
+import heroImg from "@/assets/hero-tattoo.jpg";
 
 const HeroSection = () => (
   <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
     <img
-      src={getImageUrl("hero-tattoo.jpg", IMG_WIDTH.HERO)}
+      src={heroImg}
       alt="Tattoo artist working in studio"
       className="absolute inset-0 h-full w-full object-cover"
       loading="eager"
