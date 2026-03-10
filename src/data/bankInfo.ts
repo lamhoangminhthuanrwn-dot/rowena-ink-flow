@@ -1,8 +1,8 @@
 export const bankInfo = {
-  bankName: "Vietcombank",
+  bankName: "BVBank - Ngân hàng TMCP Bản Việt",
   bankId: "970436",
-  accountNumber: "1234567890",
-  accountName: "ROWENA TATTOO STUDIO",
+  accountNumber: "99ZP26063M39729787",
+  accountName: "ROWENA TATTOO",
   branch: "Hồ Chí Minh",
   depositAmount: 200000,
   zaloPayPhone: "0938048780",
