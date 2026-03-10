@@ -26,6 +26,18 @@ const branches = [
 
 const Footer = () => {
   const [activeBranch, setActiveBranch] = useState(0);
+  const [mapVisible, setMapVisible] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setMapVisible(true); observer.disconnect(); } },
+      { rootMargin: "200px" }
+    );
+    observer.observe(mapRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <footer className="border-t border-border/50 bg-card/50 pt-16 pb-8">
