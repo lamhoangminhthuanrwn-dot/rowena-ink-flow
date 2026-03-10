@@ -25,4 +25,54 @@
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-full-lung</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-full-tay</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-full-chan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-full-nguc-hoac-full-bung</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/cover-hinh-xam-cu</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-hinh-mini-a4</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/mau-xam/xam-theo-yeu-cau-khac</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/tin-tuc/khuyen-mai-thang-3-giam-20-xam-mini</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/tin-tuc/huong-dan-cham-soc-hinh-xam</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thuanlam.id.vn/tin-tuc/rowena-khai-truong-chi-nhanh-quan-7</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
