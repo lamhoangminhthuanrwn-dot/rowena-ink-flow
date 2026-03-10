@@ -1,14 +1,14 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Fix: Font serif gây lỗi hiển thị dấu tiếng Việt
 
-### Changes in `src/data/tattooDesigns.ts`
+Chữ "hồng" hiển thị sai dấu do dùng `font-serif` (Crimson Pro) — font này không hỗ trợ tốt dấu tiếng Việt kết hợp (đã ghi nhận trong style guide).
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Thay đổi
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+**`src/pages/Success.tsx`** (line 325):
+- Đổi `font-serif` thành `font-sans` cho thẻ `<h3>`:
+```tsx
+<h3 className="font-sans text-base font-semibold text-foreground break-words">
+```
 
