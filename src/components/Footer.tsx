@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import logoRowena from "@/assets/logo-rowena-footer.png";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, MapPin, Phone, Clock, Mail } from "lucide-react";
@@ -26,6 +26,18 @@ const branches = [
 
 const Footer = () => {
   const [activeBranch, setActiveBranch] = useState(0);
+  const [mapVisible, setMapVisible] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setMapVisible(true); observer.disconnect(); } },
+      { rootMargin: "200px" }
+    );
+    observer.observe(mapRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <footer className="border-t border-border/50 bg-card/50 pt-16 pb-8">
@@ -108,16 +120,22 @@ const Footer = () => {
               </button>
               )}
           </div>
-          <iframe
-              src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
-              width="100%"
-              height="200"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="rounded-lg border border-border/30"
-              title={`Vị trí ${branches[activeBranch].name}`} />
+          <div ref={mapRef}>
+            {mapVisible ? (
+              <iframe
+                src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
+                width="100%"
+                height="200"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="rounded-lg border border-border/30"
+                title={`Vị trí ${branches[activeBranch].name}`} />
+            ) : (
+              <div className="h-[200px] rounded-lg border border-border/30 bg-secondary/30" />
+            )}
+          </div>
 
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin size={12} className="shrink-0 text-primary/70" />
