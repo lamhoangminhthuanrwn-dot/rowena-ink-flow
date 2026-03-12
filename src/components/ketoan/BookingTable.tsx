@@ -322,6 +322,58 @@ const BookingTable = ({
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            Trang {page + 1} / {totalPages} — {totalCount} bookings
+          </p>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 0}
+              onClick={() => onPageChange(page - 1)}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronLeft size={14} />
+            </Button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+              let pageNum: number;
+              if (totalPages <= 7) {
+                pageNum = i;
+              } else if (page < 3) {
+                pageNum = i;
+              } else if (page > totalPages - 4) {
+                pageNum = totalPages - 7 + i;
+              } else {
+                pageNum = page - 3 + i;
+              }
+              return (
+                <Button
+                  key={pageNum}
+                  variant={pageNum === page ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 w-8 p-0 text-xs"
+                  onClick={() => onPageChange(pageNum)}
+                >
+                  {pageNum + 1}
+                </Button>
+              );
+            })}
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages - 1}
+              onClick={() => onPageChange(page + 1)}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronRight size={14} />
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   );
 };
