@@ -1,3 +1,5 @@
+import { SITE_DOMAIN } from "@/lib/constants";
+
 const defaults = {
   title: "ROWENA TATTOO CLUB",
   description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM. Đặt lịch online, xem mẫu xăm và giá.",
@@ -5,7 +7,7 @@ const defaults = {
   type: "website",
 };
 
-const SITE_URL = typeof window !== "undefined" ? window.location.origin : "https://rowena-ink-flow.lovable.app";
+const SITE_URL = SITE_DOMAIN;
 
 function setMeta(attr: "name" | "property", key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
