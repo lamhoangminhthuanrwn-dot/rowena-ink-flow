@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { CalendarDays, Wallet, Share2, Copy, Check } from "lucide-react";
+import { CalendarDays, Wallet as WalletIcon, Share2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { formatVND } from "@/data/tattooDesigns";
+import type { Booking, Withdrawal, WalletTransaction, Wallet } from "@/types/database";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
@@ -25,10 +26,10 @@ const bookingStatusLabels: Record<string, { text: string; className: string }> =
 const Account = () => {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [wallet, setWallet] = useState<{ balance_vnd: number; reserved_vnd: number } | null>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
 
@@ -179,7 +180,7 @@ const Account = () => {
           <div className="mb-6 flex gap-1.5 rounded-lg border border-border bg-secondary/30 p-1">
             {[
               { key: "bookings" as const, label: "Lịch hẹn", icon: CalendarDays },
-              { key: "wallet" as const, label: "Ví & Rút tiền", icon: Wallet },
+              { key: "wallet" as const, label: "Ví & Rút tiền", icon: WalletIcon },
               { key: "referral" as const, label: "Giới thiệu", icon: Share2 },
             ].map((t) => (
               <button
@@ -218,9 +219,9 @@ const Account = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="font-mono text-xs text-primary">{b.booking_code}</p>
-                            <p className="mt-1 font-semibold text-foreground">{b.design_name}</p>
+                            <p className="mt-1 font-semibold text-foreground">{b.product_name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {b.appointment_date} · {b.appointment_time}
+                              {b.preferred_date} · {b.preferred_time}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-1">

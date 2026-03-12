@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import type { BookingWithArtist, Withdrawal, BookingPriceHistory } from "@/types/database";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
@@ -34,8 +35,8 @@ const Ketoan = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"bookings" | "withdrawals">("bookings");
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<BookingWithArtist[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [filter, setFilter] = useState("all");
   const [wdFilter, setWdFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -46,27 +47,26 @@ const Ketoan = () => {
   const [editPriceId, setEditPriceId] = useState<string | null>(null);
   const [editPriceValue, setEditPriceValue] = useState<string>("");
   const [priceHistoryBookingId, setPriceHistoryBookingId] = useState<string | null>(null);
-  const [priceHistory, setPriceHistory] = useState<any[]>([]);
+  const [priceHistory, setPriceHistory] = useState<BookingPriceHistory[]>([]);
   const [priceHistoryLoading, setPriceHistoryLoading] = useState(false);
 
   const fetchPriceHistory = async (bookingId: string) => {
     setPriceHistoryLoading(true);
     setPriceHistoryBookingId(bookingId);
     const { data } = await supabase
-      .from("booking_price_history" as any)
+      .from("booking_price_history")
       .select("*")
       .eq("booking_id", bookingId)
       .order("created_at", { ascending: false });
     
-    if (data && (data as any[]).length > 0) {
-      // Fetch profile names for changed_by
-      const userIds = [...new Set((data as any[]).map((h: any) => h.changed_by))];
+    if (data && data.length > 0) {
+      const userIds = [...new Set(data.map((h) => h.changed_by))];
       const { data: profiles } = await supabase
         .from("profiles")
         .select("id, full_name")
         .in("id", userIds);
       const profileMap = new Map((profiles || []).map((p) => [p.id, p.full_name]));
-      setPriceHistory((data as any[]).map((h: any) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
+      setPriceHistory(data.map((h) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
     } else {
       setPriceHistory([]);
     }
@@ -76,7 +76,7 @@ const Ketoan = () => {
 
   const fetchBookings = async () => {
     const { data } = await supabase.from("bookings").select("*, artists(name)").order("created_at", { ascending: false });
-    if (data) setBookings(data);
+    if (data) setBookings(data as unknown as BookingWithArtist[]);
   };
 
   const fetchWithdrawals = async () => {
@@ -252,10 +252,10 @@ const Ketoan = () => {
     const rows = filteredBookings.map((b) => [
       b.booking_code,
       b.customer_name,
-      b.phone,
-      b.design_name,
-      `${b.appointment_date} ${b.appointment_time}`,
-      b.deposit_amount,
+      b.customer_phone,
+      b.product_name,
+      `${b.preferred_date} ${b.preferred_time}`,
+      b.total_price,
       b.payment_status,
       b.booking_status,
       new Date(b.created_at).toLocaleDateString("vi-VN"),
@@ -280,7 +280,7 @@ const Ketoan = () => {
       !search ||
       b.booking_code?.toLowerCase().includes(search.toLowerCase()) ||
       b.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-      b.phone?.includes(search);
+      b.customer_phone?.includes(search);
     return matchFilter && matchSearch;
   });
 
@@ -414,7 +414,7 @@ const Ketoan = () => {
                             {b.preferred_date} · {b.preferred_time}
                           </td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.branch_name || "—"}</td>
-                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{(b as any).artists?.name || "—"}</td>
+                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.artists?.name || "—"}</td>
                           {/* Giá trị column */}
                           <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                             {editPriceId === b.id ? (
