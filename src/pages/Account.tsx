@@ -180,7 +180,7 @@ const Account = () => {
           <div className="mb-6 flex gap-1.5 rounded-lg border border-border bg-secondary/30 p-1">
             {[
               { key: "bookings" as const, label: "Lịch hẹn", icon: CalendarDays },
-              { key: "wallet" as const, label: "Ví & Rút tiền", icon: Wallet },
+              { key: "wallet" as const, label: "Ví & Rút tiền", icon: WalletIcon },
               { key: "referral" as const, label: "Giới thiệu", icon: Share2 },
             ].map((t) => (
               <button
