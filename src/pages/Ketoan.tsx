@@ -35,8 +35,8 @@ const Ketoan = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"bookings" | "withdrawals">("bookings");
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [filter, setFilter] = useState("all");
   const [wdFilter, setWdFilter] = useState("all");
   const [search, setSearch] = useState("");
