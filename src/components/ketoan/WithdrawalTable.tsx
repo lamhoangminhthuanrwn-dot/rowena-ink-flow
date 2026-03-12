@@ -1,13 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { formatVND } from "@/data/tattooDesigns";
 import type { Withdrawal } from "@/types/database";
-
-const withdrawalStatusLabels: Record<string, { text: string; className: string }> = {
-  pending: { text: "Chờ duyệt", className: "bg-muted text-muted-foreground" },
-  approved: { text: "Đã duyệt", className: "bg-primary/10 text-primary" },
-  paid: { text: "Đã chuyển", className: "bg-success/10 text-success" },
-  rejected: { text: "Từ chối", className: "bg-destructive/10 text-destructive" },
-};
+import { withdrawalStatusLabels } from "@/lib/statusLabels";
 
 interface WithdrawalTableProps {
   withdrawals: Withdrawal[];
