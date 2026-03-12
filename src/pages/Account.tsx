@@ -219,9 +219,9 @@ const Account = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="font-mono text-xs text-primary">{b.booking_code}</p>
-                            <p className="mt-1 font-semibold text-foreground">{b.design_name}</p>
+                            <p className="mt-1 font-semibold text-foreground">{b.product_name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {b.appointment_date} · {b.appointment_time}
+                              {b.preferred_date} · {b.preferred_time}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
