@@ -252,7 +252,7 @@ const BookingTable = ({
                             </Button>
                             <Button size="sm" variant="ghost"
                               className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
-                              onClick={() => onCancelBooking(b.id)} title="Hủy đơn">
+                              onClick={() => setCancelTargetId(b.id)} title="Hủy đơn">
                               <XCircle size={12} /> Hủy
                             </Button>
                           </>
