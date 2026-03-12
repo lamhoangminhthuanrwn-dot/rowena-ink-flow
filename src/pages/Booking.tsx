@@ -96,63 +96,19 @@ const Booking = () => {
     fetchData();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const remaining = MAX_FILES - referenceFiles.length;
-    if (remaining <= 0) {
-      toast.error(`Tối đa ${MAX_FILES} ảnh tham khảo`);
-      return;
-    }
-    const toAdd = files.slice(0, remaining);
-    const validFiles: File[] = [];
-    for (const file of toAdd) {
-      const err = validateFile(file);
-      if (err) {
-        toast.error(err);
-      } else {
-        validFiles.push(file);
-      }
-    }
-    if (files.length > remaining) {
-      toast.warning(`Chỉ thêm được ${remaining} ảnh nữa`);
-    }
-    setReferenceFiles((prev) => [...prev, ...validFiles]);
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => setReferencePreviews((prev) => [...prev, reader.result as string]);
-      reader.readAsDataURL(file);
-    });
-    // Reset input so same file can be selected again
-    e.target.value = "";
-  };
-
-  const removeFile = (idx: number) => {
-    setReferenceFiles((prev) => prev.filter((_, i) => i !== idx));
-    setReferencePreviews((prev) => prev.filter((_, i) => i !== idx));
-  };
-
   const handleSubmit = async () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      // Artist assignment is handled server-side with availability check
       const branch = branches.find((b) => b.id === selectedBranch);
 
-      // Upload reference images first
+      // Upload reference images via hook
       const tempCode = `TMP${Date.now().toString(36).toUpperCase()}`;
-      const uploadedPaths: string[] = [];
-      for (let i = 0; i < referenceFiles.length; i++) {
-        const file = referenceFiles[i];
+      const folder = user?.id || 'anon';
+      const uploadedPaths = await refUpload.uploadAll("booking-uploads", (file, i) => {
         const ext = file.name.split(".").pop();
-        const folder = user?.id || 'anon';
-        const path = `references/${folder}/${tempCode}_${i}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("booking-uploads")
-          .upload(path, file, { upsert: true });
-        if (!uploadError) {
-          uploadedPaths.push(path);
-        }
-      }
+        return `references/${folder}/${tempCode}_${i}.${ext}`;
+      });
 
       // Call server-side Edge Function to create booking
       const savedRefCode = localStorage.getItem("ref_code");
