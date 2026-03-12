@@ -53,7 +53,7 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
   };
 
   const handleDepositSubmit = async () => {
-    if (depositFiles.length === 0) {
+    if (deposit.files.length === 0) {
       toast.error("Vui lòng tải lên ít nhất 1 ảnh biên lai.");
       return;
     }
@@ -61,20 +61,10 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
     try {
       await onInsertBooking();
 
-      const uploadedPaths: string[] = [];
-      for (let i = 0; i < depositFiles.length; i++) {
-        const file = depositFiles[i];
+      const uploadedPaths = await deposit.uploadAll("booking-uploads", (file, i) => {
         const ext = file.name.split(".").pop();
-        const path = `deposits/${bookingCode}_${Date.now()}_${i}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("booking-uploads")
-          .upload(path, file, { upsert: true });
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-        } else {
-          uploadedPaths.push(path);
-        }
-      }
+        return `deposits/${bookingCode}_${Date.now()}_${i}.${ext}`;
+      });
 
       if (uploadedPaths.length === 0) {
         toast.error("Không thể tải ảnh lên. Vui lòng thử lại.");
