@@ -9,6 +9,7 @@ import {
   Plus, Pencil, Trash2, Check, X, MapPin, User, Clock,
   ChevronDown, ChevronUp, ArrowLeft,
 } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Branch {
   id: string;
