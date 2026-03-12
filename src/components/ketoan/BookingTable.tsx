@@ -376,6 +376,18 @@ const BookingTable = ({
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!cancelTargetId}
+        title="Hủy đơn booking?"
+        description="Bạn có chắc chắn muốn hủy đơn booking này? Hành động không thể hoàn tác."
+        confirmLabel="Hủy đơn"
+        onConfirm={() => {
+          if (cancelTargetId) onCancelBooking(cancelTargetId);
+          setCancelTargetId(null);
+        }}
+        onCancel={() => setCancelTargetId(null)}
+      />
     </>
   );
 };
