@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface Props {
@@ -27,15 +28,21 @@ class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background text-foreground">
-          <h2 className="text-xl font-semibold">Đã xảy ra lỗi</h2>
-          <p className="text-muted-foreground">Vui lòng tải lại trang để tiếp tục.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition"
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
+          <h2 className="text-xl font-semibold text-foreground">
+            Đã xảy ra lỗi
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Trang không thể tải. Vui lòng thử lại.
+          </p>
+          <Button
+            onClick={() => {
+              this.setState({ hasError: false });
+              window.location.reload();
+            }}
           >
-            Tải lại
-          </button>
+            Tải lại trang
+          </Button>
         </div>
       );
     }

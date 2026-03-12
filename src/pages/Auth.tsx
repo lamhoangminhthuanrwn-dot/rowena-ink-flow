@@ -32,6 +32,15 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    const phoneClean = phone.replace(/\s/g, "");
+    if (phoneClean && !/^(0\d{9,10})$/.test(phoneClean)) {
+      toast.error("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (VD: 0901234567).");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự.");
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,

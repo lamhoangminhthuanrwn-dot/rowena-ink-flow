@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { formatVND } from "@/data/tattooDesigns";
 import type { Booking, Withdrawal, WalletTransaction, Wallet } from "@/types/database";
+import { getReferralUrl } from "@/lib/constants";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
@@ -90,7 +91,7 @@ const Account = () => {
 
   const handleCopyReferral = () => {
     if (!profile?.referral_code) return;
-    const link = `${window.location.origin}/inv/${profile.referral_code}`;
+    const link = getReferralUrl(profile.referral_code);
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -103,8 +104,13 @@ const Account = () => {
       return;
     }
     const amount = parseInt(wdAmount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error("Số tiền không hợp lệ.");
+    if (isNaN(amount) || amount < 10000) {
+      toast.error("Số tiền rút tối thiểu là 10.000đ.");
+      return;
+    }
+    const phoneClean = wdPhone.replace(/\s/g, "");
+    if (!/^(0\d{9,10})$/.test(phoneClean)) {
+      toast.error("Số điện thoại MoMo không hợp lệ.");
       return;
     }
     const available = (wallet?.balance_vnd || 0) - (wallet?.reserved_vnd || 0);
@@ -396,7 +402,7 @@ const Account = () => {
                     <div className="rounded-lg border border-border bg-card px-4 py-3">
                       <p className="text-xs text-muted-foreground mb-1">Link giới thiệu</p>
                       <p className="break-all text-sm text-foreground">
-                        {window.location.origin}/inv/{profile.referral_code}
+                        {getReferralUrl(profile.referral_code)}
                       </p>
                     </div>
                     <Button

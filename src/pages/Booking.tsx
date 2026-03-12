@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import BookingOptionStep from "@/components/BookingOptionStep";
@@ -28,6 +29,9 @@ const Booking = () => {
   const [step, setStep] = useState(0);
   const [selectedDesign, setSelectedDesign] = useState(searchParams.get("design") || "");
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions | null>(null);
+  const handleOptionsChange = useCallback((options: SelectedOptions | null) => {
+    setSelectedOptions(options);
+  }, []);
   const [form, setForm] = useState({
     name: profile?.full_name || "",
     phone: profile?.phone || "",
@@ -148,6 +152,9 @@ const Booking = () => {
           selectedSessions: selectedOptions?.sessionsLabel || null,
         },
       });
+    } catch (err) {
+      console.error("Booking submit error:", err);
+      toast.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
     } finally {
       setSubmitting(false);
     }
@@ -226,7 +233,7 @@ const Booking = () => {
             )}
 
             {contentStep === "options" && design && (
-              <BookingOptionStep design={design} onOptionsChange={setSelectedOptions} />
+              <BookingOptionStep design={design} onOptionsChange={handleOptionsChange} />
             )}
 
             {contentStep === "info" && (

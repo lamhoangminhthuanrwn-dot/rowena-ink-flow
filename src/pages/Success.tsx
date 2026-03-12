@@ -8,6 +8,7 @@ import { bankInfo, generateTransferContent, generateZaloPayUrl } from "@/data/ba
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getReferralUrl } from "@/lib/constants";
 
 interface BookingState {
   bookingCode: string;
@@ -303,13 +304,13 @@ const Success = () => {
               {referralCode ? (
                 <div className="mt-3 flex items-center gap-2 min-w-0">
                   <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
-                    {`${window.location.origin}/inv/${referralCode}`}
+                    {getReferralUrl(referralCode)}
                   </code>
                   <Button
                     size="sm"
                     variant="outline"
                     className="shrink-0 gap-1.5"
-                    onClick={() => copyText(`${window.location.origin}/inv/${referralCode}`, "referral")}
+                    onClick={() => copyText(getReferralUrl(referralCode), "referral")}
                   >
                     {copied === "referral" ? <Check size={14} /> : <Copy size={14} />}
                     {copied === "referral" ? "Đã sao chép" : "Sao chép"}
@@ -317,7 +318,7 @@ const Success = () => {
                 </div>
               ) : (
                 <Link
-                  to="/auth"
+                  to="/dang-nhap"
                   className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   Đăng ký tài khoản để nhận link giới thiệu

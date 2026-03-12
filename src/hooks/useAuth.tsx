@@ -67,25 +67,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id, session.user);
-            checkRoles(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
-          setIsModerator(false);
-        }
-      }
-    );
+    let mounted = true;
 
+    // 1. Khởi tạo session ban đầu
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -95,7 +81,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    // 2. Lắng nghe thay đổi SAU KHI khởi tạo
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (!mounted) return;
+        // Bỏ qua INITIAL_SESSION vì đã xử lý ở getSession()
+        if (event === "INITIAL_SESSION") return;
+
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+        if (session?.user) {
+          fetchProfile(session.user.id, session.user);
+          checkRoles(session.user.id);
+        } else {
+          setProfile(null);
+          setIsAdmin(false);
+          setIsModerator(false);
+        }
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const canManagePosts = isAdmin || isModerator;
