@@ -389,7 +389,7 @@ const Booking = () => {
                   <select
                     value={selectedBranch}
                     onChange={(e) => { setSelectedBranch(e.target.value); setScheduleErrors((p) => ({ ...p, branch: undefined })); }}
-                    className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}
                   >
                     <option value="">Chọn chi nhánh</option>
                     {branches.map((b) => (
