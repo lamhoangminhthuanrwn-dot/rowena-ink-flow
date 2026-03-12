@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Check, X, Download, Search, Eye, CheckCircle, XCircle, Pencil, History } from "lucide-react";
+import { Check, X, Download, Search, Eye, CheckCircle, XCircle, Pencil, History, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatVND } from "@/data/tattooDesigns";
 import PriceEditor from "./PriceEditor";
@@ -14,6 +14,10 @@ interface BookingTableProps {
   onFilterChange: (filter: string) => void;
   onSearchChange: (search: string) => void;
   onExportCSV: () => void;
+  page: number;
+  totalCount: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
   expandedId: string | null;
   onToggleExpand: (id: string) => void;
   editPriceId: string | null;
