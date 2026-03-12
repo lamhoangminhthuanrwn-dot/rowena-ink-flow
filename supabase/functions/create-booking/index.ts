@@ -6,6 +6,8 @@ const corsHeaders = {
 };
 
 const MAX_FIELD = 500;
+const PHONE_REGEX = /^0\d{9,10}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateStr(val: unknown, max = MAX_FIELD): string {
   if (val === null || val === undefined) return '';
