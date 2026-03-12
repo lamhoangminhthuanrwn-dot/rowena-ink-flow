@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 /** Simple markdown-like content formatter */
 function processInline(text: string): string {
   return text
