@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import AdminBookingNotifier from "@/components/AdminBookingNotifier";
 import AdminRoute from "@/components/AdminRoute";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy-loaded routes for code splitting
 const Catalog = lazy(() => import("./pages/Catalog"));
