@@ -35,7 +35,6 @@ interface BookingTableProps {
   onSavePrice: (id: string) => void;
   onCancelEditPrice: () => void;
   onMarkPaid: (id: string) => void;
-  onRejectPayment: (id: string) => void;
   rejectId: string | null;
   rejectReason: string;
   onSetRejectId: (id: string | null) => void;
