@@ -59,11 +59,13 @@ renderer.table = (token) => {
   return `<div class="overflow-x-auto my-6"><table class="w-full border-collapse text-sm"><thead class="bg-muted">${headerRow}</thead><tbody>${bodyRows}</tbody></table></div>`;
 };
 
-renderer.tablerow = ({ text }: { text: string }) =>
-  `<tr class="border-b border-border">${text}</tr>`;
-
-renderer.tablecell = ({ text, header }: { text: string; header: boolean }) => {
-  const tag = header ? "th" : "td";
+renderer.tablecell = (token) => {
+  const tag = token.header ? "th" : "td";
+  const cls = token.header
+    ? "px-4 py-2 text-left font-semibold text-foreground"
+    : "px-4 py-2 text-muted-foreground";
+  return `<${tag} class="${cls}">${token.text}</${tag}>`;
+};
   const cls = header
     ? "px-4 py-2 text-left font-semibold text-foreground"
     : "px-4 py-2 text-muted-foreground";
