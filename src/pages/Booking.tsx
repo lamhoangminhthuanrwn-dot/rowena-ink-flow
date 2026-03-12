@@ -1,15 +1,17 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFileUpload } from "@/hooks/useFileUpload";
+import { cn } from "@/lib/utils";
 import BookingOptionStep from "@/components/BookingOptionStep";
 import type { SelectedOptions } from "@/components/BookingOptionStep";
 import {
@@ -31,6 +33,21 @@ interface Artist {
   id: string;
   name: string;
   branch_id: string;
+  work_start: string;
+  work_end: string;
+}
+
+function generateTimeSlots(start = "08:00", end = "17:00"): string[] {
+  const slots: string[] = [];
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  let h = sh, m = sm;
+  while (h < eh || (h === eh && m <= em)) {
+    slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    h += 1;
+  }
+  // Skip lunch break 12:00
+  return slots.filter((s) => s !== "12:00");
 }
 
 const FieldError = ({ message }: { message?: string }) =>
@@ -60,6 +77,7 @@ const Booking = () => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [infoErrors, setInfoErrors] = useState<InfoErrors>({});
   const [scheduleErrors, setScheduleErrors] = useState<ScheduleErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
@@ -85,15 +103,23 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingData(true);
       const [{ data: b }, { data: a }] = await Promise.all([
         supabase.from("branches").select("id, name, slug").order("name"),
-        supabase.from("artists").select("id, name, branch_id").eq("is_active", true),
+        supabase.from("artists").select("id, name, branch_id, work_start, work_end").eq("is_active", true),
       ]);
       if (b) setBranches(b);
       if (a) setArtists(a);
+      setLoadingData(false);
     };
     fetchData();
   }, []);
+
+  const selectedArtist = artists.find((a) => a.branch_id === selectedBranch);
+  const timeSlots = useMemo(
+    () => selectedArtist ? generateTimeSlots(selectedArtist.work_start, selectedArtist.work_end) : generateTimeSlots(),
+    [selectedArtist]
+  );
 
   const handleSubmit = async () => {
     if (submitting) return;
@@ -215,15 +241,16 @@ const Booking = () => {
             {stepLabels.map((s, i) => (
               <div key={s} className="flex flex-1 items-center">
                 <div className="flex flex-col items-center">
-                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors",
                     i <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-                  }`}>
+                  )}>
                     {i < step ? <Check size={14} /> : i + 1}
                   </div>
                   <span className="mt-1.5 hidden text-[10px] text-muted-foreground sm:block">{s}</span>
                 </div>
                 {i < stepLabels.length - 1 && (
-                  <div className={`mx-2 h-px flex-1 transition-colors ${i < step ? "bg-primary" : "bg-border"}`} />
+                  <div className={cn("mx-2 h-px flex-1 transition-colors", i < step ? "bg-primary" : "bg-border")} />
                 )}
               </div>
             ))}
@@ -347,13 +374,22 @@ const Booking = () => {
             {contentStep === "schedule" && (
               <div className="space-y-4">
                 <h2 className="font-sans text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
-
+                {loadingData ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-full" />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                ) : (
+                <>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
                   <select
                     value={selectedBranch}
                     onChange={(e) => { setSelectedBranch(e.target.value); setScheduleErrors((p) => ({ ...p, branch: undefined })); }}
-                    className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}
                   >
                     <option value="">Chọn chi nhánh</option>
                     {branches.map((b) => (
@@ -368,15 +404,15 @@ const Booking = () => {
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Ngày *</label>
                     <input type="date" value={schedule.date} onChange={(e) => { setSchedule({ ...schedule, date: e.target.value }); setScheduleErrors((p) => ({ ...p, date: undefined })); }}
                       min={new Date().toISOString().split("T")[0]}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`} />
+                      className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")} />
                     <FieldError message={scheduleErrors.date} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Giờ *</label>
                     <select value={schedule.time} onChange={(e) => { setSchedule({ ...schedule, time: e.target.value }); setScheduleErrors((p) => ({ ...p, time: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.time ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}>
+                      className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.time ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}>
                       <option value="">Chọn giờ</option>
-                      {["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map((t) => (
+                      {timeSlots.map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>
@@ -403,6 +439,8 @@ const Booking = () => {
                       <p className="text-xs text-muted-foreground">Thời gian ước tính: {design.duration}</p>
                     )}
                   </div>
+                )}
+                </>
                 )}
               </div>
             )}
