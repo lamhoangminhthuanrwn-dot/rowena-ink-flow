@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 /** Simple markdown-like content formatter */
 function processInline(text: string): string {
   return text
@@ -7,7 +9,7 @@ function processInline(text: string): string {
 }
 
 export function formatContent(content: string): string {
-  return content
+  const raw = content
     .split("\n\n")
     .map((block) => {
       const trimmed = block.trim();
@@ -18,13 +20,11 @@ export function formatContent(content: string): string {
         const match = trimmed.match(/!\[(.*?)\]\((.*?)\)/);
         if (match) return `<img src="${match[2]}" alt="${match[1]}" class="w-full rounded-lg my-6" loading="lazy" />`;
       }
-      // Bullet list
       const lines = trimmed.split("\n");
       if (lines.every((l) => /^[-*] /.test(l.trim()))) {
         const items = lines.map((l) => `<li class="text-muted-foreground">${processInline(l.trim().slice(2))}</li>`).join("");
         return `<ul class="list-disc ml-6 my-4 space-y-1.5 text-muted-foreground">${items}</ul>`;
       }
-      // Blockquote
       if (lines.every((l) => l.trim().startsWith("> "))) {
         const inner = lines.map((l) => processInline(l.trim().slice(2))).join("<br/>");
         return `<blockquote class="border-l-4 border-primary/40 pl-4 my-4 italic text-muted-foreground">${inner}</blockquote>`;
@@ -32,4 +32,6 @@ export function formatContent(content: string): string {
       return `<p class="text-muted-foreground leading-relaxed mb-4">${processInline(trimmed)}</p>`;
     })
     .join("");
+
+  return DOMPurify.sanitize(raw, { ADD_TAGS: ["img"], ADD_ATTR: ["loading", "target"] });
 }
