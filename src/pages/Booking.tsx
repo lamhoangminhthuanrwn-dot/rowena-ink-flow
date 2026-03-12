@@ -339,8 +339,7 @@ const Booking = () => {
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">Vị trí xăm</label>
-                      <input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })}
-                        className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                      <Input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })}
                         placeholder="Bắp tay, lưng..." />
                     </div>
                     <div>
