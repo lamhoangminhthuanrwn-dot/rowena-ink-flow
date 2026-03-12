@@ -54,20 +54,19 @@ const Ketoan = () => {
     setPriceHistoryLoading(true);
     setPriceHistoryBookingId(bookingId);
     const { data } = await supabase
-      .from("booking_price_history" as any)
+      .from("booking_price_history")
       .select("*")
       .eq("booking_id", bookingId)
       .order("created_at", { ascending: false });
     
-    if (data && (data as any[]).length > 0) {
-      // Fetch profile names for changed_by
-      const userIds = [...new Set((data as any[]).map((h: any) => h.changed_by))];
+    if (data && data.length > 0) {
+      const userIds = [...new Set(data.map((h) => h.changed_by))];
       const { data: profiles } = await supabase
         .from("profiles")
         .select("id, full_name")
         .in("id", userIds);
       const profileMap = new Map((profiles || []).map((p) => [p.id, p.full_name]));
-      setPriceHistory((data as any[]).map((h: any) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
+      setPriceHistory(data.map((h) => ({ ...h, changed_by_name: profileMap.get(h.changed_by) || "Admin" })));
     } else {
       setPriceHistory([]);
     }
