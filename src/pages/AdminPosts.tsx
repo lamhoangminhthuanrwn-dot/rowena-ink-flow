@@ -319,10 +319,10 @@ const AdminPosts = () => {
                 <div className="flex gap-3 items-start">
                   <div className="flex-1 space-y-2">
                     <div className="flex gap-2">
-                      <input
+                      <Input
                         value={form.cover_image}
                         onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-                        className="flex-1 rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                        className="flex-1"
                         placeholder="URL ảnh hoặc upload file bên dưới"
                       />
                       <input
