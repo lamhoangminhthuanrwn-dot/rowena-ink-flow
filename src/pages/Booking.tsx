@@ -59,8 +59,7 @@ const Booking = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [branches, setBranches] = useState<Branch[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
-  const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
-  const [referencePreviews, setReferencePreviews] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [infoErrors, setInfoErrors] = useState<InfoErrors>({});
   const [scheduleErrors, setScheduleErrors] = useState<ScheduleErrors>({});
