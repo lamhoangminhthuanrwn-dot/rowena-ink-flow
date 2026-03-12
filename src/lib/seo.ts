@@ -59,6 +59,7 @@ export function setSEO(opts: {
   const url = opts.url || `${SITE_URL}${window.location.pathname}`;
 
   document.title = title;
+  setMeta("name", "robots", "index, follow");
   setMeta("name", "description", desc);
   setMeta("property", "og:title", title);
   setMeta("property", "og:description", desc);
