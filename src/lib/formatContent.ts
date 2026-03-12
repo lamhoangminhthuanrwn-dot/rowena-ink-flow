@@ -27,11 +27,12 @@ renderer.image = ({ href, text }: { href: string; text: string }) =>
 renderer.blockquote = ({ text }: { text: string }) =>
   `<blockquote class="border-l-4 border-primary/40 pl-4 my-4 italic text-muted-foreground">${text}</blockquote>`;
 
-renderer.list = ({ body, ordered }: { body: string; ordered: boolean }) => {
-  const tag = ordered ? "ol" : "ul";
-  const cls = ordered
+renderer.list = (token) => {
+  const tag = token.ordered ? "ol" : "ul";
+  const cls = token.ordered
     ? "list-decimal ml-6 my-4 space-y-1.5 text-muted-foreground"
     : "list-disc ml-6 my-4 space-y-1.5 text-muted-foreground";
+  const body = token.items.map((item) => renderer.listitem!(item)).join("");
   return `<${tag} class="${cls}">${body}</${tag}>`;
 };
 
