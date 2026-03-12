@@ -1,15 +1,17 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFileUpload } from "@/hooks/useFileUpload";
+import { cn } from "@/lib/utils";
 import BookingOptionStep from "@/components/BookingOptionStep";
 import type { SelectedOptions } from "@/components/BookingOptionStep";
 import {
@@ -31,6 +33,21 @@ interface Artist {
   id: string;
   name: string;
   branch_id: string;
+  work_start: string;
+  work_end: string;
+}
+
+function generateTimeSlots(start = "08:00", end = "17:00"): string[] {
+  const slots: string[] = [];
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  let h = sh, m = sm;
+  while (h < eh || (h === eh && m <= em)) {
+    slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    h += 1;
+  }
+  // Skip lunch break 12:00
+  return slots.filter((s) => s !== "12:00");
 }
 
 const FieldError = ({ message }: { message?: string }) =>
