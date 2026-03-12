@@ -344,8 +344,7 @@ const Booking = () => {
                     </div>
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">Kích thước</label>
-                      <input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })}
-                        className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                      <Input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })}
                         placeholder="10x15 cm" />
                     </div>
                   </div>
