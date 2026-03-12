@@ -320,18 +320,18 @@ const Booking = () => {
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">
                       Ảnh tham khảo (tối đa {MAX_FILES} ảnh, mỗi ảnh ≤ 5MB)
                     </label>
-                    <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
-                    {referencePreviews.length > 0 && (
+                    <input ref={fileRef} type="file" accept="image/*" multiple onChange={(e) => { refUpload.addFiles(e.target.files || []); e.target.value = ""; }} className="hidden" />
+                    {refUpload.previews.length > 0 && (
                       <div className="mb-2 flex flex-wrap gap-2">
-                        {referencePreviews.map((p, i) => (
+                        {refUpload.previews.map((p, i) => (
                           <div key={i} className="relative">
                             <img src={p} alt={`Ref ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                            <button onClick={() => removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
+                            <button onClick={() => refUpload.removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
                           </div>
                         ))}
                       </div>
                     )}
-                    {referenceFiles.length < MAX_FILES && (
+                    {refUpload.canAddMore && (
                       <button
                         onClick={() => fileRef.current?.click()}
                         className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
