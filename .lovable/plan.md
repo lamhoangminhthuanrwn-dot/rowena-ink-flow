@@ -1,22 +1,14 @@
 
 
-## Plan: Bảo vệ file .env khỏi Git
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-**Lưu ý quan trọng:** File `.env` trong dự án Lovable Cloud được tự động tạo và quản lý bởi hệ thống. Nó chứa các biến công khai (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`) -- đây đều là anon key, an toàn khi public.
+### Changes in `src/data/tattooDesigns.ts`
 
-Tuy nhiên, để tránh thói quen xấu và ngăn việc vô tình commit secret keys trong tương lai:
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-### Thay đổi
-
-1. **Thêm `.env` vào `.gitignore`** (dòng cuối)
-2. **Tạo `.env.example`** với placeholder:
-   ```
-   VITE_SUPABASE_PROJECT_ID="your-project-id"
-   VITE_SUPABASE_PUBLISHABLE_KEY="your-anon-key"
-   VITE_SUPABASE_URL="https://your-project-id.supabase.co"
-   ```
-
-2 file thay đổi, không ảnh hưởng chức năng.
-
-**Lưu ý:** Vì `.env` đã được tracked bởi Git, sau khi thêm vào `.gitignore` cần chạy `git rm --cached .env` để ngừng track. Tuy nhiên trong môi trường Lovable, file `.env` được tự động quản lý nên thay đổi này chủ yếu mang tính phòng ngừa.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
