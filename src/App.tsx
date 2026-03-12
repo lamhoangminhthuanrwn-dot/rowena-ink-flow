@@ -69,7 +69,7 @@ const App = () => (
                   <Route path="/booking" element={<Navigate to="/dat-lich" replace />} />
                   <Route path="/auth" element={<Navigate to="/dang-nhap" replace />} />
                   <Route path="/account" element={<Navigate to="/tai-khoan" replace />} />
-                  <Route path="/ketoan" element={<AdminRoute><Ketoan /></AdminRoute>} />
+                  <Route path="/ketoan" element={<AdminRoute><AdminFinance /></AdminRoute>} />
                   <Route path="/admin/branches" element={<AdminRoute><AdminBranches /></AdminRoute>} />
                   <Route path="/admin/posts" element={<AdminRoute><AdminPosts /></AdminRoute>} />
                   <Route path="/tin-tuc" element={<News />} />
