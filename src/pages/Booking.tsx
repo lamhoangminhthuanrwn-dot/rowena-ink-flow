@@ -250,7 +250,7 @@ const Booking = () => {
                   <span className="mt-1.5 hidden text-[10px] text-muted-foreground sm:block">{s}</span>
                 </div>
                 {i < stepLabels.length - 1 && (
-                  <div className={`mx-2 h-px flex-1 transition-colors ${i < step ? "bg-primary" : "bg-border"}`} />
+                  <div className={cn("mx-2 h-px flex-1 transition-colors", i < step ? "bg-primary" : "bg-border")} />
                 )}
               </div>
             ))}
