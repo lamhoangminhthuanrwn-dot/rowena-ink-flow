@@ -69,7 +69,7 @@ const Ketoan = () => {
 
   useEffect(() => {
     if (user && isAdmin) { fetchBookings(); fetchWithdrawals(); }
-  }, [user, authLoading, isAdmin]);
+  }, [user, authLoading, isAdmin, page]);
 
   const markPaid = async (id: string) => {
     const { error } = await supabase.rpc("admin_update_booking_payment", { _booking_id: id, _payment_status: "paid" });
