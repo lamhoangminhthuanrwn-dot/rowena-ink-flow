@@ -122,42 +122,12 @@ const Success = () => {
     }
   }, [state, bookingInserted]);
 
-  // Insert on page unload / tab close
+  // Insert booking immediately on page load
   useEffect(() => {
-    if (!state) return;
-
-    const handleBeforeUnload = () => {
-      if (!insertingRef.current && !bookingInserted) {
-        // Use sendBeacon for reliable unload
-        const payload = JSON.stringify({
-          booking_code: state.bookingCode,
-          user_id: state.userId || null,
-          customer_name: state.customerName,
-          customer_phone: state.phone,
-          customer_email: state.email,
-          product_name: state.designName,
-          notes: state.note,
-          reference_images: state.referenceImages || [],
-          preferred_date: state.appointmentDate,
-          preferred_time: state.appointmentTime,
-          placement: state.placement,
-          size: state.size,
-          payment_status: "unpaid",
-          booking_status: "new",
-          referral_code: savedRefCode,
-        });
-
-        const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/bookings`;
-        navigator.sendBeacon(
-          url + `?apikey=${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          new Blob([payload], { type: "application/json" }),
-        );
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [state, bookingInserted]);
+    if (state) {
+      insertBooking();
+    }
+  }, [state, insertBooking]);
 
   if (!state) {
     return (
