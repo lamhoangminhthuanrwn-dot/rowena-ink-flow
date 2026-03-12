@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     const preferred_time = validateStr(body.preferred_time, 20) || null;
     const note = validateStr(body.note, 500) || null;
     const branch_id = validateUuid(body.branch_id);
-    const artist_id = validateUuid(body.artist_id);
+    const client_artist_id = validateUuid(body.artist_id);
     const referral_code = validateStr(body.referral_code, 50) || null;
     const total_price = typeof body.total_price === 'number' && body.total_price >= 0 ? body.total_price : null;
     const branch_name = validateStr(body.branch_name, 200) || null;
@@ -84,6 +84,43 @@ Deno.serve(async (req) => {
 
     // Insert booking using service role (bypasses RLS, server generates booking_code)
     const supabase = createClient(supabaseUrl, serviceKey);
+
+    // Server-side artist assignment with availability check
+    let artist_id = client_artist_id;
+    if (!artist_id && branch_id && preferred_date) {
+      // Get active artists for the branch
+      const { data: branchArtists } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('branch_id', branch_id)
+        .eq('is_active', true);
+
+      if (branchArtists && branchArtists.length > 0) {
+        // Find artists who already have bookings at the same date+time
+        let busyArtistIds: string[] = [];
+        if (preferred_time) {
+          const { data: busyBookings } = await supabase
+            .from('bookings')
+            .select('artist_id')
+            .eq('preferred_date', preferred_date)
+            .eq('preferred_time', preferred_time)
+            .not('artist_id', 'is', null)
+            .in('booking_status', ['new', 'confirmed']);
+
+          busyArtistIds = (busyBookings || []).map((b) => b.artist_id!);
+        }
+
+        const availableArtists = branchArtists.filter((a) => !busyArtistIds.includes(a.id));
+
+        if (availableArtists.length > 0) {
+          artist_id = availableArtists[Math.floor(Math.random() * availableArtists.length)].id;
+        } else {
+          // Fallback: all busy, assign randomly anyway
+          console.warn('All artists busy for', preferred_date, preferred_time, '— assigning randomly');
+          artist_id = branchArtists[Math.floor(Math.random() * branchArtists.length)].id;
+        }
+      }
+    }
 
     const { data: booking, error: insertError } = await supabase
       .from('bookings')
