@@ -169,7 +169,7 @@ const Booking = () => {
           reference_images: uploadedUrls,
           branch_id: selectedBranch || null,
           branch_name: branch?.name || null,
-          artist_id: randomArtist?.id || null,
+          // artist_id is assigned server-side based on availability
           referral_code: savedRefCode || null,
           total_price: selectedOptions?.finalPrice || null,
         },
