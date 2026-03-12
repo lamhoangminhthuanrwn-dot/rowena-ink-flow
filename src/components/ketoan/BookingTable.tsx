@@ -63,12 +63,14 @@ const ReferenceImages = ({ paths }: { paths: string[] }) => {
 
 const BookingTable = ({
   bookings, filter, search, onFilterChange, onSearchChange, onExportCSV,
+  page, totalCount, pageSize, onPageChange,
   expandedId, onToggleExpand,
   editPriceId, editPriceValue, onEditPrice, onEditPriceChange, onSavePrice, onCancelEditPrice,
   onMarkPaid, rejectId, rejectReason, onSetRejectId, onRejectReasonChange, onConfirmReject,
   onConfirmBooking, onCancelBooking, onMarkCompleted,
   onViewReceipts, onFetchPriceHistory,
 }: BookingTableProps) => {
+  const totalPages = Math.ceil(totalCount / pageSize);
   const filtered = bookings.filter((b) => {
     const matchFilter =
       filter === "all" ||
