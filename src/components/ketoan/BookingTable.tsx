@@ -269,7 +269,7 @@ const BookingTable = ({
                         {b.booking_status === "confirmed" && (
                           <Button size="sm" variant="ghost"
                             className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
-                            onClick={() => onCancelBooking(b.id)}>
+                            onClick={() => setCancelTargetId(b.id)}>
                             <XCircle size={12} /> Hủy
                           </Button>
                         )}
