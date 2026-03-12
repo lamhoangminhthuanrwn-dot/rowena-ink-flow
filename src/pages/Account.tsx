@@ -10,16 +10,14 @@ import { toast } from "sonner";
 import { formatVND } from "@/data/tattooDesigns";
 import type { Booking, Withdrawal, WalletTransaction, Wallet } from "@/types/database";
 import { getReferralUrl } from "@/lib/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { paymentStatusLabels, bookingStatusLabels } from "@/lib/statusLabels";
 
 const Account = () => {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
 
@@ -32,46 +30,58 @@ const Account = () => {
     if (!authLoading && !user) navigate("/dang-nhap");
   }, [user, authLoading, navigate]);
 
-  useEffect(() => {
-    if (!user) return;
+  const { data: bookings = [] } = useQuery<Booking[]>({
+    queryKey: ["account-bookings", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: tab === "bookings" && !!user,
+  });
 
-    supabase
-      .from("bookings")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data) setBookings(data);
-      });
+  const { data: wallet = null } = useQuery<Wallet | null>({
+    queryKey: ["account-wallet", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("wallet")
+        .select("*")
+        .eq("user_id", user!.id)
+        .single();
+      return data;
+    },
+    enabled: tab === "wallet" && !!user,
+  });
 
-    supabase
-      .from("wallet")
-      .select("*")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) setWallet(data);
-      });
+  const { data: transactions = [] } = useQuery<WalletTransaction[]>({
+    queryKey: ["account-transactions", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("wallet_transactions")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      return data || [];
+    },
+    enabled: tab === "wallet" && !!user,
+  });
 
-    supabase
-      .from("wallet_transactions")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(20)
-      .then(({ data }) => {
-        if (data) setTransactions(data);
-      });
-
-    supabase
-      .from("withdrawals")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data) setWithdrawals(data);
-      });
-  }, [user]);
+  const { data: withdrawals = [] } = useQuery<Withdrawal[]>({
+    queryKey: ["account-withdrawals", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("withdrawals")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: tab === "wallet" && !!user,
+  });
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -120,7 +130,6 @@ const Account = () => {
         toast.error("Không thể thực hiện thao tác. Vui lòng thử lại.");
       } else {
         toast.success("Yêu cầu rút tiền đã được gửi!");
-        // Send email notification to admin
         try {
           await supabase.functions.invoke("send-withdrawal-email", {
             body: { amount_vnd: amount, momo_phone: wdPhone, momo_name: wdName || "" },
@@ -131,14 +140,10 @@ const Account = () => {
         setWdAmount("");
         setWdPhone("");
         setWdName("");
-        const { data: wData } = await supabase.from("wallet").select("*").eq("user_id", user!.id).single();
-        if (wData) setWallet(wData);
-        const { data: wdData } = await supabase
-          .from("withdrawals")
-          .select("*")
-          .eq("user_id", user!.id)
-          .order("created_at", { ascending: false });
-        if (wdData) setWithdrawals(wdData);
+        // Invalidate wallet-related queries to refetch
+        queryClient.invalidateQueries({ queryKey: ["account-wallet", user!.id] });
+        queryClient.invalidateQueries({ queryKey: ["account-withdrawals", user!.id] });
+        queryClient.invalidateQueries({ queryKey: ["account-transactions", user!.id] });
       }
     } finally {
       setWdLoading(false);
