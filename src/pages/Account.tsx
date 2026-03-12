@@ -25,10 +25,10 @@ const bookingStatusLabels: Record<string, { text: string; className: string }> =
 const Account = () => {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [wallet, setWallet] = useState<{ balance_vnd: number; reserved_vnd: number } | null>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
 

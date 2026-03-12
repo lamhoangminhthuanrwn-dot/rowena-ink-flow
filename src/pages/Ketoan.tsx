@@ -47,7 +47,7 @@ const Ketoan = () => {
   const [editPriceId, setEditPriceId] = useState<string | null>(null);
   const [editPriceValue, setEditPriceValue] = useState<string>("");
   const [priceHistoryBookingId, setPriceHistoryBookingId] = useState<string | null>(null);
-  const [priceHistory, setPriceHistory] = useState<any[]>([]);
+  const [priceHistory, setPriceHistory] = useState<BookingPriceHistory[]>([]);
   const [priceHistoryLoading, setPriceHistoryLoading] = useState(false);
 
   const fetchPriceHistory = async (bookingId: string) => {
