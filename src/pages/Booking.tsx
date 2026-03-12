@@ -324,8 +324,8 @@ const Booking = () => {
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại *</label>
-                    <input type="tel" value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.phone ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="tel" value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
+                      className={infoErrors.phone ? "border-destructive bg-destructive/5" : ""}
                       placeholder="0901234567" />
                     <FieldError message={infoErrors.phone} />
                   </div>
