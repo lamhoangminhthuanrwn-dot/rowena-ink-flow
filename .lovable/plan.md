@@ -1,8 +1,14 @@
 
 
-## Plan: Dynamic copyright year in Footer
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-**File:** `src/components/Footer.tsx`, line 150
+### Changes in `src/data/tattooDesigns.ts`
 
-Replace hardcoded `© 2025` with `© {new Date().getFullYear()}`.
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
+
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
