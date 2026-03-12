@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SITE_URL = "https://rowena-ink-flow.lovable.app";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://thuanlam.id.vn";
 
 function escapeHtml(str: string): string {
   return str
