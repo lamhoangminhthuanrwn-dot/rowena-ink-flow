@@ -122,16 +122,20 @@ const Footer = () => {
           </div>
           <div ref={mapRef}>
             {mapVisible ? (
-              <iframe
-                src={`https://maps.google.com/maps?q=${branches[activeBranch].mapQuery}&output=embed`}
-                width="100%"
-                height="200"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="rounded-lg border border-border/30"
-                title={`Vị trí ${branches[activeBranch].name}`} />
+              branches.map((branch, index) => (
+                <iframe
+                  key={branch.name}
+                  src={`https://maps.google.com/maps?q=${branch.mapQuery}&output=embed`}
+                  width="100%"
+                  height="200"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className={`rounded-lg border border-border/30 ${index !== activeBranch ? "hidden" : ""}`}
+                  title={`Vị trí ${branch.name}`}
+                />
+              ))
             ) : (
               <div className="h-[200px] rounded-lg border border-border/30 bg-secondary/30" />
             )}
