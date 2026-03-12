@@ -8,7 +8,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, canManagePosts, loading } = useAuth();
 
   const links = [
     { to: "/", label: "Trang chủ" },
@@ -16,8 +16,6 @@ const Navbar = () => {
     { to: "/tin-tuc", label: "Tin tức" },
     { to: "/dat-lich", label: "Đặt lịch" },
   ];
-
-  const { canManagePosts } = useAuth();
 
   if (user && isAdmin) {
     links.push({ to: "/ketoan", label: "Kế toán" });
