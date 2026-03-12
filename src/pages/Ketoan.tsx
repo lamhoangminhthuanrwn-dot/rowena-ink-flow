@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import type { Booking, Withdrawal, BookingPriceHistory } from "@/types/database";
+import type { BookingWithArtist, Withdrawal, BookingPriceHistory } from "@/types/database";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
