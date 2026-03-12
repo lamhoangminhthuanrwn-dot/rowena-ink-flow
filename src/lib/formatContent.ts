@@ -66,11 +66,8 @@ renderer.tablecell = (token) => {
     : "px-4 py-2 text-muted-foreground";
   return `<${tag} class="${cls}">${token.text}</${tag}>`;
 };
-  const cls = header
-    ? "px-4 py-2 text-left font-semibold text-foreground"
-    : "px-4 py-2 text-muted-foreground";
-  return `<${tag} class="${cls}">${text}</${tag}>`;
-};
+
+
 
 renderer.strong = ({ text }: { text: string }) => `<strong>${text}</strong>`;
 renderer.em = ({ text }: { text: string }) => `<em>${text}</em>`;
