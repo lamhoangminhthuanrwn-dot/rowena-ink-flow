@@ -1,12 +1,14 @@
 
 
-## Plan: Xoá file type thủ công trùng lặp
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-**Phát hiện:** `src/types/booking.ts` không được import ở bất kỳ file nào trong codebase. Tất cả các file đều đã dùng `src/types/database.ts` (re-export từ Supabase generated types).
+### Changes in `src/data/tattooDesigns.ts`
 
-**Thay đổi:**
-1. **Xoá** `src/types/booking.ts` -- file chết, không ai import
-2. Không cần sửa file nào khác
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-Chỉ 1 thao tác duy nhất: xoá 1 file.
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
