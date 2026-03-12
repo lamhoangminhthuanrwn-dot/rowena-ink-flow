@@ -8,6 +8,7 @@ import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 interface DepositSectionProps {
   bookingCode: string;
@@ -19,8 +20,7 @@ interface DepositSectionProps {
 
 const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmitted, onSkipped }: DepositSectionProps) => {
   const navigate = useNavigate();
-  const [depositFiles, setDepositFiles] = useState<File[]>([]);
-  const [depositPreviews, setDepositPreviews] = useState<string[]>([]);
+  const deposit = useFileUpload({ maxFiles: 3 });
   const [depositNote, setDepositNote] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
