@@ -1,14 +1,35 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Create typed interfaces and replace `any[]`
 
-### Changes in `src/data/tattooDesigns.ts`
+### 1. Create `src/types/database.ts`
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+Export type aliases derived from the auto-generated Supabase types:
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+```ts
+import { Database } from "@/integrations/supabase/types";
+
+export type Booking = Database["public"]["Tables"]["bookings"]["Row"];
+export type Withdrawal = Database["public"]["Tables"]["withdrawals"]["Row"];
+export type WalletTransaction = Database["public"]["Tables"]["wallet_transactions"]["Row"];
+export type BookingPriceHistory = Database["public"]["Tables"]["booking_price_history"]["Row"] & {
+  changed_by_name?: string;
+};
+```
+
+### 2. Update `src/pages/Account.tsx`
+
+Replace `any[]` with proper types:
+- `useState<any[]>([])` → `useState<Booking[]>([])`
+- `useState<any[]>([])` → `useState<WalletTransaction[]>([])`
+- `useState<any[]>([])` → `useState<Withdrawal[]>([])`
+
+### 3. Update `src/pages/Ketoan.tsx`
+
+- `useState<any[]>([])` for bookings → `useState<Booking[]>([])`
+- `useState<any[]>([])` for withdrawals → `useState<Withdrawal[]>([])`
+- `useState<any[]>([])` for priceHistory → `useState<BookingPriceHistory[]>([])`
+- Remove `as any[]` and `as any` casts in `fetchPriceHistory`
+
+No functional or visual changes. Only type safety improvements.
 
