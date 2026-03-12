@@ -507,9 +507,7 @@ const AdminPosts = () => {
                     variant="ghost"
                     size="sm"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => {
-                      if (confirm("Xóa bài viết này?")) deleteMutation.mutate(post.id);
-                    }}
+                    onClick={() => setDeletePostId(post.id)}
                   >
                     <Trash2 size={14} />
                   </Button>
