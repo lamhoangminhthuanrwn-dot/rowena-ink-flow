@@ -147,7 +147,7 @@ const Footer = () => {
       <Separator className="my-8 bg-border/30" />
 
       <div className="flex flex-col items-center justify-between gap-3 text-xs text-muted-foreground sm:flex-row">
-        <p>© 2025 ROWENA Tattoo Club. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} ROWENA Tattoo Club. All rights reserved.</p>
         <p className="text-muted-foreground/60">Thiết kế bởi ❤️ cho nghệ thuật xăm</p>
       </div>
     </div>
