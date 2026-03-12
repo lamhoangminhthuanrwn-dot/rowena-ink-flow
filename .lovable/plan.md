@@ -1,14 +1,30 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Thêm validation đầu vào cho Booking
 
-### Changes in `src/data/tattooDesigns.ts`
+### Thay đổi
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+#### 1. Tạo schema validation với Zod — `src/lib/bookingValidation.ts`
+- **Phone**: regex `^0\d{9,10}$` (số VN)
+- **Email**: `z.string().email()` (optional, validate nếu có nhập)
+- **File**: max 5MB/file, max 5 files, chỉ chấp nhận image/*
+- **Date**: không cho chọn ngày quá khứ (bổ sung validation ngoài `min` attribute)
+- Export helper `validateInfoStep()`, `validateScheduleStep()`
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+#### 2. Sửa `src/pages/Booking.tsx`
+- Import validation schema
+- Thêm state `errors: Record<string, string>` để hiển thị lỗi inline dưới mỗi field
+- `canNext()` gọi Zod `.safeParse()` thay vì check rỗng
+- `handleFileChange()` — check file size (max 5MB) và type (image only), toast lỗi nếu không hợp lệ, giới hạn tổng 5 files
+- Hiển thị error message màu đỏ dưới mỗi input khi validation fail
+
+#### 3. Bổ sung validation trong Edge Function `create-booking`
+- Thêm regex check phone server-side: `^0\d{9,10}$`
+- Thêm email format check nếu có giá trị
+- Return lỗi cụ thể (field nào sai) thay vì generic "missing fields"
+
+### Tóm tắt
+- **1 file mới**: `src/lib/bookingValidation.ts`
+- **2 file sửa**: `Booking.tsx`, `create-booking/index.ts`
+- Validation cả client-side (UX) lẫn server-side (security)
 
