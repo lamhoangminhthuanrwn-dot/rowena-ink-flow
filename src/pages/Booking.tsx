@@ -331,8 +331,8 @@ const Booking = () => {
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Email</label>
-                    <input type="email" value={form.email} onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.email ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="email" value={form.email} onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
+                      className={infoErrors.email ? "border-destructive bg-destructive/5" : ""}
                       placeholder="email@example.com" />
                     <FieldError message={infoErrors.email} />
                   </div>
