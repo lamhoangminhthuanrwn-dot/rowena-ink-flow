@@ -102,15 +102,23 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingData(true);
       const [{ data: b }, { data: a }] = await Promise.all([
         supabase.from("branches").select("id, name, slug").order("name"),
-        supabase.from("artists").select("id, name, branch_id").eq("is_active", true),
+        supabase.from("artists").select("id, name, branch_id, work_start, work_end").eq("is_active", true),
       ]);
       if (b) setBranches(b);
       if (a) setArtists(a);
+      setLoadingData(false);
     };
     fetchData();
   }, []);
+
+  const selectedArtist = artists.find((a) => a.branch_id === selectedBranch);
+  const timeSlots = useMemo(
+    () => selectedArtist ? generateTimeSlots(selectedArtist.work_start, selectedArtist.work_end) : generateTimeSlots(),
+    [selectedArtist]
+  );
 
   const handleSubmit = async () => {
     if (submitting) return;
