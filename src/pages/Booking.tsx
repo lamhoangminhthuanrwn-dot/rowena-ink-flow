@@ -165,7 +165,7 @@ const Booking = () => {
           preferred_date: schedule.date,
           preferred_time: schedule.time,
           note: form.note,
-          reference_images: uploadedUrls,
+          reference_images: uploadedPaths,
           branch_id: selectedBranch || null,
           branch_name: branch?.name || null,
           // artist_id is assigned server-side based on availability
