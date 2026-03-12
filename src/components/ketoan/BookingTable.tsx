@@ -71,6 +71,7 @@ const BookingTable = ({
   onConfirmBooking, onCancelBooking, onMarkCompleted,
   onViewReceipts, onFetchPriceHistory,
 }: BookingTableProps) => {
+  const [cancelTargetId, setCancelTargetId] = useState<string | null>(null);
   const totalPages = Math.ceil(totalCount / pageSize);
   const filtered = bookings.filter((b) => {
     const matchFilter =
