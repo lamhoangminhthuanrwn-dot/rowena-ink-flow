@@ -1,14 +1,26 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Sắp xếp lại thứ tự link tags trong index.html
 
-### Changes in `src/data/tattooDesigns.ts`
+**File:** `index.html`, lines 7-11
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+Di chuyển `preconnect` lên trước `stylesheet` để trình duyệt thiết lập kết nối sớm hơn:
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+```html
+<!-- Before -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:..." />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:..." />
+<link rel="canonical" href="..." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- After -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:..." />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:..." />
+<link rel="canonical" href="..." />
+```
+
+**1 file, chỉ thay đổi thứ tự dòng.**
 
