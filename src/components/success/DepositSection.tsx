@@ -37,20 +37,6 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
     setTimeout(() => setCopied(""), 2000);
   };
 
-  const handleDepositFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 3 - depositFiles.length);
-    setDepositFiles((prev) => [...prev, ...files]);
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => setDepositPreviews((prev) => [...prev, reader.result as string]);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeDepositFile = (idx: number) => {
-    setDepositFiles((prev) => prev.filter((_, i) => i !== idx));
-    setDepositPreviews((prev) => prev.filter((_, i) => i !== idx));
-  };
 
   const handleDepositSubmit = async () => {
     if (deposit.files.length === 0) {
