@@ -271,11 +271,10 @@ const Account = () => {
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại MoMo *</label>
-                    <input
+                    <Input
                       type="tel"
                       value={wdPhone}
                       onChange={(e) => setWdPhone(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                       placeholder="0901 234 567"
                     />
                   </div>
