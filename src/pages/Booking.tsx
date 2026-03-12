@@ -440,6 +440,8 @@ const Booking = () => {
                     )}
                   </div>
                 )}
+                </>
+                )}
               </div>
             )}
           </motion.div>
