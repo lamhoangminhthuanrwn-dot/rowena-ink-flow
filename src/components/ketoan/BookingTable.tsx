@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Check, X, Download, Search, Eye, CheckCircle, XCircle, Pencil, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatVND } from "@/data/tattooDesigns";
 import PriceEditor from "./PriceEditor";
 import type { BookingWithArtist } from "@/types/database";
+import { resolveStorageUrls } from "@/lib/storageUtils";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },
