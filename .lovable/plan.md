@@ -1,14 +1,14 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Gộp 2 lần gọi `useAuth()` trong Navbar thành 1
 
-### Changes in `src/data/tattooDesigns.ts`
+**File:** `src/components/Navbar.tsx`
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+Currently line 13 destructures `{ user, isAdmin, loading }` and line 22 destructures `{ canManagePosts }` separately. Merge into a single call:
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+```tsx
+const { user, isAdmin, canManagePosts, loading } = useAuth();
+```
+
+Remove the second `useAuth()` call on line 22. No other changes needed.
 
