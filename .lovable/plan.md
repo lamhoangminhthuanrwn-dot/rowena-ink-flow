@@ -1,25 +1,14 @@
 
 
-## Plan: Thêm React.StrictMode vào main.tsx
+## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
 
-### Thay đổi
+### Changes in `src/data/tattooDesigns.ts`
 
-**Sửa `src/main.tsx`** — bọc `<App />` trong `<React.StrictMode>`:
+1. **Item id="4"** (Xăm full ngực):
+   - `name`: → "Xăm full ngực & bụng"
+   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
+   - `size`: → "Full ngực & bụng"
+   - Giữ nguyên giá, variants, hình ảnh
 
-```typescript
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
-```
-
-### Tóm tắt
-- **1 file sửa**: `src/main.tsx`
-- Giúp phát hiện side effects, deprecated API, và các vấn đề tiềm ẩn trong development mode
+2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
 
