@@ -1,14 +1,30 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Cấu hình mặc định cho QueryClient
 
-### Changes in `src/data/tattooDesigns.ts`
+### Thay đổi
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+**Sửa `src/App.tsx` — dòng 29**
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+Thêm `defaultOptions` cho QueryClient:
+
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,    // 5 phút
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+```
+
+### Lý do
+- `staleTime: 5m` — giảm request thừa, data như catalog/posts không cần refetch liên tục
+- `retry: 1` — tránh retry 3 lần mặc định khi API lỗi, UX nhanh hơn
+- `refetchOnWindowFocus: false` — không refetch mỗi khi user quay lại tab
+
+### Tóm tắt
+- **1 file sửa**: `src/App.tsx` (1 dòng → 8 dòng)
 
