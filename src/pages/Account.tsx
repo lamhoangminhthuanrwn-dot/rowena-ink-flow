@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { CalendarDays, Wallet, Share2, Copy, Check } from "lucide-react";
+import { CalendarDays, Wallet as WalletIcon, Share2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { formatVND } from "@/data/tattooDesigns";
+import type { Booking, Withdrawal, WalletTransaction, Wallet } from "@/types/database";
 
 const paymentStatusLabels: Record<string, { text: string; className: string }> = {
   unpaid: { text: "Chưa cọc", className: "bg-muted text-muted-foreground" },

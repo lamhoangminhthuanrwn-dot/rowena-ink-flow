@@ -281,7 +281,7 @@ const Ketoan = () => {
       !search ||
       b.booking_code?.toLowerCase().includes(search.toLowerCase()) ||
       b.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-      b.phone?.includes(search);
+      b.customer_phone?.includes(search);
     return matchFilter && matchSearch;
   });
 
