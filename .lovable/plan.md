@@ -1,14 +1,29 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Thêm pagination cho Ketoan bookings
 
-### Changes in `src/data/tattooDesigns.ts`
+### Vấn đề
+`fetchBookings()` query toàn bộ bookings không giới hạn. Khi data lớn sẽ chậm và lag UI.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Giải pháp
+Thêm server-side pagination với page buttons. Mỗi page load 50 bookings.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+### Thay đổi
+
+**1. Sửa `src/pages/Ketoan.tsx`**
+- Thêm state: `page` (number, default 0), `totalCount` (number)
+- Sửa `fetchBookings`: thêm `.range(page * 50, (page + 1) * 50 - 1)` và query count via `select("*", { count: "exact", head: true })` hoặc dùng `{ count: "exact" }` option
+- Truyền `page`, `totalCount`, `onPageChange` xuống BookingTable
+- `useEffect` depend on `page` để refetch khi đổi trang
+- Filter/search vẫn client-side trên page hiện tại (giữ đơn giản)
+
+**2. Sửa `src/components/ketoan/BookingTable.tsx`**
+- Nhận thêm props: `page`, `totalCount`, `pageSize`, `onPageChange`
+- Thêm pagination controls ở cuối table: Previous / page numbers / Next
+- Dùng shadcn Pagination components đã có sẵn
+
+### Tóm tắt
+- **2 file sửa**
+- Server-side pagination 50 items/page
+- Không thay đổi logic filter/search hiện có
 
