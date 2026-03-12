@@ -404,7 +404,7 @@ const Booking = () => {
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Ngày *</label>
                     <input type="date" value={schedule.date} onChange={(e) => { setSchedule({ ...schedule, date: e.target.value }); setScheduleErrors((p) => ({ ...p, date: undefined })); }}
                       min={new Date().toISOString().split("T")[0]}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`} />
+                      className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")} />
                     <FieldError message={scheduleErrors.date} />
                   </div>
                   <div>
