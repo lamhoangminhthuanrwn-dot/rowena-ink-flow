@@ -101,20 +101,20 @@ const Booking = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      const code = `BK${Date.now().toString(36).toUpperCase().slice(-6)}`;
-
       const branchArtists = artists.filter((a) => a.branch_id === selectedBranch);
       const randomArtist = branchArtists.length > 0
         ? branchArtists[Math.floor(Math.random() * branchArtists.length)]
         : null;
       const branch = branches.find((b) => b.id === selectedBranch);
 
+      // Upload reference images first
+      const tempCode = `TMP${Date.now().toString(36).toUpperCase()}`;
       const uploadedUrls: string[] = [];
       for (let i = 0; i < referenceFiles.length; i++) {
         const file = referenceFiles[i];
         const ext = file.name.split(".").pop();
         const folder = user?.id || 'anon';
-        const path = `references/${folder}/${code}_${i}.${ext}`;
+        const path = `references/${folder}/${tempCode}_${i}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
@@ -124,34 +124,37 @@ const Booking = () => {
         }
       }
 
-      navigate("/success", {
-        state: {
-          bookingCode: code,
-          customerName: form.name,
+      // Call server-side Edge Function to create booking
+      const savedRefCode = localStorage.getItem("ref_code");
+      const { data, error } = await supabase.functions.invoke("create-booking", {
+        body: {
+          customer_name: form.name,
           phone: form.phone,
           email: form.email,
-          designName: design?.name || "Tùy chỉnh",
+          design_name: design?.name || "Tùy chỉnh",
           placement: form.placement,
           size: form.size,
           style: form.style,
-          appointmentDate: schedule.date,
-          appointmentTime: schedule.time,
+          preferred_date: schedule.date,
+          preferred_time: schedule.time,
           note: form.note,
-          referenceImages: uploadedUrls,
-          userId: user?.id || null,
-          branchId: selectedBranch,
-          branchName: branch?.name || "",
-          artistId: randomArtist?.id || null,
-          artistName: randomArtist?.name || "",
-          // Selected options
-          selectedPosition: selectedOptions?.position || null,
-          selectedStyle: selectedOptions?.style || null,
-          selectedScheduleType: selectedOptions?.scheduleType || null,
-          selectedPaymentType: selectedOptions?.paymentType || null,
-          selectedPrice: selectedOptions?.finalPrice || null,
-          selectedSessions: selectedOptions?.sessionsLabel || null,
+          reference_images: uploadedUrls,
+          branch_id: selectedBranch || null,
+          branch_name: branch?.name || null,
+          artist_id: randomArtist?.id || null,
+          referral_code: savedRefCode || null,
+          total_price: selectedOptions?.finalPrice || null,
         },
       });
+
+      if (error || data?.error) {
+        console.error("Create booking error:", data?.error || error);
+        toast.error("Không thể tạo đơn đặt lịch. Vui lòng thử lại.");
+        return;
+      }
+
+      // Navigate to success page with booking code in URL
+      navigate(`/success?code=${encodeURIComponent(data.booking_code)}`);
     } catch (err) {
       console.error("Booking submit error:", err);
       toast.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");

@@ -1,100 +1,60 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import BookingSummary from "@/components/success/BookingSummary";
 import ReferralBanner from "@/components/success/ReferralBanner";
 import DepositSection from "@/components/success/DepositSection";
 
-interface BookingState {
-  bookingCode: string;
-  customerName: string;
-  phone: string;
-  email: string;
-  designName: string;
-  placement: string;
-  size: string;
-  style: string;
-  appointmentDate: string;
-  appointmentTime: string;
-  note: string;
-  referenceImages?: string[];
-  userId?: string | null;
-  branchId?: string;
-  branchName?: string;
-  artistId?: string | null;
-  artistName?: string;
-  selectedPrice?: number | null;
-}
-
 const Success = () => {
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [copied, setCopied] = useState("");
-  const [bookingInserted, setBookingInserted] = useState(false);
-  const insertingRef = useRef(false);
-
-  const state = location.state as BookingState | null;
-  const savedRefCode = useRef(localStorage.getItem("ref_code")).current;
+  const [loading, setLoading] = useState(true);
+  const [booking, setBooking] = useState<Record<string, unknown> | null>(null);
   const [referralCode, setReferralCode] = useState<string | null>(null);
 
+  const bookingCode = searchParams.get("code");
+
   useEffect(() => {
-    if (!state?.userId) return;
-    supabase.from("profiles").select("referral_code").eq("id", state.userId).single()
-      .then(({ data }) => { if (data?.referral_code) setReferralCode(data.referral_code); });
-  }, [state?.userId]);
-
-  const insertBooking = useCallback(async () => {
-    if (!state || insertingRef.current || bookingInserted) return;
-    insertingRef.current = true;
-    try {
-      const { error } = await supabase.from("bookings").insert([{
-        booking_code: state.bookingCode,
-        user_id: state.userId || null,
-        customer_name: state.customerName,
-        customer_phone: state.phone,
-        customer_email: state.email,
-        product_name: state.designName,
-        notes: state.note,
-        reference_images: state.referenceImages || [],
-        preferred_date: state.appointmentDate,
-        preferred_time: state.appointmentTime,
-        placement: state.placement,
-        size: state.size,
-        payment_status: "unpaid",
-        booking_status: "new",
-        branch_id: state.branchId || null,
-        branch_name: state.branchName || null,
-        artist_id: state.artistId || null,
-        referral_code: savedRefCode,
-        total_price: state.selectedPrice || null,
-      }]);
-      if (error) {
-        console.error("Booking insert error:", error);
-        toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.");
-      } else {
-        setBookingInserted(true);
-        try {
-          await supabase.functions.invoke("send-booking-email", {
-            body: {
-              booking_code: state.bookingCode, customer_name: state.customerName, phone: state.phone,
-              email: state.email, design_name: state.designName, placement: state.placement,
-              size: state.size, style: state.style, appointment_date: state.appointmentDate,
-              appointment_time: state.appointmentTime, note: state.note, reference_urls: state.referenceImages || [],
-            },
-          });
-        } catch (emailErr) { console.warn("Email notification failed:", emailErr); }
-      }
-    } catch (err) {
-      console.error("Insert booking error:", err);
-      toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.");
+    if (!bookingCode) {
+      setLoading(false);
+      return;
     }
-  }, [state, bookingInserted]);
 
-  useEffect(() => { if (state) insertBooking(); }, [state, insertBooking]);
+    const fetchBooking = async () => {
+      // Try as authenticated user first, then anon
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("*, artists(name)")
+        .eq("booking_code", bookingCode)
+        .single();
+
+      if (error || !data) {
+        console.error("Fetch booking error:", error);
+        setLoading(false);
+        return;
+      }
+
+      setBooking(data);
+
+      // Fetch referral code if user is logged in
+      if (data.user_id) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("referral_code")
+          .eq("id", data.user_id as string)
+          .single();
+        if (profile?.referral_code) setReferralCode(profile.referral_code);
+      }
+
+      setLoading(false);
+    };
+
+    fetchBooking();
+  }, [bookingCode]);
 
   const copyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -102,7 +62,15 @@ const Success = () => {
     setTimeout(() => setCopied(""), 2000);
   };
 
-  if (!state) {
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center pt-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!bookingCode || !booking) {
     return (
       <div className="flex min-h-screen items-center justify-center pt-16">
         <div className="text-center">
@@ -112,6 +80,8 @@ const Success = () => {
       </div>
     );
   }
+
+  const artistName = (booking.artists as { name: string } | null)?.name;
 
   return (
     <div className="pt-20 pb-16">
@@ -127,19 +97,27 @@ const Success = () => {
         </motion.div>
 
         <BookingSummary
-          bookingCode={state.bookingCode} customerName={state.customerName} phone={state.phone}
-          email={state.email} branchName={state.branchName} artistName={state.artistName}
-          designName={state.designName} placement={state.placement} size={state.size}
-          style={state.style} appointmentDate={state.appointmentDate} appointmentTime={state.appointmentTime}
-          note={state.note}
+          bookingCode={booking.booking_code as string}
+          customerName={booking.customer_name as string}
+          phone={booking.customer_phone as string}
+          email={(booking.customer_email as string) || ""}
+          branchName={(booking.branch_name as string) || undefined}
+          artistName={artistName || undefined}
+          designName={(booking.product_name as string) || ""}
+          placement={(booking.placement as string) || ""}
+          size={(booking.size as string) || ""}
+          style=""
+          appointmentDate={(booking.preferred_date as string) || ""}
+          appointmentTime={(booking.preferred_time as string) || ""}
+          note={(booking.notes as string) || (booking.note as string) || ""}
         />
 
         <ReferralBanner referralCode={referralCode} copied={copied} onCopy={copyText} />
 
         <DepositSection
-          bookingCode={state.bookingCode}
-          bookingInserted={bookingInserted}
-          onInsertBooking={insertBooking}
+          bookingCode={booking.booking_code as string}
+          bookingInserted={true}
+          onInsertBooking={async () => {}}
           onSubmitted={() => {}}
           onSkipped={() => {}}
         />
