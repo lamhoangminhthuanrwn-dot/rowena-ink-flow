@@ -414,7 +414,7 @@ const Ketoan = () => {
                             {b.preferred_date} · {b.preferred_time}
                           </td>
                           <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.branch_name || "—"}</td>
-                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{(b as any).artists?.name || "—"}</td>
+                          <td className="px-3 py-3 text-foreground whitespace-nowrap">{b.artists?.name || "—"}</td>
                           {/* Giá trị column */}
                           <td className="px-3 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                             {editPriceId === b.id ? (
