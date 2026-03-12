@@ -303,7 +303,7 @@ const Success = () => {
               {referralCode ? (
                 <div className="mt-3 flex items-center gap-2 min-w-0">
                   <code className="flex-1 truncate rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
-                    {`https://thuanlam.id.vn/inv/${referralCode}`}
+                    {`${window.location.origin}/inv/${referralCode}`}
                   </code>
                   <Button
                     size="sm"
