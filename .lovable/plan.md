@@ -1,14 +1,23 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Tóm tắt kiểm tra
 
-### Changes in `src/data/tattooDesigns.ts`
+**File `index.html` hiện tại đã đúng:**
+- Line 11: `canonical` = `https://thuanlam.id.vn` ✓
+- Line 21: `og:url` = `https://thuanlam.id.vn` ✓
+- Line 37: JSON-LD `url` = `https://thuanlam.id.vn` ✓
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+**Search toàn codebase:** Không còn domain `rowena-ink-flow.lovable.app` nào.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+## Vấn đề có thể gặp phải
+
+Nếu screenshot bạn thấy vẫn còn domain cũ, nguyên nhân có thể là:
+
+1. **Browser cache** - Ctrl+Shift+R để hard refresh
+2. **CDN/Edge cache** - Cần thời gian để cache hết hạn
+3. **Preview URL khác với Published URL** - Preview dùng domain lovable.app
+
+## Giải pháp
+
+File đã đúng, nhưng nếu cần thay đổi có hiệu lực ngay trên production `thuanlam.id.vn`, cần **deploy lại**.
 
