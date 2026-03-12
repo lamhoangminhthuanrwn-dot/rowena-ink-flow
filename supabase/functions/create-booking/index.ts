@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const customer_email = validateStr(body.email, 255) || null;
+    const customer_email = rawEmail || null;
     const product_name = validateStr(body.design_name, 200) || null;
     const placement = validateStr(body.placement, 100) || null;
     const size = validateStr(body.size, 100) || null;
