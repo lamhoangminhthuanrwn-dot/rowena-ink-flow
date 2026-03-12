@@ -76,7 +76,7 @@ const Ketoan = () => {
 
   const fetchBookings = async () => {
     const { data } = await supabase.from("bookings").select("*, artists(name)").order("created_at", { ascending: false });
-    if (data) setBookings(data);
+    if (data) setBookings(data as unknown as BookingWithArtist[]);
   };
 
   const fetchWithdrawals = async () => {
