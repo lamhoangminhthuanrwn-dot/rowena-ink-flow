@@ -412,12 +412,12 @@ const AdminPosts = () => {
                     dangerouslySetInnerHTML={{ __html: form.content ? formatContent(form.content) : '<p class="text-muted-foreground italic">Chưa có nội dung để xem trước</p>' }}
                   />
                 ) : (
-                  <textarea
+                  <Textarea
                     ref={contentTextareaRef}
                     value={form.content}
                     onChange={(e) => setForm({ ...form, content: e.target.value })}
                     rows={12}
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    className="font-mono"
                     placeholder="## Tiêu đề&#10;&#10;Nội dung bài viết...&#10;&#10;**In đậm**, [Link](url)"
                   />
                 )}
