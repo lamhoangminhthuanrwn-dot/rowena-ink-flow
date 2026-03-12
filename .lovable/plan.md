@@ -1,14 +1,19 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Gom status label maps vào `lib/statusLabels.ts`
 
-### Changes in `src/data/tattooDesigns.ts`
+### Thay đổi
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+**1. Tạo `src/lib/statusLabels.ts`**
+- Chứa 3 maps: `paymentStatusLabels`, `bookingStatusLabels`, `withdrawalStatusLabels`
+- Export tất cả
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+**2. Sửa 3 file — xóa định nghĩa local, import từ file mới:**
+- `src/components/ketoan/BookingTable.tsx` — xóa dòng 9-22, thêm import
+- `src/components/ketoan/WithdrawalTable.tsx` — xóa dòng 5-10, thêm import
+- `src/pages/Account.tsx` — xóa dòng 13-25, thêm import
+
+### Tóm tắt
+- **1 file tạo, 3 file sửa**
+- Không thay đổi logic, chỉ DRY refactor
 
