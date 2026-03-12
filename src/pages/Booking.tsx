@@ -64,6 +64,7 @@ const Booking = () => {
   const [infoErrors, setInfoErrors] = useState<InfoErrors>({});
   const [scheduleErrors, setScheduleErrors] = useState<ScheduleErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
+  const refUpload = useFileUpload({ maxFiles: MAX_FILES, validateFn: validateFile });
 
   const design = tattooDesigns.find((d) => d.id === selectedDesign);
   const hasVariants = design?.variants && design.variants.length > 0;
