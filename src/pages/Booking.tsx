@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
