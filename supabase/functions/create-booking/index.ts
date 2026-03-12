@@ -6,6 +6,8 @@ const corsHeaders = {
 };
 
 const MAX_FIELD = 500;
+const PHONE_REGEX = /^0\d{9,10}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateStr(val: unknown, max = MAX_FIELD): string {
   if (val === null || val === undefined) return '';
@@ -47,13 +49,21 @@ Deno.serve(async (req) => {
     // Validate required fields
     const customer_name = validateStr(body.customer_name, 200);
     const customer_phone = validateStr(body.phone, 20);
-    if (!customer_name || !customer_phone) {
-      return new Response(JSON.stringify({ error: 'Missing required fields: customer_name, phone' }), {
+    const fieldErrors: Record<string, string> = {};
+    if (!customer_name) fieldErrors.name = 'Vui lòng nhập họ tên';
+    if (!customer_phone) fieldErrors.phone = 'Vui lòng nhập số điện thoại';
+    else if (!PHONE_REGEX.test(customer_phone)) fieldErrors.phone = 'Số điện thoại không hợp lệ';
+
+    const rawEmail = validateStr(body.email, 255);
+    if (rawEmail && !EMAIL_REGEX.test(rawEmail)) fieldErrors.email = 'Email không hợp lệ';
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return new Response(JSON.stringify({ error: 'Validation failed', fields: fieldErrors }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const customer_email = validateStr(body.email, 255) || null;
+    const customer_email = rawEmail || null;
     const product_name = validateStr(body.design_name, 200) || null;
     const placement = validateStr(body.placement, 100) || null;
     const size = validateStr(body.size, 100) || null;

@@ -9,6 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import BookingOptionStep from "@/components/BookingOptionStep";
 import type { SelectedOptions } from "@/components/BookingOptionStep";
+import {
+  infoStepSchema,
+  scheduleStepSchema,
+  validateFile,
+  MAX_FILES,
+  type InfoErrors,
+  type ScheduleErrors,
+} from "@/lib/bookingValidation";
 
 interface Branch {
   id: string;
@@ -21,6 +29,9 @@ interface Artist {
   name: string;
   branch_id: string;
 }
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? <p className="mt-1 text-xs text-destructive">{message}</p> : null;
 
 const Booking = () => {
   const [searchParams] = useSearchParams();
@@ -48,6 +59,8 @@ const Booking = () => {
   const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
   const [referencePreviews, setReferencePreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [infoErrors, setInfoErrors] = useState<InfoErrors>({});
+  const [scheduleErrors, setScheduleErrors] = useState<ScheduleErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
 
   const design = tattooDesigns.find((d) => d.id === selectedDesign);
@@ -61,10 +74,8 @@ const Booking = () => {
   // Map logical step to content step
   const getContentStep = () => {
     if (!hasVariants) {
-      // 0=design, 1=info, 2=schedule
       return step === 0 ? "design" : step === 1 ? "info" : "schedule";
     }
-    // 0=design, 1=options, 2=info, 3=schedule
     return step === 0 ? "design" : step === 1 ? "options" : step === 2 ? "info" : "schedule";
   };
 
@@ -84,12 +95,32 @@ const Booking = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setReferenceFiles((prev) => [...prev, ...files]);
-    files.forEach((file) => {
+    const remaining = MAX_FILES - referenceFiles.length;
+    if (remaining <= 0) {
+      toast.error(`Tối đa ${MAX_FILES} ảnh tham khảo`);
+      return;
+    }
+    const toAdd = files.slice(0, remaining);
+    const validFiles: File[] = [];
+    for (const file of toAdd) {
+      const err = validateFile(file);
+      if (err) {
+        toast.error(err);
+      } else {
+        validFiles.push(file);
+      }
+    }
+    if (files.length > remaining) {
+      toast.warning(`Chỉ thêm được ${remaining} ảnh nữa`);
+    }
+    setReferenceFiles((prev) => [...prev, ...validFiles]);
+    validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => setReferencePreviews((prev) => [...prev, reader.result as string]);
       reader.readAsDataURL(file);
     });
+    // Reset input so same file can be selected again
+    e.target.value = "";
   };
 
   const removeFile = (idx: number) => {
@@ -153,7 +184,6 @@ const Booking = () => {
         return;
       }
 
-      // Navigate to success page with booking code in URL
       navigate(`/success?code=${encodeURIComponent(data.booking_code)}`);
     } catch (err) {
       console.error("Booking submit error:", err);
@@ -163,10 +193,54 @@ const Booking = () => {
     }
   };
 
+  const validateAndNext = () => {
+    if (contentStep === "info") {
+      const result = infoStepSchema.safeParse({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+      });
+      if (!result.success) {
+        const fieldErrors: InfoErrors = {};
+        result.error.issues.forEach((issue) => {
+          const field = issue.path[0] as keyof InfoErrors;
+          if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+        });
+        setInfoErrors(fieldErrors);
+        return;
+      }
+      setInfoErrors({});
+    }
+    if (contentStep === "schedule") {
+      const result = scheduleStepSchema.safeParse({
+        date: schedule.date,
+        time: schedule.time,
+        branch: selectedBranch,
+      });
+      if (!result.success) {
+        const fieldErrors: ScheduleErrors = {};
+        result.error.issues.forEach((issue) => {
+          const field = issue.path[0] as keyof ScheduleErrors;
+          if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+        });
+        setScheduleErrors(fieldErrors);
+        return;
+      }
+      setScheduleErrors({});
+    }
+
+    if (contentStep === "schedule") {
+      // Last step — submit
+      handleSubmit();
+    } else {
+      setStep(step + 1);
+    }
+  };
+
   const canNext = () => {
     if (contentStep === "design") return !!selectedDesign;
     if (contentStep === "options") return !!selectedOptions;
-    if (contentStep === "info") return form.name.trim() && form.phone.trim();
+    if (contentStep === "info") return form.name.trim().length > 0 && form.phone.trim().length > 0;
     if (contentStep === "schedule") return schedule.date && schedule.time && !!selectedBranch;
     return false;
   };
@@ -245,21 +319,24 @@ const Booking = () => {
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Họ tên *</label>
-                    <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    <input type="text" value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
+                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.name ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
                       placeholder="Nguyễn Văn A" />
+                    <FieldError message={infoErrors.name} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại *</label>
-                    <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      placeholder="0901 234 567" />
+                    <input type="tel" value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
+                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.phone ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                      placeholder="0901234567" />
+                    <FieldError message={infoErrors.phone} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Email</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    <input type="email" value={form.email} onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
+                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.email ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
                       placeholder="email@example.com" />
+                    <FieldError message={infoErrors.email} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
@@ -289,7 +366,9 @@ const Booking = () => {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-muted-foreground">Ảnh tham khảo (tùy chọn)</label>
+                    <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                      Ảnh tham khảo (tối đa {MAX_FILES} ảnh, mỗi ảnh ≤ 5MB)
+                    </label>
                     <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
                     {referencePreviews.length > 0 && (
                       <div className="mb-2 flex flex-wrap gap-2">
@@ -301,13 +380,15 @@ const Booking = () => {
                         ))}
                       </div>
                     )}
-                    <button
-                      onClick={() => fileRef.current?.click()}
-                      className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
-                    >
-                      <Upload size={18} />
-                      Thêm ảnh tham khảo
-                    </button>
+                    {referenceFiles.length < MAX_FILES && (
+                      <button
+                        onClick={() => fileRef.current?.click()}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+                      >
+                        <Upload size={18} />
+                        Thêm ảnh tham khảo
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -321,32 +402,35 @@ const Booking = () => {
                   <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
                   <select
                     value={selectedBranch}
-                    onChange={(e) => setSelectedBranch(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                    onChange={(e) => { setSelectedBranch(e.target.value); setScheduleErrors((p) => ({ ...p, branch: undefined })); }}
+                    className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
                   >
                     <option value="">Chọn chi nhánh</option>
                     {branches.map((b) => (
                       <option key={b.id} value={b.id}>{b.name}</option>
                     ))}
                   </select>
+                  <FieldError message={scheduleErrors.branch} />
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Ngày *</label>
-                    <input type="date" value={schedule.date} onChange={(e) => setSchedule({ ...schedule, date: e.target.value })}
+                    <input type="date" value={schedule.date} onChange={(e) => { setSchedule({ ...schedule, date: e.target.value }); setScheduleErrors((p) => ({ ...p, date: undefined })); }}
                       min={new Date().toISOString().split("T")[0]}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none" />
+                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`} />
+                    <FieldError message={scheduleErrors.date} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Giờ *</label>
-                    <select value={schedule.time} onChange={(e) => setSchedule({ ...schedule, time: e.target.value })}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none">
+                    <select value={schedule.time} onChange={(e) => { setSchedule({ ...schedule, time: e.target.value }); setScheduleErrors((p) => ({ ...p, time: undefined })); }}
+                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.time ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}>
                       <option value="">Chọn giờ</option>
                       {["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>
+                    <FieldError message={scheduleErrors.time} />
                   </div>
                 </div>
 
@@ -386,7 +470,7 @@ const Booking = () => {
           </Button>
           {!isLastStep ? (
             <Button
-              onClick={() => setStep(step + 1)}
+              onClick={validateAndNext}
               disabled={!canNext()}
               className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
@@ -394,7 +478,7 @@ const Booking = () => {
             </Button>
           ) : (
             <Button
-              onClick={handleSubmit}
+              onClick={validateAndNext}
               disabled={!canNext() || submitting}
               className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
