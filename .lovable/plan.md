@@ -1,14 +1,20 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Thêm loading fallback cho Suspense
 
-### Changes in `src/data/tattooDesigns.ts`
+**File:** `src/App.tsx`, line 43
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+Thay `fallback={null}` bằng một spinner/loading indicator đơn giản, centered trong viewport:
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+```tsx
+<Suspense fallback={
+  <div className="flex min-h-screen items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+  </div>
+}>
+```
+
+Dùng CSS spinner thuần Tailwind, không cần thêm component hay dependency. Đảm bảo user thấy loading state thay vì màn hình trống khi lazy route đang tải.
+
+**1 file sửa, 0 file tạo mới.**
 
