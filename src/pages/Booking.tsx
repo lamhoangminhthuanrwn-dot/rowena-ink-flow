@@ -137,7 +137,7 @@ const Booking = () => {
 
       // Upload reference images first
       const tempCode = `TMP${Date.now().toString(36).toUpperCase()}`;
-      const uploadedUrls: string[] = [];
+      const uploadedPaths: string[] = [];
       for (let i = 0; i < referenceFiles.length; i++) {
         const file = referenceFiles[i];
         const ext = file.name.split(".").pop();
@@ -147,8 +147,7 @@ const Booking = () => {
           .from("booking-uploads")
           .upload(path, file, { upsert: true });
         if (!uploadError) {
-          const { data: urlData } = await supabase.storage.from("booking-uploads").createSignedUrl(path, 60 * 60 * 24 * 30);
-          if (urlData?.signedUrl) uploadedUrls.push(urlData.signedUrl);
+          uploadedPaths.push(path);
         }
       }
 
