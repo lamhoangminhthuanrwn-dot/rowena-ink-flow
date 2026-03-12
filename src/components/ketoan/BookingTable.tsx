@@ -48,6 +48,28 @@ interface BookingTableProps {
   onFetchPriceHistory: (id: string) => void;
 }
 
+const ReferenceImages = ({ paths }: { paths: string[] }) => {
+  const [urls, setUrls] = useState<string[]>([]);
+  useEffect(() => {
+    resolveStorageUrls("booking-uploads", paths).then(setUrls);
+  }, [paths]);
+
+  if (urls.length === 0) return <span className="text-xs text-muted-foreground">Đang tải...</span>;
+
+  return (
+    <div className="flex gap-2 flex-wrap">
+      {urls.map((url, i) => (
+        url ? (
+          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+            <img src={url} alt={`Ref ${i + 1}`}
+              className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
+          </a>
+        ) : null
+      ))}
+    </div>
+  );
+};
+
 const BookingTable = ({
   bookings, filter, search, onFilterChange, onSearchChange, onExportCSV,
   expandedId, onToggleExpand,
