@@ -1,14 +1,22 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Phân tích: Lazy load Index page
 
-### Changes in `src/data/tattooDesigns.ts`
+### Hiện trạng
+`Index` được import trực tiếp trong `App.tsx` — là trang duy nhất không lazy load.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Đánh giá
+- `Index` chỉ chứa `HeroSection` (1 ảnh tĩnh + text), `FloatingCTA`, và 3 `CatalogCard` — khá nhẹ.
+- Đây là landing page — route `/` — nơi đa số user truy cập đầu tiên.
+- Lazy load landing page sẽ thêm 1 round-trip + hiện spinner trước khi render nội dung chính → **giảm perceived performance**.
+- Các trang khác (Catalog, Booking, Admin...) đã lazy load đúng.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+### Kết luận
+**Giữ nguyên** — không nên lazy load Index. Đây là tradeoff UX đúng: landing page cần render ngay lập tức, không nên cho user thấy spinner ở trang đầu tiên.
+
+Nếu muốn giảm bundle size thêm, hướng tốt hơn là:
+- Code-split `framer-motion` (nặng ~30KB gzipped) bằng dynamic import
+- Optimize hero image (WebP, srcset)
+
+Không cần thay đổi code cho item này.
 
