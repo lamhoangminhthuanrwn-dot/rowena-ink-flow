@@ -1,14 +1,25 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Problem
 
-### Changes in `src/data/tattooDesigns.ts`
+The `sendBeacon` in `Success.tsx` (lines 126-160) exposes the Supabase API key in the URL (`?apikey=...`), which is a security risk. The booking is also not inserted until the user leaves the page or clicks a button, risking data loss.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+## Plan
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+**Single change in `src/pages/Success.tsx`:**
+
+1. **Remove the entire `beforeunload`/`sendBeacon` useEffect** (lines 126-160)
+
+2. **Add a new useEffect that calls `insertBooking()` immediately on mount** when `state` is available:
+```tsx
+useEffect(() => {
+  if (state) {
+    insertBooking();
+  }
+}, [state]);
+```
+
+This ensures the booking is inserted as soon as the Success page renders, eliminating both the API key exposure and the risk of losing booking data if the user closes the tab quickly.
+
+No other files need changes. The `insertBooking` callback already has guards (`insertingRef` and `bookingInserted`) to prevent duplicate inserts, so existing calls in `handleDepositSubmit`, `handleSkip`, and `handleGoHome` remain safe.
 
