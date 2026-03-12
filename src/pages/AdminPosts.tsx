@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { formatContent } from "@/lib/formatContent";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface PostForm {
   title: string;
