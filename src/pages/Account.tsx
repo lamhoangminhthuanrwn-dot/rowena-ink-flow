@@ -396,7 +396,7 @@ const Account = () => {
                     <div className="rounded-lg border border-border bg-card px-4 py-3">
                       <p className="text-xs text-muted-foreground mb-1">Link giới thiệu</p>
                       <p className="break-all text-sm text-foreground">
-                        https://thuanlam.id.vn/inv/{profile.referral_code}
+                        {window.location.origin}/inv/{profile.referral_code}
                       </p>
                     </div>
                     <Button

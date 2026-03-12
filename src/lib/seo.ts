@@ -5,7 +5,7 @@ const defaults = {
   type: "website",
 };
 
-const SITE_URL = "https://rowena-ink-flow.lovable.app";
+const SITE_URL = typeof window !== "undefined" ? window.location.origin : "https://rowena-ink-flow.lovable.app";
 
 function setMeta(attr: "name" | "property", key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;

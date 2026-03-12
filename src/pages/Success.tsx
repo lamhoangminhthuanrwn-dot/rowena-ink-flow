@@ -309,7 +309,7 @@ const Success = () => {
                     size="sm"
                     variant="outline"
                     className="shrink-0 gap-1.5"
-                    onClick={() => copyText(`https://thuanlam.id.vn/inv/${referralCode}`, "referral")}
+                    onClick={() => copyText(`${window.location.origin}/inv/${referralCode}`, "referral")}
                   >
                     {copied === "referral" ? <Check size={14} /> : <Copy size={14} />}
                     {copied === "referral" ? "Đã sao chép" : "Sao chép"}
