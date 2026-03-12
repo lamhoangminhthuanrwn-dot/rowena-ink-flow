@@ -34,4 +34,6 @@ export function formatContent(content: string): string {
       return `<p class="text-muted-foreground leading-relaxed mb-4">${processInline(trimmed)}</p>`;
     })
     .join("");
+
+  return DOMPurify.sanitize(raw, { ADD_TAGS: ["img"], ADD_ATTR: ["loading", "target"] });
 }
