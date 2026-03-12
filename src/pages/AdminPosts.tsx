@@ -56,6 +56,7 @@ const AdminPosts = () => {
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState<PostForm>(emptyForm);
   const [uploading, setUploading] = useState(false);
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
   const [contentUploading, setContentUploading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
