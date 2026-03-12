@@ -19,7 +19,7 @@ const Booking = lazy(() => import("./pages/Booking"));
 const Success = lazy(() => import("./pages/Success"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
-const Ketoan = lazy(() => import("./pages/Ketoan"));
+const AdminFinance = lazy(() => import("./pages/AdminFinance"));
 const AdminBranches = lazy(() => import("./pages/AdminBranches"));
 const AdminPosts = lazy(() => import("./pages/AdminPosts"));
 const News = lazy(() => import("./pages/News"));
