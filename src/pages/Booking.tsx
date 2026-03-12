@@ -132,10 +132,7 @@ const Booking = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      const branchArtists = artists.filter((a) => a.branch_id === selectedBranch);
-      const randomArtist = branchArtists.length > 0
-        ? branchArtists[Math.floor(Math.random() * branchArtists.length)]
-        : null;
+      // Artist assignment is handled server-side with availability check
       const branch = branches.find((b) => b.id === selectedBranch);
 
       // Upload reference images first
@@ -172,7 +169,7 @@ const Booking = () => {
           reference_images: uploadedUrls,
           branch_id: selectedBranch || null,
           branch_name: branch?.name || null,
-          artist_id: randomArtist?.id || null,
+          // artist_id is assigned server-side based on availability
           referral_code: savedRefCode || null,
           total_price: selectedOptions?.finalPrice || null,
         },
