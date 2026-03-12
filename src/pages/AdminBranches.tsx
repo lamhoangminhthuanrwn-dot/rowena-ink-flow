@@ -9,6 +9,7 @@ import {
   Plus, Pencil, Trash2, Check, X, MapPin, User, Clock,
   ChevronDown, ChevronUp, ArrowLeft,
 } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Branch {
   id: string;
@@ -43,7 +44,7 @@ const AdminBranches = () => {
   const [artistForm, setArtistForm] = useState({ name: "", work_start: "08:00", work_end: "18:00" });
   const [editingArtist, setEditingArtist] = useState<string | null>(null);
   const [addingArtistBranch, setAddingArtistBranch] = useState<string | null>(null);
-
+  const [deleteTarget, setDeleteTarget] = useState<{ type: "branch" | "artist"; id: string } | null>(null);
 
   const fetchAll = async () => {
     const [{ data: b }, { data: a }] = await Promise.all([
@@ -235,7 +236,7 @@ const AdminBranches = () => {
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startEditBranch(b)} title="Sửa">
                       <Pencil size={13} />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => deleteBranch(b.id)} title="Xóa">
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => setDeleteTarget({ type: "branch", id: b.id })} title="Xóa">
                       <Trash2 size={13} />
                     </Button>
                     {isExpanded ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
@@ -309,7 +310,7 @@ const AdminBranches = () => {
                               <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => startEditArtist(a)} title="Sửa">
                                 <Pencil size={12} />
                               </Button>
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => deleteArtist(a.id)} title="Xóa">
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => setDeleteTarget({ type: "artist", id: a.id })} title="Xóa">
                                 <Trash2 size={12} />
                               </Button>
                             </div>
@@ -324,6 +325,23 @@ const AdminBranches = () => {
           })}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={deleteTarget?.type === "branch" ? "Xóa chi nhánh?" : "Xóa thợ xăm?"}
+        description={deleteTarget?.type === "branch"
+          ? "Bạn có chắc chắn muốn xóa chi nhánh này? Hành động không thể hoàn tác."
+          : "Bạn có chắc chắn muốn xóa thợ xăm này? Hành động không thể hoàn tác."}
+        confirmLabel="Xóa"
+        onConfirm={() => {
+          if (deleteTarget) {
+            if (deleteTarget.type === "branch") deleteBranch(deleteTarget.id);
+            else deleteArtist(deleteTarget.id);
+          }
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 };

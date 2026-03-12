@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { formatContent } from "@/lib/formatContent";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface PostForm {
   title: string;
@@ -55,6 +56,7 @@ const AdminPosts = () => {
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState<PostForm>(emptyForm);
   const [uploading, setUploading] = useState(false);
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
   const [contentUploading, setContentUploading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -505,9 +507,7 @@ const AdminPosts = () => {
                     variant="ghost"
                     size="sm"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => {
-                      if (confirm("Xóa bài viết này?")) deleteMutation.mutate(post.id);
-                    }}
+                    onClick={() => setDeletePostId(post.id)}
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -517,6 +517,18 @@ const AdminPosts = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deletePostId}
+        title="Xóa bài viết?"
+        description="Bạn có chắc chắn muốn xóa bài viết này? Hành động không thể hoàn tác."
+        confirmLabel="Xóa"
+        onConfirm={() => {
+          if (deletePostId) deleteMutation.mutate(deletePostId);
+          setDeletePostId(null);
+        }}
+        onCancel={() => setDeletePostId(null)}
+      />
     </div>
   );
 };

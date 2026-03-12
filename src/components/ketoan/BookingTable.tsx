@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { Check, X, Download, Search, Eye, CheckCircle, XCircle, Pencil, History, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatVND } from "@/data/tattooDesigns";
@@ -70,6 +71,7 @@ const BookingTable = ({
   onConfirmBooking, onCancelBooking, onMarkCompleted,
   onViewReceipts, onFetchPriceHistory,
 }: BookingTableProps) => {
+  const [cancelTargetId, setCancelTargetId] = useState<string | null>(null);
   const totalPages = Math.ceil(totalCount / pageSize);
   const filtered = bookings.filter((b) => {
     const matchFilter =
@@ -250,7 +252,7 @@ const BookingTable = ({
                             </Button>
                             <Button size="sm" variant="ghost"
                               className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
-                              onClick={() => onCancelBooking(b.id)} title="Hủy đơn">
+                              onClick={() => setCancelTargetId(b.id)} title="Hủy đơn">
                               <XCircle size={12} /> Hủy
                             </Button>
                           </>
@@ -267,7 +269,7 @@ const BookingTable = ({
                         {b.booking_status === "confirmed" && (
                           <Button size="sm" variant="ghost"
                             className="h-auto px-1.5 py-0.5 text-xs text-destructive hover:text-destructive/80 gap-0.5"
-                            onClick={() => onCancelBooking(b.id)}>
+                            onClick={() => setCancelTargetId(b.id)}>
                             <XCircle size={12} /> Hủy
                           </Button>
                         )}
@@ -374,6 +376,18 @@ const BookingTable = ({
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!cancelTargetId}
+        title="Hủy đơn booking?"
+        description="Bạn có chắc chắn muốn hủy đơn booking này? Hành động không thể hoàn tác."
+        confirmLabel="Hủy đơn"
+        onConfirm={() => {
+          if (cancelTargetId) onCancelBooking(cancelTargetId);
+          setCancelTargetId(null);
+        }}
+        onCancel={() => setCancelTargetId(null)}
+      />
     </>
   );
 };
