@@ -194,6 +194,10 @@ const Ketoan = () => {
             onFilterChange={setFilter}
             onSearchChange={setSearch}
             onExportCSV={exportCSV}
+            page={page}
+            totalCount={totalCount}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
             expandedId={expandedId}
             onToggleExpand={(id) => setExpandedId(expandedId === id ? null : id)}
             editPriceId={editPriceId}
