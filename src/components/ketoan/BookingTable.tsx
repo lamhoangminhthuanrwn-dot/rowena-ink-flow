@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { Check, X, Download, Search, Eye, CheckCircle, XCircle, Pencil, History, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatVND } from "@/data/tattooDesigns";
