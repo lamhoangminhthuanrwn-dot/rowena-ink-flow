@@ -31,10 +31,20 @@ const Ketoan = () => {
   const [priceHistoryBookingId, setPriceHistoryBookingId] = useState<string | null>(null);
   const [priceHistory, setPriceHistory] = useState<BookingPriceHistory[]>([]);
   const [priceHistoryLoading, setPriceHistoryLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 50;
 
   const fetchBookings = async () => {
-    const { data } = await supabase.from("bookings").select("*, artists(name)").order("created_at", { ascending: false });
+    const from = page * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    const { data, count } = await supabase
+      .from("bookings")
+      .select("*, artists(name)", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
     if (data) setBookings(data as unknown as BookingWithArtist[]);
+    if (count !== null) setTotalCount(count);
   };
 
   const fetchWithdrawals = async () => {
@@ -59,7 +69,7 @@ const Ketoan = () => {
 
   useEffect(() => {
     if (user && isAdmin) { fetchBookings(); fetchWithdrawals(); }
-  }, [user, authLoading, isAdmin]);
+  }, [user, authLoading, isAdmin, page]);
 
   const markPaid = async (id: string) => {
     const { error } = await supabase.rpc("admin_update_booking_payment", { _booking_id: id, _payment_status: "paid" });
@@ -184,6 +194,10 @@ const Ketoan = () => {
             onFilterChange={setFilter}
             onSearchChange={setSearch}
             onExportCSV={exportCSV}
+            page={page}
+            totalCount={totalCount}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
             expandedId={expandedId}
             onToggleExpand={(id) => setExpandedId(expandedId === id ? null : id)}
             editPriceId={editPriceId}
