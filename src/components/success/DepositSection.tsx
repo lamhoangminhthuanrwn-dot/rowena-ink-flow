@@ -8,6 +8,7 @@ import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 interface DepositSectionProps {
   bookingCode: string;
@@ -19,8 +20,7 @@ interface DepositSectionProps {
 
 const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmitted, onSkipped }: DepositSectionProps) => {
   const navigate = useNavigate();
-  const [depositFiles, setDepositFiles] = useState<File[]>([]);
-  const [depositPreviews, setDepositPreviews] = useState<string[]>([]);
+  const deposit = useFileUpload({ maxFiles: 3 });
   const [depositNote, setDepositNote] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -37,23 +37,9 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
     setTimeout(() => setCopied(""), 2000);
   };
 
-  const handleDepositFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 3 - depositFiles.length);
-    setDepositFiles((prev) => [...prev, ...files]);
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => setDepositPreviews((prev) => [...prev, reader.result as string]);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeDepositFile = (idx: number) => {
-    setDepositFiles((prev) => prev.filter((_, i) => i !== idx));
-    setDepositPreviews((prev) => prev.filter((_, i) => i !== idx));
-  };
 
   const handleDepositSubmit = async () => {
-    if (depositFiles.length === 0) {
+    if (deposit.files.length === 0) {
       toast.error("Vui lòng tải lên ít nhất 1 ảnh biên lai.");
       return;
     }
@@ -61,20 +47,10 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
     try {
       await onInsertBooking();
 
-      const uploadedPaths: string[] = [];
-      for (let i = 0; i < depositFiles.length; i++) {
-        const file = depositFiles[i];
+      const uploadedPaths = await deposit.uploadAll("booking-uploads", (file, i) => {
         const ext = file.name.split(".").pop();
-        const path = `deposits/${bookingCode}_${Date.now()}_${i}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("booking-uploads")
-          .upload(path, file, { upsert: true });
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-        } else {
-          uploadedPaths.push(path);
-        }
-      }
+        return `deposits/${bookingCode}_${Date.now()}_${i}.${ext}`;
+      });
 
       if (uploadedPaths.length === 0) {
         toast.error("Không thể tải ảnh lên. Vui lòng thử lại.");
@@ -209,14 +185,14 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
         <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Tôi đã chuyển khoản</h2>
         <p className="text-sm text-muted-foreground mb-4">Tải lên 1–3 ảnh biên lai chuyển khoản để xác nhận đặt cọc.</p>
 
-        <input ref={depositFileRef} type="file" accept="image/*" multiple onChange={handleDepositFileChange} className="hidden" />
+        <input ref={depositFileRef} type="file" accept="image/*" multiple onChange={(e) => { deposit.addFiles(e.target.files || []); e.target.value = ""; }} className="hidden" />
 
-        {depositPreviews.length > 0 && (
+        {deposit.previews.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
-            {depositPreviews.map((p, i) => (
+            {deposit.previews.map((p, i) => (
               <div key={i} className="relative">
                 <img src={p} alt={`Receipt ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                <button onClick={() => removeDepositFile(i)}
+                <button onClick={() => deposit.removeFile(i)}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">
                   ×
                 </button>
@@ -225,10 +201,10 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
           </div>
         )}
 
-        {depositFiles.length < 3 && (
+        {deposit.canAddMore && (
           <button onClick={() => depositFileRef.current?.click()}
             className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-4 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground mb-3">
-            <Upload size={18} /> Tải ảnh biên lai ({depositFiles.length}/3)
+            <Upload size={18} /> Tải ảnh biên lai ({deposit.files.length}/3)
           </button>
         )}
 
@@ -238,7 +214,7 @@ const DepositSection = ({ bookingCode, bookingInserted, onInsertBooking, onSubmi
             placeholder="Ghi chú thêm..." />
         </div>
 
-        <Button onClick={handleDepositSubmit} disabled={depositFiles.length === 0 || uploading} className="w-full">
+        <Button onClick={handleDepositSubmit} disabled={deposit.files.length === 0 || uploading} className="w-full">
           {uploading ? "Đang tải lên..." : "Gửi biên lai xác nhận"}
         </Button>
       </motion.div>

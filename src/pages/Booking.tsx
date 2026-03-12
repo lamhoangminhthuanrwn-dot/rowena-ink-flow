@@ -9,6 +9,7 @@ import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import BookingOptionStep from "@/components/BookingOptionStep";
 import type { SelectedOptions } from "@/components/BookingOptionStep";
 import {
@@ -58,12 +59,11 @@ const Booking = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [branches, setBranches] = useState<Branch[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
-  const [referenceFiles, setReferenceFiles] = useState<File[]>([]);
-  const [referencePreviews, setReferencePreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [infoErrors, setInfoErrors] = useState<InfoErrors>({});
   const [scheduleErrors, setScheduleErrors] = useState<ScheduleErrors>({});
   const fileRef = useRef<HTMLInputElement>(null);
+  const refUpload = useFileUpload({ maxFiles: MAX_FILES, validateFn: validateFile });
 
   const design = tattooDesigns.find((d) => d.id === selectedDesign);
   const hasVariants = design?.variants && design.variants.length > 0;
@@ -95,63 +95,19 @@ const Booking = () => {
     fetchData();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const remaining = MAX_FILES - referenceFiles.length;
-    if (remaining <= 0) {
-      toast.error(`Tối đa ${MAX_FILES} ảnh tham khảo`);
-      return;
-    }
-    const toAdd = files.slice(0, remaining);
-    const validFiles: File[] = [];
-    for (const file of toAdd) {
-      const err = validateFile(file);
-      if (err) {
-        toast.error(err);
-      } else {
-        validFiles.push(file);
-      }
-    }
-    if (files.length > remaining) {
-      toast.warning(`Chỉ thêm được ${remaining} ảnh nữa`);
-    }
-    setReferenceFiles((prev) => [...prev, ...validFiles]);
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => setReferencePreviews((prev) => [...prev, reader.result as string]);
-      reader.readAsDataURL(file);
-    });
-    // Reset input so same file can be selected again
-    e.target.value = "";
-  };
-
-  const removeFile = (idx: number) => {
-    setReferenceFiles((prev) => prev.filter((_, i) => i !== idx));
-    setReferencePreviews((prev) => prev.filter((_, i) => i !== idx));
-  };
-
   const handleSubmit = async () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      // Artist assignment is handled server-side with availability check
       const branch = branches.find((b) => b.id === selectedBranch);
 
-      // Upload reference images first
+      // Upload reference images via hook
       const tempCode = `TMP${Date.now().toString(36).toUpperCase()}`;
-      const uploadedPaths: string[] = [];
-      for (let i = 0; i < referenceFiles.length; i++) {
-        const file = referenceFiles[i];
+      const folder = user?.id || 'anon';
+      const uploadedPaths = await refUpload.uploadAll("booking-uploads", (file, i) => {
         const ext = file.name.split(".").pop();
-        const folder = user?.id || 'anon';
-        const path = `references/${folder}/${tempCode}_${i}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("booking-uploads")
-          .upload(path, file, { upsert: true });
-        if (!uploadError) {
-          uploadedPaths.push(path);
-        }
-      }
+        return `references/${folder}/${tempCode}_${i}.${ext}`;
+      });
 
       // Call server-side Edge Function to create booking
       const savedRefCode = localStorage.getItem("ref_code");
@@ -363,18 +319,18 @@ const Booking = () => {
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">
                       Ảnh tham khảo (tối đa {MAX_FILES} ảnh, mỗi ảnh ≤ 5MB)
                     </label>
-                    <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
-                    {referencePreviews.length > 0 && (
+                    <input ref={fileRef} type="file" accept="image/*" multiple onChange={(e) => { refUpload.addFiles(e.target.files || []); e.target.value = ""; }} className="hidden" />
+                    {refUpload.previews.length > 0 && (
                       <div className="mb-2 flex flex-wrap gap-2">
-                        {referencePreviews.map((p, i) => (
+                        {refUpload.previews.map((p, i) => (
                           <div key={i} className="relative">
                             <img src={p} alt={`Ref ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                            <button onClick={() => removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
+                            <button onClick={() => refUpload.removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
                           </div>
                         ))}
                       </div>
                     )}
-                    {referenceFiles.length < MAX_FILES && (
+                    {refUpload.canAddMore && (
                       <button
                         onClick={() => fileRef.current?.click()}
                         className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
