@@ -132,10 +132,7 @@ const Booking = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      const branchArtists = artists.filter((a) => a.branch_id === selectedBranch);
-      const randomArtist = branchArtists.length > 0
-        ? branchArtists[Math.floor(Math.random() * branchArtists.length)]
-        : null;
+      // Artist assignment is handled server-side with availability check
       const branch = branches.find((b) => b.id === selectedBranch);
 
       // Upload reference images first
