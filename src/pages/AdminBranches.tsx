@@ -44,7 +44,7 @@ const AdminBranches = () => {
   const [artistForm, setArtistForm] = useState({ name: "", work_start: "08:00", work_end: "18:00" });
   const [editingArtist, setEditingArtist] = useState<string | null>(null);
   const [addingArtistBranch, setAddingArtistBranch] = useState<string | null>(null);
-
+  const [deleteTarget, setDeleteTarget] = useState<{ type: "branch" | "artist"; id: string } | null>(null);
 
   const fetchAll = async () => {
     const [{ data: b }, { data: a }] = await Promise.all([
