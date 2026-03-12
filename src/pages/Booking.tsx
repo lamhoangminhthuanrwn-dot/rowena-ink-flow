@@ -241,9 +241,10 @@ const Booking = () => {
             {stepLabels.map((s, i) => (
               <div key={s} className="flex flex-1 items-center">
                 <div className="flex flex-col items-center">
-                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors",
                     i <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-                  }`}>
+                  )}>
                     {i < step ? <Check size={14} /> : i + 1}
                   </div>
                   <span className="mt-1.5 hidden text-[10px] text-muted-foreground sm:block">{s}</span>
