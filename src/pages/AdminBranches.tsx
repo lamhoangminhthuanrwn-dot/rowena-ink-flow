@@ -236,7 +236,7 @@ const AdminBranches = () => {
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startEditBranch(b)} title="Sửa">
                       <Pencil size={13} />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => deleteBranch(b.id)} title="Xóa">
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => setDeleteTarget({ type: "branch", id: b.id })} title="Xóa">
                       <Trash2 size={13} />
                     </Button>
                     {isExpanded ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
