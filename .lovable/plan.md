@@ -1,14 +1,29 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Add toast.error for silent failures + ErrorBoundary
 
-### Changes in `src/data/tattooDesigns.ts`
+### 1. Create `src/components/ErrorBoundary.tsx`
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+A React class component that catches render errors and displays a fallback UI with a "Tải lại" button. On error, it also fires `toast.error("Đã xảy ra lỗi. Vui lòng tải lại trang.")`.
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+### 2. Update `src/App.tsx`
+
+Wrap the `<Suspense>` block with `<ErrorBoundary>`:
+
+```tsx
+<ErrorBoundary>
+  <Suspense fallback={null}>
+    <Routes>...</Routes>
+  </Suspense>
+</ErrorBoundary>
+```
+
+### 3. Add `toast.error` to silent `console.error` calls in `src/pages/Success.tsx`
+
+Two places currently only log errors without notifying the user:
+
+- **Line 95** (`Booking insert error`): Add `toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.")`
+- **Line 121** (`Insert booking error`): Add `toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.")`
+
+These are the only pages with silent failures — Ketoan, Auth, AdminBranches already have proper toast.error handling.
 
