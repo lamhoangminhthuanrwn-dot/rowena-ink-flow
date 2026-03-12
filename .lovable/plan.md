@@ -1,14 +1,19 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Vấn đề
 
-### Changes in `src/data/tattooDesigns.ts`
+`index.html` dùng `https://rowena-ink-flow.lovable.app` cho canonical, og:url và JSON-LD, trong khi `constants.ts` và `seo.ts` dùng `https://thuanlam.id.vn`. Google Bot thấy 2 domain khác nhau → duplicate content, canonical conflict.
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+## Giải pháp
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+Thống nhất tất cả về `https://thuanlam.id.vn` trong `index.html`. Các giá trị trong `index.html` chỉ là fallback trước khi JS chạy (cho crawler không chạy JS) — phải khớp với domain thật.
+
+### Thay đổi duy nhất: `index.html`
+
+Thay tất cả `https://rowena-ink-flow.lovable.app` → `https://thuanlam.id.vn`:
+- Line 11: `<link rel="canonical" href="https://thuanlam.id.vn" />`
+- Line 21: `<meta property="og:url" content="https://thuanlam.id.vn" />`
+- Line 37: `"url": "https://thuanlam.id.vn"` (trong JSON-LD)
+
+Không cần thay đổi file khác — `constants.ts`, `seo.ts`, `robots.txt`, `sitemap.xml`, edge functions đã dùng đúng domain.
 
