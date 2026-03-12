@@ -325,6 +325,23 @@ const AdminBranches = () => {
           })}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={deleteTarget?.type === "branch" ? "Xóa chi nhánh?" : "Xóa thợ xăm?"}
+        description={deleteTarget?.type === "branch"
+          ? "Bạn có chắc chắn muốn xóa chi nhánh này? Hành động không thể hoàn tác."
+          : "Bạn có chắc chắn muốn xóa thợ xăm này? Hành động không thể hoàn tác."}
+        confirmLabel="Xóa"
+        onConfirm={() => {
+          if (deleteTarget) {
+            if (deleteTarget.type === "branch") deleteBranch(deleteTarget.id);
+            else deleteArtist(deleteTarget.id);
+          }
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 };

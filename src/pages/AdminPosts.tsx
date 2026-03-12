@@ -517,6 +517,18 @@ const AdminPosts = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deletePostId}
+        title="Xóa bài viết?"
+        description="Bạn có chắc chắn muốn xóa bài viết này? Hành động không thể hoàn tác."
+        confirmLabel="Xóa"
+        onConfirm={() => {
+          if (deletePostId) deleteMutation.mutate(deletePostId);
+          setDeletePostId(null);
+        }}
+        onCancel={() => setDeletePostId(null)}
+      />
     </div>
   );
 };
