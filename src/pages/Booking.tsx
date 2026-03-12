@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { tattooDesigns, formatVNDShort } from "@/data/tattooDesigns";
 import { Check, Upload, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -315,49 +317,45 @@ const Booking = () => {
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Họ tên *</label>
-                    <input type="text" value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.name ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="text" value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
+                      className={infoErrors.name ? "border-destructive bg-destructive/5" : ""}
                       placeholder="Nguyễn Văn A" />
                     <FieldError message={infoErrors.name} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại *</label>
-                    <input type="tel" value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.phone ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="tel" value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
+                      className={infoErrors.phone ? "border-destructive bg-destructive/5" : ""}
                       placeholder="0901234567" />
                     <FieldError message={infoErrors.phone} />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Email</label>
-                    <input type="email" value={form.email} onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.email ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="email" value={form.email} onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
+                      className={infoErrors.email ? "border-destructive bg-destructive/5" : ""}
                       placeholder="email@example.com" />
                     <FieldError message={infoErrors.email} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">Vị trí xăm</label>
-                      <input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })}
-                        className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                      <Input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })}
                         placeholder="Bắp tay, lưng..." />
                     </div>
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">Kích thước</label>
-                      <input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })}
-                        className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                      <Input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })}
                         placeholder="10x15 cm" />
                     </div>
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Phong cách</label>
-                    <input type="text" value={form.style} onChange={(e) => setForm({ ...form, style: e.target.value })}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    <Input type="text" value={form.style} onChange={(e) => setForm({ ...form, style: e.target.value })}
                       placeholder="Truyền thống, tối giản, realistic..." />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Ghi chú</label>
-                    <textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} rows={3}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} rows={3}
                       placeholder="Yêu cầu đặc biệt..." />
                   </div>
 

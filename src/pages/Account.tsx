@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays, Wallet as WalletIcon, Share2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { formatVND } from "@/data/tattooDesigns";
@@ -260,32 +261,29 @@ const Account = () => {
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số tiền (VNĐ) *</label>
-                    <input
+                    <Input
                       type="number"
                       value={wdAmount}
                       onChange={(e) => setWdAmount(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                       placeholder="300000"
                       min="1"
                     />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại MoMo *</label>
-                    <input
+                    <Input
                       type="tel"
                       value={wdPhone}
                       onChange={(e) => setWdPhone(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                       placeholder="0901 234 567"
                     />
                   </div>
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Tên MoMo (tùy chọn)</label>
-                    <input
+                    <Input
                       type="text"
                       value={wdName}
                       onChange={(e) => setWdName(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                       placeholder="Nguyễn Văn A"
                     />
                   </div>

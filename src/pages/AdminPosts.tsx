@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Eye, EyeOff, ArrowLeft, Save, X, Upload, ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -287,19 +289,18 @@ const AdminPosts = () => {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">Tiêu đề *</label>
-                <input
+                <Input
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value, slug: toSlug(e.target.value) })}
-                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                   placeholder="Tiêu đề bài viết"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">Slug (URL)</label>
-                <input
+                <Input
                   value={form.slug}
                   onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                  className="font-mono"
                   placeholder="tieu-de-bai-viet"
                 />
               </div>
@@ -318,10 +319,10 @@ const AdminPosts = () => {
                 <div className="flex gap-3 items-start">
                   <div className="flex-1 space-y-2">
                     <div className="flex gap-2">
-                      <input
+                      <Input
                         value={form.cover_image}
                         onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-                        className="flex-1 rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                        className="flex-1"
                         placeholder="URL ảnh hoặc upload file bên dưới"
                       />
                       <input
@@ -358,11 +359,10 @@ const AdminPosts = () => {
               </div>
               <div className="sm:col-span-2">
                 <label className="mb-1 block text-xs font-medium text-muted-foreground">Tóm tắt</label>
-                <textarea
+                <Textarea
                   value={form.excerpt}
                   onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
                   rows={2}
-                  className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
                   placeholder="Mô tả ngắn cho SEO..."
                 />
               </div>
@@ -412,12 +412,12 @@ const AdminPosts = () => {
                     dangerouslySetInnerHTML={{ __html: form.content ? formatContent(form.content) : '<p class="text-muted-foreground italic">Chưa có nội dung để xem trước</p>' }}
                   />
                 ) : (
-                  <textarea
+                  <Textarea
                     ref={contentTextareaRef}
                     value={form.content}
                     onChange={(e) => setForm({ ...form, content: e.target.value })}
                     rows={12}
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    className="font-mono"
                     placeholder="## Tiêu đề&#10;&#10;Nội dung bài viết...&#10;&#10;**In đậm**, [Link](url)"
                   />
                 )}
