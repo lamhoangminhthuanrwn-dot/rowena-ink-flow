@@ -310,7 +310,7 @@ const AdminBranches = () => {
                               <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => startEditArtist(a)} title="Sửa">
                                 <Pencil size={12} />
                               </Button>
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => deleteArtist(a.id)} title="Xóa">
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => setDeleteTarget({ type: "artist", id: a.id })} title="Xóa">
                                 <Trash2 size={12} />
                               </Button>
                             </div>
