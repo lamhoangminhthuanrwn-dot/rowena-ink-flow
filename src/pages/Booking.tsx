@@ -402,7 +402,7 @@ const Booking = () => {
                     <select value={schedule.time} onChange={(e) => { setSchedule({ ...schedule, time: e.target.value }); setScheduleErrors((p) => ({ ...p, time: undefined })); }}
                       className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none ${scheduleErrors.time ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}>
                       <option value="">Chọn giờ</option>
-                      {["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map((t) => (
+                      {timeSlots.map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>
