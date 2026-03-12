@@ -47,8 +47,17 @@ renderer.codespan = ({ text }: { text: string }) =>
 
 renderer.hr = () => `<hr class="my-8 border-border" />`;
 
-renderer.table = ({ header, body }: { header: string; body: string }) =>
-  `<div class="overflow-x-auto my-6"><table class="w-full border-collapse text-sm"><thead class="bg-muted">${header}</thead><tbody>${body}</tbody></table></div>`;
+renderer.table = (token) => {
+  const headerCells = token.header.map((cell) => renderer.tablecell!(cell)).join("");
+  const headerRow = `<tr class="border-b border-border">${headerCells}</tr>`;
+  const bodyRows = token.rows
+    .map((row) => {
+      const cells = row.map((cell) => renderer.tablecell!(cell)).join("");
+      return `<tr class="border-b border-border">${cells}</tr>`;
+    })
+    .join("");
+  return `<div class="overflow-x-auto my-6"><table class="w-full border-collapse text-sm"><thead class="bg-muted">${headerRow}</thead><tbody>${bodyRows}</tbody></table></div>`;
+};
 
 renderer.tablerow = ({ text }: { text: string }) =>
   `<tr class="border-b border-border">${text}</tr>`;
