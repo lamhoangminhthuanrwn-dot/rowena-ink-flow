@@ -38,9 +38,9 @@ Deno.serve(async (req) => {
       const anonClient = createClient(supabaseUrl, anonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data } = await anonClient.auth.getClaims(authHeader.replace('Bearer ', ''));
-      if (data?.claims?.sub) {
-        userId = data.claims.sub as string;
+      const { data: { user }, error: userError } = await anonClient.auth.getUser();
+      if (!userError && user?.id) {
+        userId = user.id;
       }
     }
 

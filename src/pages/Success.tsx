@@ -25,32 +25,24 @@ const Success = () => {
     }
 
     const fetchBooking = async () => {
-      // Try as authenticated user first, then anon
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("*, artists(name)")
-        .eq("booking_code", bookingCode)
-        .single();
+      try {
+        const { data, error } = await supabase.functions.invoke("get-booking", {
+          body: { booking_code: bookingCode },
+        });
 
-      if (error || !data) {
-        console.error("Fetch booking error:", error);
+        if (error || !data?.booking) {
+          console.error("Fetch booking error:", error);
+          setLoading(false);
+          return;
+        }
+
+        setBooking(data.booking);
+        if (data.referral_code) setReferralCode(data.referral_code);
+      } catch (err) {
+        console.error("Fetch booking error:", err);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      setBooking(data);
-
-      // Fetch referral code if user is logged in
-      if (data.user_id) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("referral_code")
-          .eq("id", data.user_id as string)
-          .single();
-        if (profile?.referral_code) setReferralCode(profile.referral_code);
-      }
-
-      setLoading(false);
     };
 
     fetchBooking();
@@ -81,8 +73,6 @@ const Success = () => {
     );
   }
 
-  const artistName = (booking.artists as { name: string } | null)?.name;
-
   return (
     <div className="pt-20 pb-16">
       <div className="mx-auto max-w-lg px-4">
@@ -102,7 +92,7 @@ const Success = () => {
           phone={booking.customer_phone as string}
           email={(booking.customer_email as string) || ""}
           branchName={(booking.branch_name as string) || undefined}
-          artistName={artistName || undefined}
+          artistName={(booking.artist_name as string) || undefined}
           designName={(booking.product_name as string) || ""}
           placement={(booking.placement as string) || ""}
           size={(booking.size as string) || ""}
