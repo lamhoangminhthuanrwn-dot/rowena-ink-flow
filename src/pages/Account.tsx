@@ -90,7 +90,7 @@ const Account = () => {
 
   const handleCopyReferral = () => {
     if (!profile?.referral_code) return;
-    const link = `https://thuanlam.id.vn/inv/${profile.referral_code}`;
+    const link = `${window.location.origin}/inv/${profile.referral_code}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
