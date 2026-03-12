@@ -374,7 +374,16 @@ const Booking = () => {
             {contentStep === "schedule" && (
               <div className="space-y-4">
                 <h2 className="font-sans text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
-
+                {loadingData ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-full" />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                ) : (
+                <>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
                   <select
