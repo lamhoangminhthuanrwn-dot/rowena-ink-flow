@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, Wallet, Check, Copy, Home, SkipForward, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { bankInfo, generateTransferContent, generateZaloPayUrl } from "@/data/bankInfo";
 import { formatVND } from "@/data/tattooDesigns";
 import { supabase } from "@/integrations/supabase/client";
