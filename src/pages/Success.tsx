@@ -93,6 +93,7 @@ const Success = () => {
 
       if (error) {
         console.error("Booking insert error:", error);
+        toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.");
       } else {
         setBookingInserted(true);
         // Send email notification
@@ -119,6 +120,7 @@ const Success = () => {
       }
     } catch (err) {
       console.error("Insert booking error:", err);
+      toast.error("Không thể lưu đơn đặt lịch. Vui lòng thử lại.");
     }
   }, [state, bookingInserted]);
 

@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import AdminBookingNotifier from "@/components/AdminBookingNotifier";
 import AdminRoute from "@/components/AdminRoute";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy-loaded routes for code splitting
 const Catalog = lazy(() => import("./pages/Catalog"));
@@ -38,6 +39,7 @@ const App = () => (
           <div className="grain">
             <Navbar />
             <main className="min-h-screen">
+              <ErrorBoundary>
               <Suspense fallback={null}>
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -65,6 +67,7 @@ const App = () => (
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
+              </ErrorBoundary>
             </main>
             <Footer />
           </div>
