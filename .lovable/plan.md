@@ -1,14 +1,28 @@
 
 
-## Plan: Gộp "Xăm full ngực" và xóa "Xăm full bụng"
+## Plan: Thêm DOMPurify để sanitize HTML trong formatContent
 
-### Changes in `src/data/tattooDesigns.ts`
+### Vấn đề
+`formatContent()` trong `src/lib/formatContent.ts` chuyển markdown thành HTML thuần bằng regex, không sanitize. Dù chỉ admin dùng, đây vẫn là vector XSS (stored XSS nếu content chứa `<script>` hoặc event handler).
 
-1. **Item id="4"** (Xăm full ngực):
-   - `name`: → "Xăm full ngực & bụng"
-   - `description`: cập nhật mô tả bao gồm cả ngực và bụng
-   - `size`: → "Full ngực & bụng"
-   - Giữ nguyên giá, variants, hình ảnh
+### Thay đổi
 
-2. **Xóa item id="5"** (Xăm full bụng) khỏi mảng
+1. **Cài `dompurify` + `@types/dompurify`**
+2. **Sửa `src/lib/formatContent.ts`** — wrap output qua `DOMPurify.sanitize()` trước khi return
+3. **Không thay đổi gì ở `AdminPosts.tsx` hay `NewsDetail.tsx`** — sanitize tập trung tại nguồn
+
+```typescript
+// formatContent.ts — thêm ở cuối hàm
+import DOMPurify from "dompurify";
+
+export function formatContent(content: string): string {
+  const raw = content.split("\n\n").map(/* ...existing logic... */).join("");
+  return DOMPurify.sanitize(raw, { ADD_TAGS: ["img"], ADD_ATTR: ["loading", "target"] });
+}
+```
+
+### Tóm tắt
+- **1 dependency mới**: `dompurify`
+- **1 file sửa**: `src/lib/formatContent.ts`
+- Sanitize tập trung, bảo vệ mọi nơi dùng `formatContent`
 
