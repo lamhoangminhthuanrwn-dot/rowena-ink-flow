@@ -39,6 +39,7 @@ const App = () => (
           <div className="grain">
             <Navbar />
             <main className="min-h-screen">
+              <ErrorBoundary>
               <Suspense fallback={null}>
                 <Routes>
                   <Route path="/" element={<Index />} />
