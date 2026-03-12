@@ -317,8 +317,8 @@ const Booking = () => {
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium text-muted-foreground">Họ tên *</label>
-                    <input type="text" value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
-                      className={`w-full rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ${infoErrors.name ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary"}`}
+                    <Input type="text" value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
+                      className={infoErrors.name ? "border-destructive bg-destructive/5" : ""}
                       placeholder="Nguyễn Văn A" />
                     <FieldError message={infoErrors.name} />
                   </div>
