@@ -283,14 +283,7 @@ const BookingTable = ({
                           {b.reference_images && b.reference_images.length > 0 && (
                             <div className="sm:col-span-2 lg:col-span-3">
                               <span className="text-muted-foreground block mb-2">Ảnh tham khảo:</span>
-                              <div className="flex gap-2 flex-wrap">
-                                {b.reference_images.map((url: string, i: number) => (
-                                  <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                                    <img src={url} alt={`Ref ${i + 1}`}
-                                      className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                                  </a>
-                                ))}
-                              </div>
+                              <ReferenceImages paths={b.reference_images} />
                             </div>
                           )}
                           <div>
