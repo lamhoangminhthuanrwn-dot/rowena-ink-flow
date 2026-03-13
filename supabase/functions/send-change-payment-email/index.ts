@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resendFrom = Deno.env.get("RESEND_FROM_EMAIL") ?? "ROWENA Tattoo <notify@notify.thuanlam.id.vn>";
+    const resendFrom = "ROWENA Tattoo <onboarding@resend.dev>";
     const confirmUrl = `https://thuanlam.id.vn/tai-khoan?change_token=${token}`;
 
     const emailRes = await fetch("https://api.resend.com/emails", {
