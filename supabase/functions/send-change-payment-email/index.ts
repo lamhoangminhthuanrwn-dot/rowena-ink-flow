@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>",
+        from: "ROWENA Tattoo <onboarding@resend.dev>",
         to: [user.email],
         subject: "Xác nhận đổi tài khoản thanh toán — ROWENA Tattoo",
         html: `
