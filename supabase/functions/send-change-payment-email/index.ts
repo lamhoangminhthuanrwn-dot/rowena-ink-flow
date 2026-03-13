@@ -59,6 +59,14 @@ Deno.serve(async (req) => {
 
     // Send email via Resend
     const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      return new Response(JSON.stringify({ error: "Email service is not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const resendFrom = Deno.env.get("RESEND_FROM_EMAIL") ?? "ROWENA Tattoo <notify@notify.thuanlam.id.vn>";
     const confirmUrl = `https://thuanlam.id.vn/tai-khoan?change_token=${token}`;
 
     const emailRes = await fetch("https://api.resend.com/emails", {
@@ -68,7 +76,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "ROWENA Tattoo <onboarding@resend.dev>",
+        from: resendFrom,
         to: [user.email],
         subject: "Xác nhận đổi tài khoản thanh toán — ROWENA Tattoo",
         html: `
@@ -94,10 +102,27 @@ Deno.serve(async (req) => {
     if (!emailRes.ok) {
       const errBody = await emailRes.text();
       console.error("Resend error:", errBody);
-      return new Response(JSON.stringify({ error: "Failed to send email" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+
+      let resendErrorMessage = "Failed to send email";
+      try {
+        const parsed = JSON.parse(errBody);
+        if (parsed?.message) resendErrorMessage = parsed.message;
+      } catch {
+        // keep fallback message
+      }
+
+      const isDomainValidationError = emailRes.status === 403;
+      return new Response(
+        JSON.stringify({
+          error: isDomainValidationError
+            ? "Email service chưa sẵn sàng: cần xác minh domain gửi email trên Resend."
+            : resendErrorMessage,
+        }),
+        {
+          status: isDomainValidationError ? 400 : 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     return new Response(JSON.stringify({ success: true }), {
