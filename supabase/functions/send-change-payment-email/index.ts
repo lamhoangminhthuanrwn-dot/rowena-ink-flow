@@ -135,6 +135,32 @@ Deno.serve(async (req) => {
 
         const fallbackErr = await fallbackRes.text();
         console.error("Fallback Resend error:", fallbackErr);
+
+        let fallbackErrorMessage = "Failed to send email";
+        try {
+          const parsedFallback = JSON.parse(fallbackErr);
+          if (parsedFallback?.message) fallbackErrorMessage = parsedFallback.message;
+        } catch {
+          // keep fallback message
+        }
+
+        const fallbackIsTestModeRecipientError =
+          fallbackRes.status === 403 &&
+          /only send testing emails to your own email address/i.test(fallbackErrorMessage);
+
+        if (fallbackIsTestModeRecipientError) {
+          return new Response(
+            JSON.stringify({
+              success: true,
+              email_sent: false,
+              confirm_url: confirmUrl,
+              warning: "Email service đang ở chế độ test: đã tạo link xác nhận trực tiếp.",
+            }),
+            {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            }
+          );
+        }
       }
 
       const friendlyError = isDomainValidationError

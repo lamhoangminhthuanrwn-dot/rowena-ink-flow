@@ -130,12 +130,23 @@ const WalletTab = ({ userId }: WalletTabProps) => {
   const handleRequestChange = async () => {
     setChangeLoading(true);
     try {
-      const { error } = await supabase.functions.invoke("send-change-payment-email");
+      const { data, error } = await supabase.functions.invoke("send-change-payment-email");
       if (error) {
         console.error("Change request error:", error);
         toast.error("Không thể gửi email xác nhận. Vui lòng thử lại.");
       } else {
-        toast.success("Email xác nhận đã được gửi! Vui lòng kiểm tra hộp thư.");
+        const responseData = (data ?? {}) as { email_sent?: boolean; confirm_url?: string };
+
+        if (responseData.email_sent === false && responseData.confirm_url) {
+          try {
+            await navigator.clipboard.writeText(responseData.confirm_url);
+          } catch (clipboardErr) {
+            console.warn("Clipboard unavailable:", clipboardErr);
+          }
+          toast.success("Email đang ở chế độ test, link xác nhận đã được sao chép.");
+        } else {
+          toast.success("Email xác nhận đã được gửi! Vui lòng kiểm tra hộp thư.");
+        }
       }
     } finally {
       setChangeLoading(false);
