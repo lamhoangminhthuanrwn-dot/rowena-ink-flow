@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resendFrom = "ROWENA Tattoo <onboarding@resend.dev>";
+    const resendFrom = "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>";
     const confirmUrl = `https://thuanlam.id.vn/tai-khoan?change_token=${token}`;
 
     const emailRes = await fetch("https://api.resend.com/emails", {
