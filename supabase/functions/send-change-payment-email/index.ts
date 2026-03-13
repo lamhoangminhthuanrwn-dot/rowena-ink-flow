@@ -67,37 +67,41 @@ Deno.serve(async (req) => {
     }
 
     const resendFrom = "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>";
+    const fallbackFrom = "ROWENA Tattoo <onboarding@resend.dev>";
     const confirmUrl = `https://thuanlam.id.vn/tai-khoan?change_token=${token}`;
 
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: resendFrom,
-        to: [user.email],
-        subject: "Xác nhận đổi tài khoản thanh toán — ROWENA Tattoo",
-        html: `
-          <div style="font-family: 'DM Sans', Arial, sans-serif; padding: 32px 28px;">
-            <p style="font-family: 'Crimson Pro', Georgia, serif; font-size: 20px; font-weight: bold; color: hsl(222, 47%, 11%); letter-spacing: 0.05em; margin: 0 0 24px;">
-              ROWENA <span style="font-family: 'DM Sans', Arial, sans-serif; font-size: 10px; font-weight: 300; text-transform: uppercase; letter-spacing: 0.2em; color: hsl(215, 20%, 65%);">tattoo</span>
-            </p>
-            <h1 style="font-family: 'Crimson Pro', Georgia, serif; font-size: 22px; font-weight: bold; color: hsl(222, 47%, 11%); margin: 0 0 20px;">Xác nhận đổi tài khoản thanh toán</h1>
-            <p style="font-size: 14px; color: #55575d; line-height: 1.6; margin: 0 0 20px;">
-              Bạn đã yêu cầu thay đổi tài khoản thanh toán liên kết với ví ROWENA. Nhấn nút bên dưới để xác nhận:
-            </p>
-            <a href="${confirmUrl}" style="display: inline-block; background-color: hsl(216, 19%, 26%); color: hsl(210, 19%, 98%); font-size: 14px; font-weight: 600; border-radius: 0px; padding: 12px 24px; text-decoration: none;">
-              Xác nhận đổi tài khoản
-            </a>
-            <p style="font-size: 12px; color: #999999; margin: 30px 0 0;">
-              Link này có hiệu lực trong 30 phút. Nếu bạn không yêu cầu thay đổi này, vui lòng bỏ qua email này.
-            </p>
-          </div>
-        `,
-      }),
-    });
+    const sendEmail = (from: string) =>
+      fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: [user.email],
+          subject: "Xác nhận đổi tài khoản thanh toán — ROWENA Tattoo",
+          html: `
+            <div style="font-family: 'DM Sans', Arial, sans-serif; padding: 32px 28px;">
+              <p style="font-family: 'Crimson Pro', Georgia, serif; font-size: 20px; font-weight: bold; color: hsl(222, 47%, 11%); letter-spacing: 0.05em; margin: 0 0 24px;">
+                ROWENA <span style="font-family: 'DM Sans', Arial, sans-serif; font-size: 10px; font-weight: 300; text-transform: uppercase; letter-spacing: 0.2em; color: hsl(215, 20%, 65%);">tattoo</span>
+              </p>
+              <h1 style="font-family: 'Crimson Pro', Georgia, serif; font-size: 22px; font-weight: bold; color: hsl(222, 47%, 11%); margin: 0 0 20px;">Xác nhận đổi tài khoản thanh toán</h1>
+              <p style="font-size: 14px; color: #55575d; line-height: 1.6; margin: 0 0 20px;">
+                Bạn đã yêu cầu thay đổi tài khoản thanh toán liên kết với ví ROWENA. Nhấn nút bên dưới để xác nhận:
+              </p>
+              <a href="${confirmUrl}" style="display: inline-block; background-color: hsl(216, 19%, 26%); color: hsl(210, 19%, 98%); font-size: 14px; font-weight: 600; border-radius: 0px; padding: 12px 24px; text-decoration: none;">
+                Xác nhận đổi tài khoản
+              </a>
+              <p style="font-size: 12px; color: #999999; margin: 30px 0 0;">
+                Link này có hiệu lực trong 30 phút. Nếu bạn không yêu cầu thay đổi này, vui lòng bỏ qua email này.
+              </p>
+            </div>
+          `,
+        }),
+      });
+
+    const emailRes = await sendEmail(resendFrom);
 
     if (!emailRes.ok) {
       const errBody = await emailRes.text();
@@ -119,6 +123,20 @@ Deno.serve(async (req) => {
         emailRes.status === 403 &&
         /only send testing emails to your own email address/i.test(resendErrorMessage);
 
+      if (isDomainValidationError) {
+        const fallbackRes = await sendEmail(fallbackFrom);
+        if (fallbackRes.ok) {
+          await fallbackRes.text();
+          console.warn("Primary sender domain not verified, sent with fallback sender.");
+          return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const fallbackErr = await fallbackRes.text();
+        console.error("Fallback Resend error:", fallbackErr);
+      }
+
       const friendlyError = isDomainValidationError
         ? "Email service chưa sẵn sàng: cần xác minh domain gửi email trên Resend."
         : isTestModeRecipientError
@@ -133,6 +151,8 @@ Deno.serve(async (req) => {
         }
       );
     }
+
+    await emailRes.text();
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
