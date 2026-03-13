@@ -220,6 +220,51 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_accounts: {
+        Row: {
+          account_type: string
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
+          change_token: string | null
+          change_token_expires_at: string | null
+          created_at: string
+          id: string
+          momo_name: string | null
+          momo_phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: string
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          change_token?: string | null
+          change_token_expires_at?: string | null
+          created_at?: string
+          id?: string
+          momo_name?: string | null
+          momo_phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: string
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          change_token?: string | null
+          change_token_expires_at?: string | null
+          created_at?: string
+          id?: string
+          momo_name?: string | null
+          momo_phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string | null
@@ -533,7 +578,7 @@ export type Database = {
       }
       release_reserved: { Args: { _withdrawal_id: string }; Returns: undefined }
       request_withdrawal: {
-        Args: { _amount: number; _momo_name?: string; _momo_phone: string }
+        Args: { _amount: number; _momo_name?: string; _momo_phone?: string }
         Returns: string
       }
     }

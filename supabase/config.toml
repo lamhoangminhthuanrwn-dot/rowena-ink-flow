@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.get-booking]
 verify_jwt = false
+
+[functions.confirm-change-payment]
+verify_jwt = false

@@ -4,7 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays, Wallet as WalletIcon, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import BookingsTab from "@/components/account/BookingsTab";
 import WalletTab from "@/components/account/WalletTab";
 import ReferralTab from "@/components/account/ReferralTab";
@@ -12,11 +13,39 @@ import ReferralTab from "@/components/account/ReferralTab";
 const Account = () => {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/dang-nhap");
   }, [user, authLoading, navigate]);
+
+  // Handle change_token for payment account reset
+  useEffect(() => {
+    const changeToken = searchParams.get("change_token");
+    if (!changeToken) return;
+
+    const confirmChange = async () => {
+      try {
+        const res = await supabase.functions.invoke("confirm-change-payment", {
+          body: { token: changeToken },
+        });
+        if (res.error || res.data?.error) {
+          toast.error(res.data?.error || "Xác nhận thất bại. Vui lòng thử lại.");
+        } else {
+          toast.success("Đã xóa tài khoản cũ. Bạn có thể liên kết tài khoản mới.");
+          setTab("wallet");
+        }
+      } catch {
+        toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
+      }
+      // Remove token from URL
+      searchParams.delete("change_token");
+      setSearchParams(searchParams, { replace: true });
+    };
+
+    confirmChange();
+  }, [searchParams, setSearchParams]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
