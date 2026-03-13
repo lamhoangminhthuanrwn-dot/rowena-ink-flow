@@ -7,6 +7,8 @@ const corsHeaders = {
 };
 
 const ADMIN_EMAIL = "lamhoangminhthuan@gmail.com";
+const PRIMARY_FROM = "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>";
+const FALLBACK_FROM = "ROWENA Tattoo <onboarding@resend.dev>";
 
 function sanitize(str: string): string {
   return (str || "").replace(/[<>&"']/g, (c) =>
@@ -56,8 +58,7 @@ Deno.serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) {
       console.error("RESEND_API_KEY not configured");
-      return new Response(JSON.stringify({ error: "Email service not configured" }), {
-        status: 500,
+      return new Response(JSON.stringify({ success: true, email_sent: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -65,48 +66,61 @@ Deno.serve(async (req) => {
     const formattedAmount = new Intl.NumberFormat("vi-VN").format(amount_vnd) + "đ";
     const now = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>",
-        to: [ADMIN_EMAIL],
-        subject: `[Rowena] Yêu cầu rút tiền mới: ${formattedAmount}`,
-        html: `
-          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;">
-            <h2 style="margin:0 0 16px;color:#1a1a1a;">💸 Yêu cầu rút tiền mới</h2>
-            <table style="width:100%;border-collapse:collapse;">
-              <tr><td style="padding:8px 0;color:#6b7280;">Số tiền</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(formattedAmount)}</td></tr>
-              <tr><td style="padding:8px 0;color:#6b7280;">SĐT MoMo</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(momo_phone)}</td></tr>
-              <tr><td style="padding:8px 0;color:#6b7280;">Tên MoMo</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(momo_name || "Không có")}</td></tr>
-              <tr><td style="padding:8px 0;color:#6b7280;">Thời gian</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(now)}</td></tr>
-            </table>
-            <p style="margin:16px 0 0;font-size:13px;color:#9ca3af;">Vui lòng vào trang quản lý để duyệt yêu cầu này.</p>
-          </div>
-        `,
-      }),
-    });
+    const htmlBody = `
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;">
+        <h2 style="margin:0 0 16px;color:#1a1a1a;">💸 Yêu cầu rút tiền mới</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td style="padding:8px 0;color:#6b7280;">Số tiền</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(formattedAmount)}</td></tr>
+          <tr><td style="padding:8px 0;color:#6b7280;">SĐT MoMo</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(momo_phone)}</td></tr>
+          <tr><td style="padding:8px 0;color:#6b7280;">Tên MoMo</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(momo_name || "Không có")}</td></tr>
+          <tr><td style="padding:8px 0;color:#6b7280;">Thời gian</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(now)}</td></tr>
+        </table>
+        <p style="margin:16px 0 0;font-size:13px;color:#9ca3af;">Vui lòng vào trang quản lý để duyệt yêu cầu này.</p>
+      </div>
+    `;
 
-    const emailResult = await emailRes.text();
+    const sendEmail = (from: string) =>
+      fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: [ADMIN_EMAIL],
+          subject: `[Rowena] Yêu cầu rút tiền mới: ${formattedAmount}`,
+          html: htmlBody,
+        }),
+      });
 
-    if (!emailRes.ok) {
-      console.error("Resend error:", emailResult);
-      return new Response(JSON.stringify({ error: "Failed to send email" }), {
-        status: 500,
+    const emailRes = await sendEmail(PRIMARY_FROM);
+    if (emailRes.ok) {
+      await emailRes.text();
+      return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    console.warn("Primary Resend error:", await emailRes.text());
+
+    const fallbackRes = await sendEmail(FALLBACK_FROM);
+    if (fallbackRes.ok) {
+      await fallbackRes.text();
+      console.warn("Sent withdrawal email with fallback sender.");
+      return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    console.warn("Fallback Resend error:", await fallbackRes.text());
+
+    return new Response(JSON.stringify({ success: true, email_sent: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("Error:", e);
-    return new Response(JSON.stringify({ error: "Internal error" }), {
-      status: 500,
+    return new Response(JSON.stringify({ success: true, email_sent: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

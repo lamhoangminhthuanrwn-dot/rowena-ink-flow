@@ -101,84 +101,41 @@ Deno.serve(async (req) => {
         }),
       });
 
+    let emailSent = false;
+
+    // Try primary sender
     const emailRes = await sendEmail(resendFrom);
-
-    if (!emailRes.ok) {
+    if (emailRes.ok) {
+      await emailRes.text();
+      emailSent = true;
+    } else {
       const errBody = await emailRes.text();
-      console.error("Resend error:", errBody);
+      console.warn("Primary Resend error:", errBody);
 
-      let resendErrorMessage = "Failed to send email";
-      try {
-        const parsed = JSON.parse(errBody);
-        if (parsed?.message) resendErrorMessage = parsed.message;
-      } catch {
-        // keep fallback message
-      }
-
-      const isDomainValidationError =
-        emailRes.status === 403 &&
-        /domain is not verified/i.test(resendErrorMessage);
-
-      const isTestModeRecipientError =
-        emailRes.status === 403 &&
-        /only send testing emails to your own email address/i.test(resendErrorMessage);
-
-      if (isDomainValidationError) {
-        const fallbackRes = await sendEmail(fallbackFrom);
-        if (fallbackRes.ok) {
-          await fallbackRes.text();
-          console.warn("Primary sender domain not verified, sent with fallback sender.");
-          return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-
+      // Try fallback sender
+      const fallbackRes = await sendEmail(fallbackFrom);
+      if (fallbackRes.ok) {
+        await fallbackRes.text();
+        emailSent = true;
+        console.warn("Sent with fallback sender (onboarding@resend.dev)");
+      } else {
         const fallbackErr = await fallbackRes.text();
-        console.error("Fallback Resend error:", fallbackErr);
-
-        let fallbackErrorMessage = "Failed to send email";
-        try {
-          const parsedFallback = JSON.parse(fallbackErr);
-          if (parsedFallback?.message) fallbackErrorMessage = parsedFallback.message;
-        } catch {
-          // keep fallback message
-        }
-
-        const fallbackIsTestModeRecipientError =
-          fallbackRes.status === 403 &&
-          /only send testing emails to your own email address/i.test(fallbackErrorMessage);
-
-        if (fallbackIsTestModeRecipientError) {
-          return new Response(
-            JSON.stringify({
-              success: true,
-              email_sent: false,
-              confirm_url: confirmUrl,
-              warning: "Email service đang ở chế độ test: đã tạo link xác nhận trực tiếp.",
-            }),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            }
-          );
-        }
+        console.warn("Fallback Resend error:", fallbackErr);
       }
-
-      const friendlyError = isDomainValidationError
-        ? "Email service chưa sẵn sàng: cần xác minh domain gửi email trên Resend."
-        : isTestModeRecipientError
-          ? "Email service đang ở chế độ test: chỉ gửi được tới email chủ tài khoản Resend. Hãy xác minh domain để gửi cho khách hàng."
-          : resendErrorMessage;
-
-      return new Response(
-        JSON.stringify({ error: friendlyError }),
-        {
-          status: emailRes.status === 403 ? 400 : 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
     }
 
-    await emailRes.text();
+    if (!emailSent) {
+      // Both failed — return confirm_url directly so user flow is not blocked
+      return new Response(
+        JSON.stringify({
+          success: true,
+          email_sent: false,
+          confirm_url: confirmUrl,
+          warning: "Không gửi được email, link xác nhận đã được tạo trực tiếp.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
