@@ -111,15 +111,24 @@ Deno.serve(async (req) => {
         // keep fallback message
       }
 
-      const isDomainValidationError = emailRes.status === 403;
+      const isDomainValidationError =
+        emailRes.status === 403 &&
+        /domain is not verified/i.test(resendErrorMessage);
+
+      const isTestModeRecipientError =
+        emailRes.status === 403 &&
+        /only send testing emails to your own email address/i.test(resendErrorMessage);
+
+      const friendlyError = isDomainValidationError
+        ? "Email service chưa sẵn sàng: cần xác minh domain gửi email trên Resend."
+        : isTestModeRecipientError
+          ? "Email service đang ở chế độ test: chỉ gửi được tới email chủ tài khoản Resend. Hãy xác minh domain để gửi cho khách hàng."
+          : resendErrorMessage;
+
       return new Response(
-        JSON.stringify({
-          error: isDomainValidationError
-            ? "Email service chưa sẵn sàng: cần xác minh domain gửi email trên Resend."
-            : resendErrorMessage,
-        }),
+        JSON.stringify({ error: friendlyError }),
         {
-          status: isDomainValidationError ? 400 : 500,
+          status: emailRes.status === 403 ? 400 : 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
