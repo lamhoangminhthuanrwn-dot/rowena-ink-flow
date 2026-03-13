@@ -16,9 +16,7 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;')
     .replace(/\//g, '&#x2F;')
-    // Remove null bytes
     .replace(/\0/g, '')
-    // Remove control characters
     .replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
 }
 
@@ -36,13 +34,15 @@ function validateString(val: unknown, maxLen: number = MAX_FIELD_LENGTH): string
   return val.slice(0, maxLen);
 }
 
+const PRIMARY_FROM = 'ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>';
+const FALLBACK_FROM = 'ROWENA Tattoo <onboarding@resend.dev>';
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Require a valid Authorization Bearer token
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -52,7 +52,6 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
 
-    // Validate and truncate all inputs
     const booking_code = validateString(body.booking_code, 50);
     const customer_name = validateString(body.customer_name, 200);
     const phone = validateString(body.phone, 20);
@@ -74,7 +73,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Validate booking_code exists in DB
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
@@ -94,8 +92,8 @@ Deno.serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {
       console.error('RESEND_API_KEY not configured');
-      return new Response(JSON.stringify({ error: 'Email service not configured' }), {
-        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      return new Response(JSON.stringify({ success: true, email_sent: false }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -135,30 +133,53 @@ Deno.serve(async (req) => {
       </div>
     `;
 
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: 'ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>',
-        to: ['lamhoangminhthuan@gmail.com'],
-        subject: `[ROWENA] New Booking ${safeBookingCode}`,
-        html: htmlBody,
-      }),
-    });
+    const sendEmail = (from: string) =>
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from,
+          to: ['lamhoangminhthuan@gmail.com'],
+          subject: `[ROWENA] New Booking ${safeBookingCode}`,
+          html: htmlBody,
+        }),
+      });
 
-    const result = await res.text();
-    console.log('Resend response:', res.status, result);
+    // Try primary, then fallback, then graceful failure
+    const emailRes = await sendEmail(PRIMARY_FROM);
+    if (emailRes.ok) {
+      await emailRes.text();
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    return new Response(JSON.stringify({ success: true }), {
+    const errBody = await emailRes.text();
+    console.warn('Primary Resend error:', errBody);
+
+    const fallbackRes = await sendEmail(FALLBACK_FROM);
+    if (fallbackRes.ok) {
+      await fallbackRes.text();
+      console.warn('Sent booking email with fallback sender.');
+      return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const fallbackErr = await fallbackRes.text();
+    console.warn('Fallback Resend error:', fallbackErr);
+
+    // Both failed — don't block the user flow
+    return new Response(JSON.stringify({ success: true, email_sent: false }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error sending email:', error);
-    return new Response(JSON.stringify({ error: 'Failed to send email' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ success: true, email_sent: false }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
