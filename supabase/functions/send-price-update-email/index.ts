@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const ADMIN_EMAIL = "lamhoangminhthuan@gmail.com";
-const PRIMARY_FROM = "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>";
+const PRIMARY_FROM = "ROWENA Tattoo <no-reply@thuanlam.id.vn>";
 const FALLBACK_FROM = "ROWENA Tattoo <onboarding@resend.dev>";
 
 function sanitize(str: string): string {
