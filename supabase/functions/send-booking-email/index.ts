@@ -34,7 +34,7 @@ function validateString(val: unknown, maxLen: number = MAX_FIELD_LENGTH): string
   return val.slice(0, maxLen);
 }
 
-const PRIMARY_FROM = 'ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>';
+const PRIMARY_FROM = 'ROWENA Tattoo <no-reply@thuanlam.id.vn>';
 const FALLBACK_FROM = 'ROWENA Tattoo <onboarding@resend.dev>';
 
 Deno.serve(async (req) => {

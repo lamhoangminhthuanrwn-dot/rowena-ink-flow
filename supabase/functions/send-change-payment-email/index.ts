@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resendFrom = "ROWENA Tattoo <no-reply@notify.thuanlam.id.vn>";
+    const resendFrom = "ROWENA Tattoo <no-reply@thuanlam.id.vn>";
     const fallbackFrom = "ROWENA Tattoo <onboarding@resend.dev>";
     const confirmUrl = `https://thuanlam.id.vn/tai-khoan?change_token=${token}`;
 
