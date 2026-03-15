@@ -36,9 +36,9 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 
 // Configuration
 const SITE_NAME = "Rowena Ink Hub"
-const SENDER_DOMAIN = "thuanlam.id.vn"
-const ROOT_DOMAIN = "thuanlam.id.vn"
-const FROM_DOMAIN = "thuanlam.id.vn" // Must match SENDER_DOMAIN for SPF/DKIM alignment
+const SENDER_DOMAIN = "rowenatattoos.com"
+const ROOT_DOMAIN = "rowenatattoos.com"
+const FROM_DOMAIN = "rowenatattoos.com" // Must match SENDER_DOMAIN for SPF/DKIM alignment
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.

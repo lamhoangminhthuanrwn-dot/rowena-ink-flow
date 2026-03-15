@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SITE_URL = Deno.env.get("SITE_URL") || "https://thuanlam.id.vn";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://rowenatattoos.com";
 
 const hardcodedProductSlugs = [
   "xam-full-lung",

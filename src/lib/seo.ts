@@ -3,7 +3,7 @@ import { SITE_DOMAIN } from "@/lib/constants";
 const defaults = {
   title: "ROWENA TATTOO CLUB",
   description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM. Đặt lịch online, xem mẫu xăm và giá.",
-  image: "https://thuanlam.id.vn/favicon.png",
+  image: "https://rowenatattoos.com/favicon.png",
   type: "website",
 };
 
