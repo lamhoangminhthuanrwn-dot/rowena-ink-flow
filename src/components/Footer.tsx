@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, MapPin, Phone, Clock, Mail } from "lucide-react";
 import logoRowena from "@/assets/logo-rowena.png";
+import logoRowenaLight from "@/assets/logo-rowena-light.png";
+import { useTheme } from "@/hooks/useTheme";
 
 const TikTokIcon = ({ size = 16 }: {size?: number;}) =>
 <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
