@@ -2,12 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-
-const DiamondIcon = ({ className = "size-5" }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <path clipRule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fillRule="evenodd" />
-  </svg>
-);
+import logoRowena from "@/assets/logo-rowena.png";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
