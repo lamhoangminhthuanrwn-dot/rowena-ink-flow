@@ -10,6 +10,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, canManagePosts, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const links = [
   { to: "/mau-xam", label: "Mẫu xăm" },
