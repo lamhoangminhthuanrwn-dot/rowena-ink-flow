@@ -33,23 +33,23 @@ const Index = () => {
               <ArrowRight className="text-muted-foreground group-hover:text-primary transition-colors" size={20} />
             </div>
             <div className="aspect-[4/5] w-full overflow-hidden border border-border">
-              {featured[0]?.images && featured[0].images.length > 1 ? (
-                <ImageSlideshow
-                  images={featured[0].images}
-                  alt={featured[0].name}
-                  className="h-full w-full"
-                  objectFit="contain"
-                  grayscale
-                  showArrows
-                  showDots={false}
-                />
-              ) : (
-                <img
-                  src={featured[0]?.image}
-                  alt={featured[0]?.name}
-                  className="h-full w-full object-contain grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700"
-                />
-              )}
+              {featured[0]?.images && featured[0].images.length > 1 ?
+              <ImageSlideshow
+                images={featured[0].images}
+                alt={featured[0].name}
+                className="h-full w-full"
+                objectFit="contain"
+                grayscale
+                showArrows
+                showDots={false} /> :
+
+
+              <img
+                src={featured[0]?.image}
+                alt={featured[0]?.name}
+                className="h-full w-full object-contain grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
+
+              }
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
@@ -76,18 +76,18 @@ const Index = () => {
               
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 overflow-hidden border border-border">
-                    {d.images && d.images.length > 1 ? (
-                      <ImageSlideshow
-                        images={d.images}
-                        alt={d.name}
-                        className="h-full w-full"
-                        showArrows={false}
-                        showDots={false}
-                        grayscale
-                      />
-                    ) : (
-                      <img src={d.image} alt={d.name} className="h-full w-full object-cover grayscale contrast-125" />
-                    )}
+                    {d.images && d.images.length > 1 ?
+                  <ImageSlideshow
+                    images={d.images}
+                    alt={d.name}
+                    className="h-full w-full"
+                    showArrows={false}
+                    showDots={false}
+                    grayscale /> :
+
+
+                  <img src={d.image} alt={d.name} className="h-full w-full object-cover grayscale contrast-125" />
+                  }
                   </div>
                   <div>
                     <h3 className="font-sans text-base font-bold uppercase text-foreground">{d.name}</h3>
@@ -112,7 +112,7 @@ const Index = () => {
       <section className="mx-auto max-w-[1440px] bg-secondary py-20 px-8 md:px-16 border-b border-border">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <div className="size-8 text-primary mb-8">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="opacity-0">
               <path clipRule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fillRule="evenodd" />
             </svg>
           </div>
