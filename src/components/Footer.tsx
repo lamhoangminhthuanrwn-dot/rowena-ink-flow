@@ -10,7 +10,7 @@ const TikTokIcon = ({ size = 16 }: {size?: number;}) =>
 
 
 const socialLinks = [
-{ href: "https://www.facebook.com/profile.php?id=61556145616091", icon: Facebook, label: "Facebook" },
+{ href: "https://www.facebook.com/people/Rowena-Tattoo/61556145616091/", icon: Facebook, label: "Facebook" },
 { href: "https://www.youtube.com/@rowenatattomiennam", icon: Youtube, label: "YouTube" },
 { href: "https://www.instagram.com/rowena_tattoo/", icon: Instagram, label: "Instagram" },
 { href: "https://www.tiktok.com/@rosaigontattoo?lang=vi-VN", icon: TikTokIcon, label: "TikTok" }];
