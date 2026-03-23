@@ -1,12 +1,29 @@
 
 
-## Cập nhật địa chỉ chi nhánh trong Footer
+## Phân tích
 
-### Thay đổi trong `src/components/Footer.tsx`
+Các link mạng xã hội trong Footer đã được code đúng (`<a href="..." target="_blank">`). Lý do click không mở được trang web có thể là:
 
-1. **Gò Vấp**: Đổi địa chỉ từ "99 đường số 18, Phường 8, Quận Gò Vấp, TP. Hồ Chí Minh" thành "88 Nguyễn Văn Khối, Phường 11, Gò Vấp, Hồ Chí Minh" và cập nhật mapQuery tương ứng.
+1. **Trong preview Lovable**: iframe sandbox chặn popup/tab mới — đây là giới hạn môi trường preview, không phải lỗi code
+2. **Trên trang thật**: nếu vẫn không mở được, có thể do trình duyệt chặn popup
 
-2. **Hà Đông → Hoàng Mai**: Đổi tên từ "Hà Đông, Hà Nội" thành "Hoàng Mai, Hà Nội", địa chỉ từ "Sh41 KPark Văn Phú..." thành "18A Bờ Sông Sét, Hoàng Mai, Hà Nội" và cập nhật mapQuery.
+### Giải pháp
 
-Ngoài ra sẽ kiểm tra database bảng `branches` để cập nhật dữ liệu nếu cần.
+Thêm `rel="noopener noreferrer"` (đã có) và thêm fallback `window.open` qua `onClick` handler để đảm bảo link luôn mở được:
+
+**File: `src/components/Footer.tsx`**
+- Thêm `onClick` handler cho mỗi social link: nếu `window.open` bị chặn, fallback sang `window.location.href`
+- Giữ nguyên `href` và `target="_blank"` cho accessibility và SEO
+
+### Chi tiết kỹ thuật
+
+Cập nhật phần render social links để thêm onClick handler:
+```tsx
+onClick={(e) => {
+  e.preventDefault();
+  window.open(href, '_blank', 'noopener,noreferrer');
+}}
+```
+
+Thay đổi nhỏ, chỉ ảnh hưởng 1 file.
 
