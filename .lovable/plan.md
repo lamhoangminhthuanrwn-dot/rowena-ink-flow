@@ -1,22 +1,25 @@
 
 
-## Vấn đề: Nhà cung cấp domain không hỗ trợ bản ghi NS
+## Hiển thị slideshow hình ảnh trên catalog card
 
-Hệ thống email của Lovable yêu cầu thêm bản ghi **NS (Name Server)** cho subdomain `notify.rowenatattoos.com` để ủy quyền DNS. Nếu nhà cung cấp domain hiện tại không cho thêm bản ghi NS, có 2 hướng giải quyết:
+### Hiện trạng
+- Catalog page (`src/pages/Catalog.tsx`) đã import `ImageSlideshow` nhưng không sử dụng — luôn hiển thị ảnh tĩnh `d.image` ngay cả khi design có mảng `images[]` nhiều ảnh.
+- Component `ImageSlideshow` đã hoàn chỉnh với auto-play, dots, arrows.
+- `CatalogCard` component cũng chỉ hiển thị ảnh tĩnh.
 
-### Phương án 1: Chuyển DNS sang Cloudflare (miễn phí, khuyến nghị)
-- Đăng ký tài khoản Cloudflare miễn phí tại cloudflare.com
-- Thêm domain `rowenatattoos.com` vào Cloudflare
-- Cập nhật nameserver tại nhà cung cấp domain hiện tại trỏ về Cloudflare
-- Sau khi DNS chuyển xong, thêm bản ghi NS trên Cloudflare (Cloudflare hỗ trợ đầy đủ các loại bản ghi)
-- Giữ nguyên tất cả bản ghi DNS hiện có
+### Thay đổi
 
-### Phương án 2: Chuyển domain sang nhà cung cấp khác
-- Các nhà cung cấp hỗ trợ NS: Namecheap, GoDaddy, Google Domains, Tên Miền Việt Nam (inet.vn), MatBao...
-- Quy trình transfer domain mất 5-7 ngày
+**1. Catalog.tsx — Thay ảnh tĩnh bằng slideshow khi có nhiều ảnh**
+- Nếu `d.images.length > 1`: render `ImageSlideshow` với `aspect-[3/4]`, `objectFit="cover"`, ẩn dots/arrows mặc định, chỉ hiện arrows khi hover.
+- Nếu chỉ có 1 ảnh: giữ nguyên `<img>`.
 
-### Lưu ý
-- Không cần thay đổi code — chỉ cần cấu hình DNS đúng
-- Sau khi thêm được bản ghi NS, email sẽ tự động hoạt động
-- Bạn đang dùng nhà cung cấp domain nào? Tôi có thể hướng dẫn cụ thể hơn.
+**2. CatalogCard.tsx — Tương tự, thêm slideshow**
+- Thay thế `<img>` bằng `ImageSlideshow` khi design có nhiều ảnh.
+
+**3. ImageSlideshow — Điều chỉnh nhỏ**
+- Thêm prop `grayscale` (mặc định `false`) để áp dụng hiệu ứng grayscale-hover phù hợp với style catalog.
+- Ngăn click vào arrow/dot không navigate sang trang chi tiết (đã có `e.preventDefault()` + `e.stopPropagation()`).
+
+### Kết quả
+Mỗi mẫu xăm trong danh mục sẽ tự động chuyển ảnh (slideshow) nếu có nhiều hình, giúp khách hàng xem preview nhiều góc ngay trên trang catalog.
 
