@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import logoRowena from "@/assets/logo-rowena.png";
 
 const Navbar = () => {
