@@ -21,12 +21,24 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
       className="group block overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
     >
       <div className="aspect-[3/4] overflow-hidden">
-        <img
-          src={design.image}
-          alt={design.name}
-          className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
-          loading="lazy"
-        />
+        {design.images && design.images.length > 1 ? (
+          <ImageSlideshow
+            images={design.images}
+            alt={design.name}
+            className="h-full w-full"
+            objectFit="cover"
+            showDots={false}
+            showArrows={true}
+            grayscale
+          />
+        ) : (
+          <img
+            src={design.image}
+            alt={design.name}
+            className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+            loading="lazy"
+          />
+        )}
       </div>
       <div className="p-4 border-t border-border">
         <h3 className="font-sans text-sm font-bold uppercase tracking-wider text-foreground">{design.name}</h3>
