@@ -154,7 +154,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-3">
-            <img src={logoRowena} alt="Rowena" className="h-4 w-auto object-contain" />
+            <img src={theme === "dark" ? logoRowena : logoRowenaLight} alt="Rowena" className="h-4 w-auto object-contain" />
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               © 2023 ROWENA TATTOO. ALL RIGHTS RESERVED.
             </p>
