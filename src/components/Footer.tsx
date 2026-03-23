@@ -147,7 +147,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-3">
-            <DiamondIcon className="size-3 text-primary" />
+            <img src={logoRowena} alt="Rowena" className="h-4 w-auto object-contain" />
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               © {new Date().getFullYear()} ROWENA TATTOO. All rights reserved.
             </p>

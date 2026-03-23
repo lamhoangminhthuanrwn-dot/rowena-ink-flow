@@ -27,9 +27,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
-        <Link to="/" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
-          <DiamondIcon className="size-5 text-primary" />
-          <span className="text-lg font-bold uppercase tracking-widest">ROWENA TATTOO</span>
+        <Link to="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+          <img src={logoRowena} alt="Rowena Tattoo" className="h-8 w-auto object-contain" />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
