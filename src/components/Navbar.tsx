@@ -11,7 +11,7 @@ const Navbar = () => {
   const { user, isAdmin, canManagePosts, loading } = useAuth();
 
   const links = [
-  { to: "/mau-xam", label: "ARCHIVE" },
+  { to: "/mau-xam", label: "Mẫu xăm" },
   { to: "/tin-tuc", label: "TIN TỨC" }];
 
 
