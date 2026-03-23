@@ -25,26 +25,25 @@ export const InviteEmail = ({
   siteUrl,
   confirmationUrl,
 }: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="vi" dir="ltr">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
+    <Preview>Bạn được mời tham gia ROWENA Tattoo</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
+        <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
+        <Heading style={h1}>Bạn được mời tham gia</Heading>
         <Text style={text}>
-          You've been invited to join{' '}
+          Bạn đã được mời tham gia{' '}
           <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
+            <strong>ROWENA Tattoo</strong>
           </Link>
-          . Click the button below to accept the invitation and create your
-          account.
+          . Nhấn nút bên dưới để chấp nhận lời mời và tạo tài khoản.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Accept Invitation
+          Chấp nhận lời mời
         </Button>
         <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+          Nếu bạn không mong đợi lời mời này, hãy bỏ qua email này.
         </Text>
       </Container>
     </Body>
@@ -53,27 +52,40 @@ export const InviteEmail = ({
 
 export default InviteEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', 'Crimson Pro', Arial, sans-serif" }
+const container = { padding: '32px 28px' }
+const brand = {
+  fontFamily: "'Crimson Pro', Georgia, serif",
+  fontSize: '20px',
+  fontWeight: 'bold' as const,
+  color: 'hsl(222, 47%, 11%)',
+  letterSpacing: '0.05em',
+  margin: '0 0 24px',
+}
+const brandSub = {
+  fontFamily: "'DM Sans', Arial, sans-serif",
+  fontSize: '10px',
+  fontWeight: '300' as const,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.2em',
+  color: 'hsl(215, 20%, 65%)',
+}
 const h1 = {
+  fontFamily: "'Crimson Pro', Georgia, serif",
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: 'hsl(222, 47%, 11%)',
   margin: '0 0 20px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
+const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
+const link = { color: 'hsl(216, 19%, 26%)', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: 'hsl(216, 19%, 26%)',
+  color: 'hsl(210, 19%, 98%)',
   fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
+  fontWeight: '600' as const,
+  borderRadius: '0px',
+  padding: '12px 24px',
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
