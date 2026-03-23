@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import CatalogCard from "@/components/CatalogCard";
+import ImageSlideshow from "@/components/ImageSlideshow";
 import { tattooDesigns } from "@/data/tattooDesigns";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
