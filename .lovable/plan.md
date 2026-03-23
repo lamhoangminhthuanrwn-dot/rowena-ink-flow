@@ -1,14 +1,18 @@
 
 
-## Hiển thị slideshow mẫu xăm trên trang chủ
+## Cập nhật robots.txt
 
 ### Thay đổi
 
-**Index.tsx** — 2 chỗ cần cập nhật:
+**public/robots.txt** — Viết lại hoàn toàn:
 
-1. **Ảnh lớn bên trái (featured[0])** — dòng 34-40: Nếu design có nhiều ảnh (`images.length > 1`), dùng `ImageSlideshow` thay vì `<img>` đơn. Giữ `objectFit="contain"`, `grayscale`, `showArrows`.
+1. **Chặn các route private/admin** khỏi bot crawl:
+   - `/tai-khoan`, `/ketoan`, `/admin/`, `/success`, `/dang-nhap`
+   - Các redirect cũ: `/booking`, `/auth`, `/account`
+   - `/huy-dang-ky` (unsubscribe)
 
-2. **Danh sách sản phẩm bên phải** — dòng 65-66: Thumbnail nhỏ (14x14), nếu có nhiều ảnh thì dùng `ImageSlideshow` với `showArrows={false}`, `showDots={false}` (auto-slide only vì quá nhỏ).
+2. **Đổi Sitemap URL** trỏ về edge function động thay vì file tĩnh:
+   - `Sitemap: https://qbbvnjnpbbpskhwngsrq.supabase.co/functions/v1/sitemap`
 
-Import thêm `ImageSlideshow` vào file.
+3. **Đơn giản hóa** — dùng 1 block `User-agent: *` chung với Allow `/` và các Disallow cụ thể, giữ riêng block cho social bot (Twitterbot, facebookexternalhit) chỉ Allow.
 
