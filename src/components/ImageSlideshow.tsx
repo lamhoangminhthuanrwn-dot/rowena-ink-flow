@@ -13,7 +13,7 @@ interface ImageSlideshowProps {
   grayscale?: boolean;
 }
 
-const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover" }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover", grayscale = false }: ImageSlideshowProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = useCallback(() => {
