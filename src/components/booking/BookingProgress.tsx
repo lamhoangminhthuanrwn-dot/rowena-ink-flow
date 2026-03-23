@@ -14,13 +14,13 @@ const BookingProgress = ({ stepLabels, currentStep }: BookingProgressProps) => (
           <div className="flex flex-col items-center">
             <div
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors",
-                i <= currentStep ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                "flex h-8 w-8 items-center justify-center text-xs font-bold transition-colors border",
+                i <= currentStep ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-muted-foreground"
               )}
             >
               {i < currentStep ? <Check size={14} /> : i + 1}
             </div>
-            <span className="mt-1.5 hidden text-[10px] text-muted-foreground sm:block">{s}</span>
+            <span className="mt-1.5 hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:block">{s}</span>
           </div>
           {i < stepLabels.length - 1 && (
             <div className={cn("mx-2 h-px flex-1 transition-colors", i < currentStep ? "bg-primary" : "bg-border")} />

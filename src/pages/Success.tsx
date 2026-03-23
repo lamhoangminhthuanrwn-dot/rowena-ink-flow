@@ -1,6 +1,5 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,8 +65,13 @@ const Success = () => {
     return (
       <div className="flex min-h-screen items-center justify-center pt-16">
         <div className="text-center">
-          <p className="text-muted-foreground">Không tìm thấy thông tin booking.</p>
-          <Button className="mt-4" onClick={() => navigate("/")}>Về trang chủ</Button>
+          <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">Không tìm thấy thông tin booking.</p>
+          <button
+            onClick={() => navigate("/")}
+            className="mt-4 border border-foreground px-6 py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground hover:bg-foreground hover:text-background transition-colors"
+          >
+            VỀ TRANG CHỦ
+          </button>
         </div>
       </div>
     );
@@ -77,12 +81,12 @@ const Success = () => {
     <div className="pt-20 pb-16">
       <div className="mx-auto max-w-lg px-4">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-8">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-primary">
             <Check className="text-primary" size={32} />
           </div>
-          <h1 className="font-serif text-3xl font-bold text-foreground">Đặt lịch thành công!</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Cảm ơn bạn đã chọn ROWENA. Chúng tôi sẽ liên hệ xác nhận lịch hẹn trong vòng 24 giờ.
+          <h1 className="font-serif text-3xl font-bold uppercase tracking-tight text-foreground">ĐẶT LỊCH THÀNH CÔNG!</h1>
+          <p className="mt-3 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Cảm ơn bạn đã chọn ROWENA. Chúng tôi sẽ liên hệ xác nhận trong 24 giờ.
           </p>
         </motion.div>
 

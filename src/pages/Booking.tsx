@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { tattooDesigns } from "@/data/tattooDesigns";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -191,75 +190,94 @@ const Booking = () => {
   const isLastStep = step === stepLabels.length - 1;
 
   return (
-    <div className="pt-20 pb-16">
-      <div className="mx-auto max-w-2xl px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="font-sans text-3xl font-bold text-foreground">Đặt lịch xăm</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Hoàn thành các bước bên dưới để đặt lịch</p>
-        </motion.div>
-
-        <BookingProgress stepLabels={stepLabels} currentStep={step} />
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={contentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {contentStep === "design" && (
-              <DesignStep
-                selectedDesign={selectedDesign}
-                onSelect={(id) => { setSelectedDesign(id); setSelectedOptions(null); }}
-              />
-            )}
-
-            {contentStep === "options" && design && (
-              <BookingOptionStep design={design} onOptionsChange={handleOptionsChange} />
-            )}
-
-            {contentStep === "info" && (
-              <InfoStep
-                form={form}
-                setForm={setForm}
-                infoErrors={infoErrors}
-                setInfoErrors={setInfoErrors}
-                refUpload={refUpload}
-              />
-            )}
-
-            {contentStep === "schedule" && (
-              <ScheduleStep
-                schedule={schedule}
-                setSchedule={setSchedule}
-                selectedBranch={selectedBranch}
-                setSelectedBranch={setSelectedBranch}
-                branches={branches}
-                artists={artists}
-                loadingData={loadingData}
-                scheduleErrors={scheduleErrors}
-                setScheduleErrors={setScheduleErrors}
-                design={design ? { name: design.name, duration: design.duration } : undefined}
-                selectedOptions={selectedOptions}
-              />
-            )}
+    <div className="min-h-screen flex flex-col">
+      {/* Booking container */}
+      <div className="flex-grow flex items-start justify-center pt-20 pb-16 px-4">
+        <div className="w-full max-w-2xl border border-border bg-card p-8 md:p-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <p className="font-mono text-xs font-bold uppercase tracking-widest text-primary mb-3">
+              STEP {step + 1}/{stepLabels.length}: {stepLabels[step]?.toUpperCase()}
+            </p>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold uppercase tracking-tight text-foreground">
+              ĐẶT LỊCH
+            </h1>
           </motion.div>
-        </AnimatePresence>
 
-        <div className="mt-8 flex justify-between">
-          <Button variant="ghost" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} className="gap-1">
-            <ArrowLeft size={16} /> Quay lại
-          </Button>
-          {!isLastStep ? (
-            <Button onClick={validateAndNext} disabled={!canNext()} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
-              Tiếp theo <ArrowRight size={16} />
-            </Button>
-          ) : (
-            <Button onClick={validateAndNext} disabled={!canNext() || submitting} className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
-              {submitting ? "Đang gửi..." : "Đặt lịch"} <ArrowRight size={16} />
-            </Button>
-          )}
+          <BookingProgress stepLabels={stepLabels} currentStep={step} />
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={contentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {contentStep === "design" && (
+                <DesignStep
+                  selectedDesign={selectedDesign}
+                  onSelect={(id) => { setSelectedDesign(id); setSelectedOptions(null); }}
+                />
+              )}
+
+              {contentStep === "options" && design && (
+                <BookingOptionStep design={design} onOptionsChange={handleOptionsChange} />
+              )}
+
+              {contentStep === "info" && (
+                <InfoStep
+                  form={form}
+                  setForm={setForm}
+                  infoErrors={infoErrors}
+                  setInfoErrors={setInfoErrors}
+                  refUpload={refUpload}
+                />
+              )}
+
+              {contentStep === "schedule" && (
+                <ScheduleStep
+                  schedule={schedule}
+                  setSchedule={setSchedule}
+                  selectedBranch={selectedBranch}
+                  setSelectedBranch={setSelectedBranch}
+                  branches={branches}
+                  artists={artists}
+                  loadingData={loadingData}
+                  scheduleErrors={scheduleErrors}
+                  setScheduleErrors={setScheduleErrors}
+                  design={design ? { name: design.name, duration: design.duration } : undefined}
+                  selectedOptions={selectedOptions}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="mt-8 flex justify-between items-center pt-6 border-t border-border">
+            <button
+              onClick={() => setStep(Math.max(0, step - 1))}
+              disabled={step === 0}
+              className="font-mono text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
+            >
+              ← QUAY LẠI
+            </button>
+            {!isLastStep ? (
+              <button
+                onClick={validateAndNext}
+                disabled={!canNext()}
+                className="bg-primary px-8 py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition-all hover:bg-foreground hover:text-background disabled:opacity-30"
+              >
+                TIẾP THEO →
+              </button>
+            ) : (
+              <button
+                onClick={validateAndNext}
+                disabled={!canNext() || submitting}
+                className="bg-primary px-8 py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition-all hover:bg-foreground hover:text-background disabled:opacity-30"
+              >
+                {submitting ? "ĐANG GỬI..." : "ĐẶT LỊCH →"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

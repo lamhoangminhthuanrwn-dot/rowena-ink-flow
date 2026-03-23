@@ -38,32 +38,32 @@ const News = () => {
 
   return (
     <div className="pt-24 pb-16">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="mb-10"
         >
-          <h1 className="font-sans text-4xl font-bold text-foreground">Tin tức & Khuyến mãi</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cập nhật mới nhất từ ROWENA — khuyến mãi, kiến thức xăm và nhiều hơn nữa
+          <h1 className="font-serif text-4xl font-bold uppercase tracking-tight text-foreground">TIN TỨC & KHUYẾN MÃI</h1>
+          <p className="mt-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Cập nhật mới nhất từ ROWENA
           </p>
         </motion.div>
 
         {/* Category filters */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-8 flex flex-wrap gap-3">
           {categories.map((c) => (
             <button
               key={c}
               onClick={() => setActive(c)}
-              className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
+              className={`border px-4 py-1.5 font-mono text-xs font-bold uppercase tracking-widest transition-all ${
                 active === c
                   ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                  : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
-              {c}
+              [{c.toUpperCase()}]
             </button>
           ))}
         </div>
@@ -71,22 +71,22 @@ const News = () => {
         {isLoading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse rounded-lg border border-border/50 bg-card">
-                <div className="aspect-[16/9] bg-secondary/50" />
+              <div key={i} className="animate-pulse border border-border bg-card">
+                <div className="aspect-[16/9] bg-secondary" />
                 <div className="p-5 space-y-3">
-                  <div className="h-3 w-20 rounded bg-secondary/50" />
-                  <div className="h-5 w-3/4 rounded bg-secondary/50" />
-                  <div className="h-3 w-full rounded bg-secondary/50" />
+                  <div className="h-3 w-20 bg-secondary" />
+                  <div className="h-5 w-3/4 bg-secondary" />
+                  <div className="h-3 w-full bg-secondary" />
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-lg border border-border/50 bg-card p-12 text-center">
-            <p className="text-muted-foreground">Chưa có bài viết nào.</p>
+          <div className="border border-border bg-card p-12 text-center">
+            <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">Chưa có bài viết nào.</p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((post, i) => (
               <motion.div
                 key={post.id}
@@ -97,42 +97,42 @@ const News = () => {
               >
                 <Link
                   to={`/tin-tuc/${post.slug}`}
-                  className="group block overflow-hidden rounded-lg border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+                  className="group block overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
                 >
                   {post.cover_image ? (
                     <div className="aspect-[16/9] overflow-hidden">
                       <img
                         src={post.cover_image}
                         alt={post.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
                         loading="lazy"
                       />
                     </div>
                   ) : (
-                    <div className="aspect-[16/9] bg-gradient-to-br from-primary/10 to-secondary/20 flex items-center justify-center">
-                      <span className="text-3xl font-bold text-primary/20">R</span>
+                    <div className="aspect-[16/9] bg-secondary flex items-center justify-center">
+                      <span className="font-serif text-3xl font-bold text-primary/20">R</span>
                     </div>
                   )}
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary">
-                        {post.category}
+                  <div className="p-5 border-t border-border">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+                        [{post.category}]
                       </span>
                       {post.published_at && (
-                        <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                          <Calendar size={11} />
+                        <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          <Calendar size={10} />
                           {format(new Date(post.published_at), "dd MMM yyyy", { locale: vi })}
                         </span>
                       )}
                     </div>
-                    <h3 className="font-sans text-base font-semibold text-foreground line-clamp-2 leading-snug">
+                    <h3 className="font-sans text-base font-bold uppercase text-foreground line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
                     {post.excerpt && (
                       <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{post.excerpt}</p>
                     )}
-                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary transition-all group-hover:gap-2">
-                      Đọc thêm <ArrowRight size={12} />
+                    <span className="mt-3 inline-flex items-center gap-1 font-mono text-xs font-bold uppercase tracking-widest text-primary transition-all group-hover:gap-2">
+                      ĐỌC THÊM <ArrowRight size={12} />
                     </span>
                   </div>
                 </Link>

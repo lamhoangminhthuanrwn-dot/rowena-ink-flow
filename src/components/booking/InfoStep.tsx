@@ -31,78 +31,80 @@ interface InfoStepProps {
 }
 
 const FieldError = ({ message }: { message?: string }) =>
-  message ? <p className="mt-1 text-xs text-destructive">{message}</p> : null;
+  message ? <p className="mt-1 font-mono text-xs text-destructive">{message}</p> : null;
 
 const InfoStep = ({ form, setForm, infoErrors, setInfoErrors, refUpload }: InfoStepProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="space-y-4">
-      <h2 className="font-sans text-xl font-semibold text-foreground">Thông tin cá nhân</h2>
-      <div className="space-y-3">
+    <div className="space-y-6">
+      <h2 className="font-serif text-xl font-bold uppercase tracking-tight text-foreground">Thông tin cá nhân</h2>
+      <div className="space-y-5">
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Họ tên *</label>
-          <Input
+          <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Họ tên *</label>
+          <input
             type="text"
             value={form.name}
             onChange={(e) => { setForm({ ...form, name: e.target.value }); setInfoErrors((p) => ({ ...p, name: undefined })); }}
-            className={infoErrors.name ? "border-destructive bg-destructive/5" : ""}
+            className={`brutalist-input ${infoErrors.name ? "border-b-destructive" : ""}`}
             placeholder="Nguyễn Văn A"
           />
           <FieldError message={infoErrors.name} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Số điện thoại *</label>
-          <Input
+          <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Số điện thoại *</label>
+          <input
             type="tel"
             value={form.phone}
             onChange={(e) => { setForm({ ...form, phone: e.target.value }); setInfoErrors((p) => ({ ...p, phone: undefined })); }}
-            className={infoErrors.phone ? "border-destructive bg-destructive/5" : ""}
+            className={`brutalist-input ${infoErrors.phone ? "border-b-destructive" : ""}`}
             placeholder="0901234567"
           />
           <FieldError message={infoErrors.phone} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Email</label>
-          <Input
+          <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Email</label>
+          <input
             type="email"
             value={form.email}
             onChange={(e) => { setForm({ ...form, email: e.target.value }); setInfoErrors((p) => ({ ...p, email: undefined })); }}
-            className={infoErrors.email ? "border-destructive bg-destructive/5" : ""}
+            className={`brutalist-input ${infoErrors.email ? "border-b-destructive" : ""}`}
             placeholder="email@example.com"
           />
           <FieldError message={infoErrors.email} />
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Vị trí xăm</label>
-            <Input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })} placeholder="Bắp tay, lưng..." />
+            <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Vị trí xăm</label>
+            <input type="text" value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })} className="brutalist-input" placeholder="Bắp tay, lưng..." />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Kích thước</label>
-            <Input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} placeholder="10x15 cm" />
+            <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Kích thước</label>
+            <input type="text" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} className="brutalist-input" placeholder="10x15 cm" />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Phong cách</label>
-          <Input type="text" value={form.style} onChange={(e) => setForm({ ...form, style: e.target.value })} placeholder="Truyền thống, tối giản, realistic..." />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Ghi chú</label>
-          <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} rows={3} placeholder="Yêu cầu đặc biệt..." />
+          <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Ghi chú / Ý tưởng</label>
+          <textarea
+            value={form.note}
+            onChange={(e) => setForm({ ...form, note: e.target.value })}
+            rows={3}
+            className="brutalist-input resize-none"
+            placeholder="Mô tả ý tưởng hình xăm..."
+          />
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">
-            Ảnh tham khảo (tối đa {MAX_FILES} ảnh, mỗi ảnh ≤ 5MB)
+          <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Ảnh tham khảo (tối đa {MAX_FILES})
           </label>
           <input ref={fileRef} type="file" accept="image/*" multiple onChange={(e) => { refUpload.addFiles(e.target.files || []); e.target.value = ""; }} className="hidden" />
           {refUpload.previews.length > 0 && (
-            <div className="mb-2 flex flex-wrap gap-2">
+            <div className="mb-3 flex flex-wrap gap-2">
               {refUpload.previews.map((p, i) => (
                 <div key={i} className="relative">
-                  <img src={p} alt={`Ref ${i + 1}`} className="h-20 w-20 rounded-lg border border-border/50 object-cover" />
-                  <button onClick={() => refUpload.removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">×</button>
+                  <img src={p} alt={`Ref ${i + 1}`} className="h-20 w-20 border border-border object-cover" />
+                  <button onClick={() => refUpload.removeFile(i)} className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center bg-destructive text-[10px] text-destructive-foreground">×</button>
                 </div>
               ))}
             </div>
@@ -110,10 +112,12 @@ const InfoStep = ({ form, setForm, infoErrors, setInfoErrors, refUpload }: InfoS
           {refUpload.canAddMore && (
             <button
               onClick={() => fileRef.current?.click()}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+              className="dropzone-brutalist flex w-full items-center justify-center gap-2 py-8 font-mono text-sm uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
             >
               <Upload size={18} />
-              Thêm ảnh tham khảo
+              DRAG REFERENCE IMAGES HERE
+              <br />
+              <span className="text-xs opacity-50">OR CLICK TO BROWSE</span>
             </button>
           )}
         </div>

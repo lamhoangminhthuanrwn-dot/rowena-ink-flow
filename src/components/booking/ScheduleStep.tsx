@@ -51,7 +51,7 @@ function generateTimeSlots(start = "08:00", end = "17:00"): string[] {
 }
 
 const FieldError = ({ message }: { message?: string }) =>
-  message ? <p className="mt-1 text-xs text-destructive">{message}</p> : null;
+  message ? <p className="mt-1 font-mono text-xs text-destructive">{message}</p> : null;
 
 const ScheduleStep = ({
   schedule, setSchedule, selectedBranch, setSelectedBranch,
@@ -65,8 +65,8 @@ const ScheduleStep = ({
   );
 
   return (
-    <div className="space-y-4">
-      <h2 className="font-sans text-xl font-semibold text-foreground">Chọn lịch hẹn</h2>
+    <div className="space-y-6">
+      <h2 className="font-serif text-xl font-bold uppercase tracking-tight text-foreground">Chọn lịch hẹn</h2>
       {loadingData ? (
         <div className="space-y-3">
           <Skeleton className="h-10 w-full" />
@@ -78,11 +78,14 @@ const ScheduleStep = ({
       ) : (
         <>
           <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Chi nhánh *</label>
+            <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Chi nhánh *</label>
             <select
               value={selectedBranch}
               onChange={(e) => { setSelectedBranch(e.target.value); setScheduleErrors((p) => ({ ...p, branch: undefined })); }}
-              className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.branch ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}
+              className={cn(
+                "brutalist-input appearance-none cursor-pointer",
+                scheduleErrors.branch && "border-b-destructive"
+              )}
             >
               <option value="">Chọn chi nhánh</option>
               {branches.map((b) => (
@@ -92,24 +95,30 @@ const ScheduleStep = ({
             <FieldError message={scheduleErrors.branch} />
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">Ngày *</label>
+              <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Ngày *</label>
               <input
                 type="date"
                 value={schedule.date}
                 onChange={(e) => { setSchedule({ ...schedule, date: e.target.value }); setScheduleErrors((p) => ({ ...p, date: undefined })); }}
                 min={new Date().toISOString().split("T")[0]}
-                className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.date ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}
+                className={cn(
+                  "brutalist-input",
+                  scheduleErrors.date && "border-b-destructive"
+                )}
               />
               <FieldError message={scheduleErrors.date} />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">Giờ *</label>
+              <label className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">Giờ *</label>
               <select
                 value={schedule.time}
                 onChange={(e) => { setSchedule({ ...schedule, time: e.target.value }); setScheduleErrors((p) => ({ ...p, time: undefined })); }}
-                className={cn("w-full rounded-lg border px-4 py-2.5 text-sm text-foreground focus:outline-none", scheduleErrors.time ? "border-destructive bg-destructive/5" : "border-border bg-secondary/30 focus:border-primary")}
+                className={cn(
+                  "brutalist-input appearance-none cursor-pointer",
+                  scheduleErrors.time && "border-b-destructive"
+                )}
               >
                 <option value="">Chọn giờ</option>
                 {timeSlots.map((t) => (
@@ -121,22 +130,22 @@ const ScheduleStep = ({
           </div>
 
           {design && (
-            <div className="rounded-lg border border-border/50 bg-card p-4 space-y-1">
-              <p className="text-xs text-muted-foreground">Mẫu đã chọn</p>
-              <p className="text-sm font-semibold text-foreground">{design.name}</p>
+            <div className="border border-border bg-secondary p-4 space-y-1">
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Mẫu đã chọn</p>
+              <p className="font-sans text-sm font-bold uppercase text-foreground">{design.name}</p>
               {selectedOptions && (
                 <>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-mono text-xs text-muted-foreground">
                     {selectedOptions.position} · {selectedOptions.style} · {selectedOptions.sessionsLabel}
                   </p>
-                  <p className="text-sm font-bold text-primary">
+                  <p className="font-mono text-sm font-bold text-primary">
                     {formatVNDShort(selectedOptions.finalPrice)}
                     {selectedOptions.paymentType === "perSession" ? " / buổi" : ""}
                   </p>
                 </>
               )}
               {!selectedOptions && (
-                <p className="text-xs text-muted-foreground">Thời gian ước tính: {design.duration}</p>
+                <p className="font-mono text-xs text-muted-foreground">Thời gian ước tính: {design.duration}</p>
               )}
             </div>
           )}

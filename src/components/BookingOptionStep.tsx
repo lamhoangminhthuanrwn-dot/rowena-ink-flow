@@ -21,7 +21,7 @@ interface Props {
 
 const OptionGroup = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
-    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+    <p className="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
     <div className="flex flex-wrap gap-2">{children}</div>
   </div>
 );
@@ -38,10 +38,10 @@ const OptionButton = ({
   <button
     type="button"
     onClick={onClick}
-    className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
+    className={`border px-4 py-2.5 font-mono text-sm font-bold transition-all ${
       selected
         ? "border-primary bg-primary/10 text-primary"
-        : "border-border/50 bg-card text-foreground hover:border-foreground/20"
+        : "border-border bg-card text-foreground hover:border-primary/50"
     }`}
   >
     {children}
@@ -60,21 +60,16 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
   const [paymentType, setPaymentType] = useState<"full" | "perSession" | "">("");
   const [selectedScheduleIdx, setSelectedScheduleIdx] = useState<number | null>(null);
 
-  // Get available styles for selected position
   const availableStyles = position ? getStyles(variants, position) : [];
 
-  // Find selected variant
   const selectedVariant =
     position && (isMini ? style : style || (!availableStyles.length ? "" : ""))
       ? findVariant(variants, position, style || undefined)
       : undefined;
 
   const hasScheduleOptions = !!(selectedVariant?.scheduleOptions && selectedVariant.scheduleOptions.length > 0);
-
-  // Check if same-day is available
   const hasSameDay = selectedVariant?.priceSameDay != null && selectedVariant.priceSameDay > 0;
 
-  // Reset downstream when upstream changes
   useEffect(() => {
     setStyle("");
     setScheduleType("");
@@ -94,14 +89,12 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     }
   }, [scheduleType, isMini, hasScheduleOptions]);
 
-  // Auto-select when only 1 schedule option
   useEffect(() => {
     if (selectedVariant?.scheduleOptions?.length === 1) {
       setSelectedScheduleIdx(0);
     }
   }, [selectedVariant]);
 
-  // When schedule option is selected, auto-set schedule and payment
   useEffect(() => {
     if (selectedScheduleIdx !== null && hasScheduleOptions) {
       setScheduleType("simple");
@@ -109,9 +102,7 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     }
   }, [selectedScheduleIdx, hasScheduleOptions]);
 
-  // Calculate final price & notify parent
   useEffect(() => {
-    // For schedule options mode
     if (hasScheduleOptions) {
       if (selectedScheduleIdx === null || !selectedVariant) {
         onOptionsChange(null);
@@ -166,7 +157,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
     });
   }, [selectedVariant, scheduleType, paymentType, selectedScheduleIdx]);
 
-  // Compute display price
   const displayFinalPrice = (() => {
     if (hasScheduleOptions && selectedScheduleIdx !== null && selectedVariant) {
       const opt = selectedVariant.scheduleOptions![selectedScheduleIdx];
@@ -197,9 +187,8 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
 
   return (
     <div className="space-y-5">
-      <h2 className="font-serif text-xl font-semibold text-foreground">Chọn tùy chọn</h2>
+      <h2 className="font-serif text-xl font-bold uppercase tracking-tight text-foreground">Chọn tùy chọn</h2>
 
-      {/* Step 1: Position */}
       <OptionGroup label="Vị trí">
         {positions.map((p) => (
           <OptionButton key={p} selected={position === p} onClick={() => setPosition(p)}>
@@ -208,7 +197,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         ))}
       </OptionGroup>
 
-      {/* Step 2: Style/Size */}
       {position && availableStyles.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label={isMini ? "Kích thước" : "Thể loại"}>
@@ -221,7 +209,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 3: Schedule — scheduleOptions mode (full body) */}
       {selectedVariant && hasScheduleOptions && selectedVariant.scheduleOptions!.length > 1 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
@@ -234,7 +221,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 3: Schedule — legacy mode (mini/A4) */}
       {selectedVariant && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Tiến độ">
@@ -250,7 +236,6 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Step 4: Payment type (only for mini without scheduleOptions) */}
       {scheduleType && !isMini && !hasScheduleOptions && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <OptionGroup label="Thanh toán">
@@ -271,34 +256,31 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Price display */}
       {displayFinalPrice && showPrice && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-primary/20 bg-primary/5 p-4"
+          className="border border-primary/30 bg-primary/5 p-4"
         >
-          <p className="text-sm text-muted-foreground">Giá ước tính</p>
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Giá ước tính</p>
           {"perSession" in displayFinalPrice && displayFinalPrice.perSession ? (
-            <>
-              <p className="text-2xl font-bold text-primary">
-                {formatVNDShort(displayFinalPrice.perSession)}
-                <span className="text-base font-normal text-muted-foreground"> / buổi</span>
-              </p>
-            </>
+            <p className="text-2xl font-bold text-primary">
+              {formatVNDShort(displayFinalPrice.perSession)}
+              <span className="text-base font-normal text-muted-foreground"> / buổi</span>
+            </p>
           ) : (
             <>
               <p className="text-2xl font-bold text-primary">{formatVNDShort(displayFinalPrice.total)}</p>
               {typeof displayFinalPrice.sessions === "string" && (
-                <p className="mt-1 text-xs text-muted-foreground">{displayFinalPrice.sessions} thực hiện</p>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">{displayFinalPrice.sessions} thực hiện</p>
               )}
             </>
           )}
           {"note" in displayFinalPrice && displayFinalPrice.note && (
-            <p className="mt-2 text-xs font-medium text-amber-600">{displayFinalPrice.note}</p>
+            <p className="mt-2 font-mono text-xs font-bold text-primary">{displayFinalPrice.note}</p>
           )}
           {selectedVariant && selectedVariant.priceDifficult > 0 && !hasScheduleOptions && (
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="mt-2 font-mono text-xs text-muted-foreground">
               Hình khó: {formatVNDShort(selectedVariant.priceDifficult)}
               {selectedVariant.priceDifficultSessions ? ` / ${selectedVariant.priceDifficultSessions}` : ""}
             </p>
@@ -306,11 +288,10 @@ const BookingOptionStep = ({ design, onOptionsChange }: Props) => {
         </motion.div>
       )}
 
-      {/* Pain tolerance notice */}
       {selectedVariant && (
-        <div className="flex items-start gap-2 rounded-md bg-amber-50 dark:bg-amber-950/30 px-3 py-2 border border-amber-200 dark:border-amber-800/50">
-          <Info size={14} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" />
-          <p className="text-xs text-amber-800 dark:text-amber-300">Số buổi thực hiện phụ thuộc vào độ chịu đau của khách hàng (ủ tê chỉ giảm 1 phần sát thương 50-80%)</p>
+        <div className="flex items-start gap-2 border border-border bg-secondary px-3 py-2">
+          <Info size={14} className="mt-0.5 shrink-0 text-primary" />
+          <p className="text-xs text-muted-foreground">Số buổi thực hiện phụ thuộc vào độ chịu đau của khách hàng (ủ tê chỉ giảm 1 phần sát thương 50-80%)</p>
         </div>
       )}
     </div>
