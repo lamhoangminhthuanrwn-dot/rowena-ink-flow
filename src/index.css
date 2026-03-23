@@ -209,13 +209,13 @@
 
 /* Dropzone */
 .dropzone-brutalist {
-  border: 2px dashed hsl(0 75% 42%);
+  border: 2px dashed hsl(var(--primary));
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .dropzone-brutalist:hover {
-  background-color: hsl(0 75% 42% / 0.05);
-  border-color: hsl(0 0% 98%);
+  background-color: hsl(var(--primary) / 0.05);
+  border-color: hsl(var(--foreground));
 }
 
 /* Hide scrollbar */

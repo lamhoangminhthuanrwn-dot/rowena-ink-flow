@@ -45,6 +45,13 @@ const Navbar = () => {
               {l.label}
             </Link>
           )}
+          <button
+            onClick={toggleTheme}
+            className="text-foreground/70 hover:text-primary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {!loading && (
           user ?
           <button
