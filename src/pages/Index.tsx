@@ -13,7 +13,7 @@ const Index = () => {
     setSEO({
       title: undefined,
       description: "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM. Đặt lịch online, xem mẫu xăm và giá.",
-      jsonLd: buildLocalBusinessJsonLd(),
+      jsonLd: buildLocalBusinessJsonLd()
     });
     return () => resetSEO();
   }, []);
@@ -28,19 +28,19 @@ const Index = () => {
         <div className="border-b lg:border-b-0 lg:border-r border-border p-8 md:p-16 group cursor-pointer hover:bg-secondary transition-colors duration-300">
           <Link to="/mau-xam" className="block">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="font-sans text-2xl font-bold uppercase tracking-tight text-foreground">FEATURED WORK</h2>
+              <h2 className="font-sans text-2xl font-bold uppercase tracking-tight text-foreground">​</h2>
               <ArrowRight className="text-muted-foreground group-hover:text-primary transition-colors" size={20} />
             </div>
             <div className="aspect-[4/5] w-full overflow-hidden border border-border">
               <img
                 src={featured[0]?.image}
                 alt={featured[0]?.name}
-                className="h-full w-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700"
-              />
+                className="h-full w-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
+              
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{featured[0]?.category}</p>
+                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">[{featured[0]?.category}]</p>
                 <p className="mt-1 font-sans text-lg font-bold uppercase text-foreground">{featured[0]?.name}</p>
               </div>
             </div>
@@ -56,12 +56,12 @@ const Index = () => {
             </Link>
           </div>
           <div className="flex flex-col gap-4 flex-1">
-            {tattooDesigns.slice(0, 5).map((d) => (
-              <Link
-                key={d.id}
-                to={`/mau-xam/${d.slug}`}
-                className="flex items-center justify-between border-b border-border pb-4 hover:pl-4 transition-all duration-300 group/item"
-              >
+            {tattooDesigns.slice(0, 5).map((d) =>
+            <Link
+              key={d.id}
+              to={`/mau-xam/${d.slug}`}
+              className="flex items-center justify-between border-b border-border pb-4 hover:pl-4 transition-all duration-300 group/item">
+              
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 overflow-hidden border border-border">
                     <img src={d.image} alt={d.name} className="h-full w-full object-cover grayscale contrast-125" />
@@ -73,13 +73,13 @@ const Index = () => {
                 </div>
                 <span className="font-mono text-xs uppercase text-primary">{d.priceText || `Từ ${new Intl.NumberFormat("vi-VN").format(d.price)}đ`}</span>
               </Link>
-            ))}
+            )}
           </div>
           <div className="mt-8">
             <Link
               to="/mau-xam"
-              className="block w-full border border-foreground py-4 text-center font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground transition-colors hover:bg-foreground hover:text-background"
-            >
+              className="block w-full border border-foreground py-4 text-center font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground transition-colors hover:bg-foreground hover:text-background">
+              
               XEM TẤT CẢ
             </Link>
           </div>
@@ -99,14 +99,14 @@ const Index = () => {
           </h2>
           <Link
             to="/tin-tuc"
-            className="mt-8 font-mono text-sm uppercase tracking-widest text-primary border-b border-primary pb-1 hover:text-foreground hover:border-foreground transition-colors"
-          >
+            className="mt-8 font-mono text-sm uppercase tracking-widest text-primary border-b border-primary pb-1 hover:text-foreground hover:border-foreground transition-colors">
+            
             ĐỌC THÊM
           </Link>
         </div>
       </section>
-    </>
-  );
+    </>);
+
 };
 
 export default Index;
