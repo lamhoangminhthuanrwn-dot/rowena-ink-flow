@@ -28,9 +28,9 @@ export const MagicLinkEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
-        <Heading style={h1}>Link đăng nhập của bạn</Heading>
+        <Heading style={h1}>Link đăng nhập</Heading>
         <Text style={text}>
-          Nhấn nút bên dưới để đăng nhập vào ROWENA. Link này sẽ hết hạn sau một thời gian ngắn.
+          Nhấn nút bên dưới để đăng nhập vào ROWENA Tattoo. Link này sẽ hết hạn sau một thời gian ngắn.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Đăng nhập
@@ -70,12 +70,7 @@ const h1 = {
   color: 'hsl(222, 47%, 11%)',
   margin: '0 0 20px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
-}
+const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
 const button = {
   backgroundColor: 'hsl(216, 19%, 26%)',
   color: 'hsl(210, 19%, 98%)',

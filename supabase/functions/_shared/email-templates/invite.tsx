@@ -33,7 +33,7 @@ export const InviteEmail = ({
         <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
         <Heading style={h1}>Bạn được mời tham gia</Heading>
         <Text style={text}>
-          Bạn được mời tham gia{' '}
+          Bạn đã được mời tham gia{' '}
           <Link href={siteUrl} style={link}>
             <strong>ROWENA Tattoo</strong>
           </Link>
@@ -77,12 +77,7 @@ const h1 = {
   color: 'hsl(222, 47%, 11%)',
   margin: '0 0 20px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
-}
+const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
 const link = { color: 'hsl(216, 19%, 26%)', textDecoration: 'underline' }
 const button = {
   backgroundColor: 'hsl(216, 19%, 26%)',

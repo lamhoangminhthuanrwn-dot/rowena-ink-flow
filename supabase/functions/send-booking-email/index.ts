@@ -6,36 +6,12 @@ const corsHeaders = {
 };
 
 const MAX_FIELD_LENGTH = 500;
-const MAX_URL_COUNT = 10;
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
-    .replace(/\//g, '&#x2F;')
-    .replace(/\0/g, '')
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
-}
-
-function sanitizeUrl(url: string): string {
-  try {
-    const parsed = new URL(url);
-    if (!['http:', 'https:'].includes(parsed.protocol)) return '#';
-    return escapeHtml(parsed.href);
-  } catch { return '#'; }
-}
 
 function validateString(val: unknown, maxLen: number = MAX_FIELD_LENGTH): string {
   if (val === null || val === undefined) return '';
   if (typeof val !== 'string') return '';
   return val.slice(0, maxLen);
 }
-
-const PRIMARY_FROM = 'ROWENA Tattoo <no-reply@rowenatattoos.com>';
-const FALLBACK_FROM = 'ROWENA Tattoo <onboarding@resend.dev>';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -59,13 +35,9 @@ Deno.serve(async (req) => {
     const design_name = validateString(body.design_name, 200);
     const placement = validateString(body.placement, 100);
     const size = validateString(body.size, 100);
-    const style = validateString(body.style, 100);
     const appointment_date = validateString(body.appointment_date, 20);
     const appointment_time = validateString(body.appointment_time, 20);
     const note = validateString(body.note, 500);
-    const reference_urls: string[] = Array.isArray(body.reference_urls)
-      ? body.reference_urls.slice(0, MAX_URL_COUNT).filter((u: unknown) => typeof u === 'string')
-      : [];
 
     if (!booking_code) {
       return new Response(JSON.stringify({ error: 'Missing booking_code' }), {
@@ -77,6 +49,7 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
+    // Verify booking exists
     const { data: booking, error: bookingErr } = await supabase
       .from('bookings')
       .select('id')
@@ -89,95 +62,36 @@ Deno.serve(async (req) => {
       });
     }
 
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-    if (!RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured');
-      return new Response(JSON.stringify({ success: true, email_sent: false }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const safeBookingCode = escapeHtml(booking_code);
-    const safeCustomerName = escapeHtml(customer_name);
-    const safePhone = escapeHtml(phone);
-    const safeEmail = escapeHtml(email || 'N/A');
-    const safeDesignName = escapeHtml(design_name);
-    const safePlacement = escapeHtml(placement || 'N/A');
-    const safeSize = escapeHtml(size || 'N/A');
-    const safeStyle = escapeHtml(style || 'N/A');
-    const safeAppointmentDate = escapeHtml(appointment_date);
-    const safeAppointmentTime = escapeHtml(appointment_time);
-    const safeNote = escapeHtml(note || 'Không có');
-
-    const referenceImagesHtml = reference_urls.length > 0
-      ? `<p><strong>Ảnh tham khảo:</strong></p>${reference_urls.map((url: string) => { const safe = sanitizeUrl(url); return `<p><a href="${safe}">${safe}</a></p>`; }).join('')}`
-      : '';
-
-    const htmlBody = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #d4a843;">🔔 Booking mới — ${safeBookingCode}</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mã booking</td><td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">${safeBookingCode}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Khách hàng</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeCustomerName}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">SĐT</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safePhone}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Email</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeEmail}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Mẫu</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeDesignName}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Vị trí</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safePlacement}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Kích thước</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeSize}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Phong cách</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeStyle}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ngày hẹn</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeAppointmentDate} · ${safeAppointmentTime}</td></tr>
-          <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #888;">Ghi chú</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${safeNote}</td></tr>
-        </table>
-        ${referenceImagesHtml}
-        <p style="margin-top: 20px; color: #888; font-size: 12px;">— ROWENA Tattoo Studio</p>
-      </div>
-    `;
-
-    const sendEmail = (from: string) =>
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
+    // Send via transactional email system
+    try {
+      await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'booking-notification',
+          recipientEmail: 'lamhoangminhthuan@gmail.com',
+          idempotencyKey: `booking-notify-${booking.id}`,
+          templateData: {
+            booking_code,
+            customer_name,
+            phone,
+            email: email || 'N/A',
+            design_name,
+            placement: placement || 'N/A',
+            size: size || 'N/A',
+            appointment_date,
+            appointment_time,
+            note: note || 'Không có',
+          },
         },
-        body: JSON.stringify({
-          from,
-          to: ['lamhoangminhthuan@gmail.com'],
-          subject: `[ROWENA] New Booking ${safeBookingCode}`,
-          html: htmlBody,
-        }),
       });
-
-    // Try primary, then fallback, then graceful failure
-    const emailRes = await sendEmail(PRIMARY_FROM);
-    if (emailRes.ok) {
-      await emailRes.text();
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    } catch (emailErr) {
+      console.error('Failed to send booking notification email:', emailErr);
     }
 
-    const errBody = await emailRes.text();
-    console.warn('Primary Resend error:', errBody);
-
-    const fallbackRes = await sendEmail(FALLBACK_FROM);
-    if (fallbackRes.ok) {
-      await fallbackRes.text();
-      console.warn('Sent booking email with fallback sender.');
-      return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const fallbackErr = await fallbackRes.text();
-    console.warn('Fallback Resend error:', fallbackErr);
-
-    // Both failed — don't block the user flow
-    return new Response(JSON.stringify({ success: true, email_sent: false }), {
+    return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error:', error);
     return new Response(JSON.stringify({ success: true, email_sent: false }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -61,18 +61,12 @@ const h1 = {
   color: 'hsl(222, 47%, 11%)',
   margin: '0 0 20px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
-}
+const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
 const codeStyle = {
-  fontFamily: "'SF Mono', Courier, monospace",
-  fontSize: '28px',
+  fontFamily: "'JetBrains Mono', Courier, monospace",
+  fontSize: '22px',
   fontWeight: 'bold' as const,
   color: 'hsl(222, 47%, 11%)',
-  letterSpacing: '0.15em',
   margin: '0 0 30px',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }

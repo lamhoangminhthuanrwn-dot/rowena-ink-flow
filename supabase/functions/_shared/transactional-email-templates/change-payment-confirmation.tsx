@@ -1,60 +1,45 @@
-/// <reference types="npm:@types/react@18.3.1" />
-
 import * as React from 'npm:react@18.3.1'
-
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
+  Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
+import type { TemplateEntry } from './registry.ts'
 
-interface EmailChangeEmailProps {
-  siteName: string
-  email: string
-  newEmail: string
-  confirmationUrl: string
+const SITE_NAME = 'ROWENA Tattoo'
+
+interface Props {
+  confirmUrl?: string
 }
 
-export const EmailChangeEmail = ({
-  siteName,
-  email,
-  newEmail,
-  confirmationUrl,
-}: EmailChangeEmailProps) => (
+const ChangePaymentConfirmationEmail = ({ confirmUrl }: Props) => (
   <Html lang="vi" dir="ltr">
     <Head />
-    <Preview>Xác nhận thay đổi email — ROWENA Tattoo</Preview>
+    <Preview>Xác nhận đổi tài khoản thanh toán — {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
-        <Heading style={h1}>Xác nhận thay đổi email</Heading>
+        <Heading style={h1}>Xác nhận đổi tài khoản thanh toán</Heading>
         <Text style={text}>
-          Bạn đã yêu cầu thay đổi email từ{' '}
-          <Link href={`mailto:${email}`} style={link}>{email}</Link>{' '}
-          sang{' '}
-          <Link href={`mailto:${newEmail}`} style={link}>{newEmail}</Link>.
+          Bạn đã yêu cầu thay đổi tài khoản thanh toán liên kết với ví ROWENA. Nhấn nút bên dưới để xác nhận:
         </Text>
-        <Text style={text}>Nhấn nút bên dưới để xác nhận thay đổi:</Text>
-        <Button style={button} href={confirmationUrl}>
-          Xác nhận thay đổi email
+        <Button style={button} href={confirmUrl || '#'}>
+          Xác nhận đổi tài khoản
         </Button>
         <Text style={footer}>
-          Nếu bạn không yêu cầu thay đổi này, vui lòng bảo mật tài khoản của bạn ngay.
+          Link này có hiệu lực trong 30 phút. Nếu bạn không yêu cầu thay đổi này, vui lòng bỏ qua email này.
         </Text>
       </Container>
     </Body>
   </Html>
 )
 
-export default EmailChangeEmail
+export const template = {
+  component: ChangePaymentConfirmationEmail,
+  subject: 'Xác nhận đổi tài khoản thanh toán — ROWENA Tattoo',
+  displayName: 'Xác nhận đổi tài khoản thanh toán',
+  previewData: { confirmUrl: 'https://rowenatattoos.com/tai-khoan?change_token=sample' },
+} satisfies TemplateEntry
 
-const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', 'Crimson Pro', Arial, sans-serif" }
+const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', Arial, sans-serif" }
 const container = { padding: '32px 28px' }
 const brand = {
   fontFamily: "'Crimson Pro', Georgia, serif",
@@ -80,7 +65,6 @@ const h1 = {
   margin: '0 0 20px',
 }
 const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
-const link = { color: 'hsl(216, 19%, 26%)', textDecoration: 'underline' }
 const button = {
   backgroundColor: 'hsl(216, 19%, 26%)',
   color: 'hsl(210, 19%, 98%)',

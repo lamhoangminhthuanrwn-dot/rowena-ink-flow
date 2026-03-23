@@ -25,6 +25,7 @@ const AdminPosts = lazy(() => import("./pages/AdminPosts"));
 const News = lazy(() => import("./pages/News"));
 const NewsDetail = lazy(() => import("./pages/NewsDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +77,7 @@ const App = () => (
                   <Route path="/tin-tuc/:slug" element={<NewsDetail />} />
                   <Route path="/r/:code" element={<ReferralRedirect />} />
                   <Route path="/inv/:code" element={<ReferralRedirect />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

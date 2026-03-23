@@ -6,16 +6,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ADMIN_EMAIL = "lamhoangminhthuan@gmail.com";
-const PRIMARY_FROM = "ROWENA Tattoo <no-reply@rowenatattoos.com>";
-const FALLBACK_FROM = "ROWENA Tattoo <onboarding@resend.dev>";
-
-function sanitize(str: string): string {
-  return (str || "").replace(/[<>&"']/g, (c) =>
-    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
-  ).slice(0, 500);
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -32,13 +22,17 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Verify caller via claims
+    const anonClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await anonClient.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -55,67 +49,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) {
-      console.error("RESEND_API_KEY not configured");
-      return new Response(JSON.stringify({ success: true, email_sent: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const formattedAmount = new Intl.NumberFormat("vi-VN").format(amount_vnd) + "đ";
     const now = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 
-    const htmlBody = `
-      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;">
-        <h2 style="margin:0 0 16px;color:#1a1a1a;">💸 Yêu cầu rút tiền mới</h2>
-        <table style="width:100%;border-collapse:collapse;">
-          <tr><td style="padding:8px 0;color:#6b7280;">Số tiền</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(formattedAmount)}</td></tr>
-          <tr><td style="padding:8px 0;color:#6b7280;">SĐT MoMo</td><td style="padding:8px 0;font-weight:600;color:#1a1a1a;">${sanitize(momo_phone)}</td></tr>
-          <tr><td style="padding:8px 0;color:#6b7280;">Tên MoMo</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(momo_name || "Không có")}</td></tr>
-          <tr><td style="padding:8px 0;color:#6b7280;">Thời gian</td><td style="padding:8px 0;color:#1a1a1a;">${sanitize(now)}</td></tr>
-        </table>
-        <p style="margin:16px 0 0;font-size:13px;color:#9ca3af;">Vui lòng vào trang quản lý để duyệt yêu cầu này.</p>
-      </div>
-    `;
-
-    const sendEmail = (from: string) =>
-      fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
+    try {
+      await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'withdrawal-notification',
+          recipientEmail: 'lamhoangminhthuan@gmail.com',
+          idempotencyKey: `withdrawal-notify-${user.id}-${Date.now()}`,
+          templateData: {
+            amount: formattedAmount,
+            momo_phone,
+            momo_name: momo_name || 'Không có',
+            time: now,
+          },
         },
-        body: JSON.stringify({
-          from,
-          to: [ADMIN_EMAIL],
-          subject: `[Rowena] Yêu cầu rút tiền mới: ${formattedAmount}`,
-          html: htmlBody,
-        }),
       });
-
-    const emailRes = await sendEmail(PRIMARY_FROM);
-    if (emailRes.ok) {
-      await emailRes.text();
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    } catch (emailErr) {
+      console.error('Failed to send withdrawal notification email:', emailErr);
     }
 
-    console.warn("Primary Resend error:", await emailRes.text());
-
-    const fallbackRes = await sendEmail(FALLBACK_FROM);
-    if (fallbackRes.ok) {
-      await fallbackRes.text();
-      console.warn("Sent withdrawal email with fallback sender.");
-      return new Response(JSON.stringify({ success: true, fallback_sender: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    console.warn("Fallback Resend error:", await fallbackRes.text());
-
-    return new Response(JSON.stringify({ success: true, email_sent: false }), {
+    return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

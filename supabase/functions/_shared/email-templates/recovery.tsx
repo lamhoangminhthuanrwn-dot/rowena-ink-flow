@@ -30,13 +30,14 @@ export const RecoveryEmail = ({
         <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
         <Heading style={h1}>Đặt lại mật khẩu</Heading>
         <Text style={text}>
-          Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản ROWENA của bạn. Nhấn nút bên dưới để chọn mật khẩu mới.
+          Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản ROWENA Tattoo của bạn.
+          Nhấn nút bên dưới để chọn mật khẩu mới.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Đặt lại mật khẩu
         </Button>
         <Text style={footer}>
-          Nếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua email này.
+          Nếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua email này. Mật khẩu của bạn sẽ không thay đổi.
         </Text>
       </Container>
     </Body>
@@ -70,12 +71,7 @@ const h1 = {
   color: 'hsl(222, 47%, 11%)',
   margin: '0 0 20px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
-}
+const text = { fontSize: '14px', color: '#55575d', lineHeight: '1.6', margin: '0 0 20px' }
 const button = {
   backgroundColor: 'hsl(216, 19%, 26%)',
   color: 'hsl(210, 19%, 98%)',
