@@ -170,10 +170,10 @@
   bottom: -100%;
   left: 0;
   width: 100%;
-  background: rgba(5, 5, 5, 0.85);
+  background: hsl(var(--background) / 0.9);
   padding: 1rem;
   transition: bottom 0.3s ease;
-  border-top: 1px solid hsl(240 5% 34%);
+  border-top: 1px solid hsl(var(--border));
 }
 
 .masonry-item:hover .meta-overlay {
