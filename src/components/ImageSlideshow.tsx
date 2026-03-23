@@ -10,6 +10,7 @@ interface ImageSlideshowProps {
   showDots?: boolean;
   showArrows?: boolean;
   objectFit?: "cover" | "contain";
+  grayscale?: boolean;
 }
 
 const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover" }: ImageSlideshowProps) => {
