@@ -1,42 +1,62 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import CatalogCard from "@/components/CatalogCard";
-import { tattooDesigns, categories } from "@/data/tattooDesigns";
+import { Link } from "react-router-dom";
+import { tattooDesigns, categories, displayPrice } from "@/data/tattooDesigns";
+import ImageSlideshow from "@/components/ImageSlideshow";
 
 const Catalog = () => {
   const [active, setActive] = useState("Tất cả");
   const filtered = active === "Tất cả" ? tattooDesigns : tattooDesigns.filter((d) => d.category === active);
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="mx-auto max-w-6xl px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-10">
-          <h1 className="font-sans text-4xl font-bold text-foreground">Mẫu xăm & Giá</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Chọn mẫu bạn yêu thích hoặc liên hệ để thiết kế riêng</p>
-        </motion.div>
-
-        <div className="mb-8 flex flex-wrap gap-2">
+    <div className="min-h-screen pt-16">
+      {/* Sticky Filter Bar */}
+      <div className="sticky top-16 z-40 border-b border-border bg-secondary w-full">
+        <div className="mx-auto flex max-w-[1440px] gap-6 px-6 md:px-10 py-3">
           {categories.map((c) => (
             <button
               key={c}
               onClick={() => setActive(c)}
-              className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-all ${
-                active === c
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+              className={`font-mono text-sm font-bold uppercase tracking-widest transition-colors ${
+                active === c ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {c}
+              [{c.toUpperCase()}]
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((d, i) => (
-            <CatalogCard key={d.id} design={d} index={i} />
+      {/* Masonry Grid */}
+      <main className="mx-auto max-w-[1440px] px-6 md:px-10 py-10">
+        <div className="masonry-grid">
+          {filtered.map((d) => (
+            <Link key={d.id} to={`/mau-xam/${d.slug}`} className="masonry-item block">
+              {d.images && d.images.length > 1 ? (
+                <div className="w-full">
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="w-full h-auto grayscale-hover block"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <img
+                  src={d.image}
+                  alt={d.name}
+                  className="w-full h-auto grayscale-hover block"
+                  loading="lazy"
+                />
+              )}
+              <div className="meta-overlay flex flex-col">
+                <span className="font-sans text-sm font-bold uppercase tracking-wider text-foreground">{d.name}</span>
+                <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground mt-1">{d.category}</span>
+                <span className="font-mono text-xs text-primary mt-1">{displayPrice(d)}</span>
+              </div>
+            </Link>
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

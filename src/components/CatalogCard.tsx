@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { TattooDesign } from "@/data/tattooDesigns";
 import { displayPrice } from "@/data/tattooDesigns";
-import ImageSlideshow from "@/components/ImageSlideshow";
 
 interface CatalogCardProps {
   design: TattooDesign;
@@ -18,24 +17,20 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
   >
     <Link
       to={`/mau-xam/${design.slug}`}
-      className="group block overflow-hidden rounded-lg border border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+      className="group block overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
     >
       <div className="aspect-[3/4] overflow-hidden">
-        {design.images && design.images.length > 1 ? (
-          <ImageSlideshow images={design.images} alt={design.name} />
-        ) : (
-          <img
-            src={design.image}
-            alt={design.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-        )}
+        <img
+          src={design.image}
+          alt={design.name}
+          className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+          loading="lazy"
+        />
       </div>
-      <div className="p-4">
-        <h3 className="font-sans text-base font-semibold text-foreground">{design.name}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{design.category}</p>
-        <p className="mt-2 text-sm font-semibold text-primary">{displayPrice(design)}</p>
+      <div className="p-4 border-t border-border">
+        <h3 className="font-sans text-sm font-bold uppercase tracking-wider text-foreground">{design.name}</h3>
+        <p className="mt-0.5 font-mono text-xs uppercase tracking-widest text-muted-foreground">{design.category}</p>
+        <p className="mt-2 font-mono text-xs font-bold text-primary">{displayPrice(design)}</p>
       </div>
     </Link>
   </motion.div>
