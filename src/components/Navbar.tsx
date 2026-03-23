@@ -2,12 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-
-const DiamondIcon = ({ className = "size-5" }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <path clipRule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fillRule="evenodd" />
-  </svg>
-);
+import logoRowena from "@/assets/logo-rowena.png";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -32,9 +27,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:px-8">
-        <Link to="/" className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
-          <DiamondIcon className="size-5 text-primary" />
-          <span className="text-lg font-bold uppercase tracking-widest">ROWENA TATTOO</span>
+        <Link to="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+          <img src={logoRowena} alt="Rowena Tattoo" className="h-8 w-auto object-contain" />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">

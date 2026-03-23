@@ -1,16 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, MapPin, Phone, Clock, Mail } from "lucide-react";
+import logoRowena from "@/assets/logo-rowena.png";
 
 const TikTokIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-);
-
-const DiamondIcon = ({ className = "size-4" }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <path clipRule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fillRule="evenodd" />
   </svg>
 );
 
@@ -49,11 +44,8 @@ const Footer = () => {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <DiamondIcon className="size-5 text-primary" />
-              <span className="font-sans text-sm font-bold uppercase tracking-widest text-foreground">
-                ROWENA TATTOO
-              </span>
+            <div className="flex items-center gap-2">
+              <img src={logoRowena} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Nghệ thuật xăm hình chuyên nghiệp. Mỗi tác phẩm là một câu chuyện riêng.
@@ -155,7 +147,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-3">
-            <DiamondIcon className="size-3 text-primary" />
+            <img src={logoRowena} alt="Rowena" className="h-4 w-auto object-contain" />
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               © {new Date().getFullYear()} ROWENA TATTOO. All rights reserved.
             </p>
