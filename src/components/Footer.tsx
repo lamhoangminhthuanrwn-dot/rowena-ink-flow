@@ -44,11 +44,8 @@ const Footer = () => {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <DiamondIcon className="size-5 text-primary" />
-              <span className="font-sans text-sm font-bold uppercase tracking-widest text-foreground">
-                ROWENA TATTOO
-              </span>
+            <div className="flex items-center gap-2">
+              <img src={logoRowena} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Nghệ thuật xăm hình chuyên nghiệp. Mỗi tác phẩm là một câu chuyện riêng.
