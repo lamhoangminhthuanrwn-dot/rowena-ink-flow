@@ -68,7 +68,6 @@ const Index = () => {
                   </div>
                   <div>
                     <h3 className="font-sans text-base font-bold uppercase text-foreground">{d.name}</h3>
-                    <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mt-0.5">{d.category}</p>
                   </div>
                 </div>
                 <span className="font-mono text-xs uppercase text-primary">{d.priceText || `Từ ${new Intl.NumberFormat("vi-VN").format(d.price)}đ`}</span>
