@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import heroImg from "@/assets/hero-tattoo.jpg";
 
-const HeroSection = () => (
-  <section className="relative flex h-screen w-full items-center justify-center border-b border-border overflow-hidden">
+const HeroSection = () =>
+<section className="relative flex h-screen w-full items-center justify-center border-b border-border overflow-hidden">
     {/* Background image with grayscale + contrast */}
     <img
-      src={heroImg}
-      alt="Tattoo artist working in studio"
-      className="absolute inset-0 h-full w-full object-cover grayscale contrast-125"
-      loading="eager"
-    />
+    src={heroImg}
+    alt="Tattoo artist working in studio"
+    className="absolute inset-0 h-full w-full object-cover grayscale contrast-125"
+    loading="eager" />
+  
     <div className="absolute inset-0 bg-background/50" />
 
     {/* Content */}
@@ -18,13 +18,13 @@ const HeroSection = () => (
         ROWENA TATTOO
       </h1>
       <Link
-        to="/dat-lich"
-        className="bg-primary px-10 py-4 font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition-all hover:bg-foreground hover:text-background border border-border"
-      >
-        ĐẶT LỊCH TƯ VẤN
+      to="/dat-lich"
+      className="bg-primary px-10 py-4 font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground transition-all hover:bg-foreground hover:text-background border border-border">
+      
+        ĐẶT LỊCH ngay  
       </Link>
     </div>
-  </section>
-);
+  </section>;
+
 
 export default HeroSection;
