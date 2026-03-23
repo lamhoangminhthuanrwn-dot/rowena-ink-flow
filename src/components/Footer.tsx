@@ -149,7 +149,7 @@ const Footer = () => {
           <div className="flex items-center gap-3">
             <img src={logoRowena} alt="Rowena" className="h-4 w-auto object-contain" />
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              © {new Date().getFullYear()} ROWENA TATTOO. All rights reserved.
+              © 2023 ROWENA TATTOO. ALL RIGHTS RESERVED.
             </p>
           </div>
           <div className="flex gap-6 font-mono text-xs uppercase tracking-widest text-muted-foreground">
