@@ -126,8 +126,8 @@
   }
 
   ::selection {
-    background-color: hsl(0 75% 42%);
-    color: white;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
 }
 
