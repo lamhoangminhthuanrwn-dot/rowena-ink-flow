@@ -58,6 +58,10 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(href, '_blank', 'noopener,noreferrer');
+                }}
                 className="flex h-9 w-9 items-center justify-center border border-border text-muted-foreground transition-all hover:border-primary hover:text-primary">
                 
                   <Icon size={16} />
