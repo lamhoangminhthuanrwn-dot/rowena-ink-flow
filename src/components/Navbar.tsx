@@ -4,6 +4,7 @@ import { Menu, X, User, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import logoRowena from "@/assets/logo-rowena.png";
+import logoRowenaLight from "@/assets/logo-rowena-light.png";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
