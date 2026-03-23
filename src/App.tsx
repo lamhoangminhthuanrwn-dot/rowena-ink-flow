@@ -77,6 +77,7 @@ const App = () => (
                   <Route path="/tin-tuc/:slug" element={<NewsDetail />} />
                   <Route path="/r/:code" element={<ReferralRedirect />} />
                   <Route path="/inv/:code" element={<ReferralRedirect />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
