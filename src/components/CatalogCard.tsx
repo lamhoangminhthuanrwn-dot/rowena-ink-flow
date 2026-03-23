@@ -20,13 +20,13 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
       to={`/mau-xam/${design.slug}`}
       className="group block overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
     >
-      <div className="aspect-[3/4] overflow-hidden">
+      <div className="aspect-[3/4] overflow-hidden bg-secondary/30">
         {design.images && design.images.length > 1 ? (
           <ImageSlideshow
             images={design.images}
             alt={design.name}
             className="h-full w-full"
-            objectFit="cover"
+            objectFit="contain"
             showDots={false}
             showArrows={true}
             grayscale
@@ -35,7 +35,7 @@ const CatalogCard = ({ design, index }: CatalogCardProps) => (
           <img
             src={design.image}
             alt={design.name}
-            className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+            className="h-full w-full object-contain grayscale contrast-125 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
             loading="lazy"
           />
         )}
