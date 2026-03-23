@@ -17,8 +17,8 @@ const socialLinks = [
 
 
 const branches = [
-{ name: "Gò Vấp, HCM", address: "99 đường số 18, Phường 8, Quận Gò Vấp, TP. Hồ Chí Minh", mapQuery: "99+đường+số+18+Phường+8+Quận+Gò+Vấp+Hồ+Chí+Minh" },
-{ name: "Hà Đông, Hà Nội", address: "Sh41 KPark Văn Phú, Phú La, Hà Đông, Hà Nội", mapQuery: "Sh41+KPark+Văn+Phú+Phú+La+Hà+Đông+Hà+Nội" },
+{ name: "Gò Vấp, HCM", address: "88 Nguyễn Văn Khối, Phường 11, Gò Vấp, Hồ Chí Minh", mapQuery: "88+Nguyễn+Văn+Khối+Phường+11+Gò+Vấp+Hồ+Chí+Minh" },
+{ name: "Hoàng Mai, Hà Nội", address: "18A Bờ Sông Sét, Hoàng Mai, Hà Nội", mapQuery: "18A+Bờ+Sông+Sét+Hoàng+Mai+Hà+Nội" },
 { name: "Buôn Ma Thuột", address: "250 Trần Phú, Buôn Ma Thuột, Đắk Lắk", mapQuery: "250+Trần+Phú+Buôn+Ma+Thuột+Đắk+Lắk" },
 { name: "Kuala Lumpur", address: "Level 1, Lot F112, Sungei Wang Plaza, Jalan Sultan Ismail, 50250 Kuala Lumpur", mapQuery: "Sungei+Wang+Plaza+Jalan+Sultan+Ismail+Kuala+Lumpur" }];
 
