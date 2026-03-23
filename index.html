@@ -50,6 +50,9 @@
   </head>
 
   <body>
+    <script>
+      (function(){var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.remove('dark');})();
+    </script>
     <div id="root"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#050505"><p style="font-family:'Space Grotesk',sans-serif;color:#FAFAFA;font-size:1.25rem;letter-spacing:0.2em;text-transform:uppercase">ROWENA TATTOO</p></div></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

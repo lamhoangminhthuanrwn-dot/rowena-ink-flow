@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import logoRowena from "@/assets/logo-rowena.png";
 
 const Navbar = () => {
@@ -9,6 +10,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, canManagePosts, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const links = [
   { to: "/mau-xam", label: "Mẫu xăm" },
@@ -43,6 +45,13 @@ const Navbar = () => {
               {l.label}
             </Link>
           )}
+          <button
+            onClick={toggleTheme}
+            className="text-foreground/70 hover:text-primary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {!loading && (
           user ?
           <button
