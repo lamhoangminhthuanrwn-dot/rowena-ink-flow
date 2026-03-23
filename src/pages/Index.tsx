@@ -76,7 +76,18 @@ const Index = () => {
               
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 overflow-hidden border border-border">
-                    <img src={d.image} alt={d.name} className="h-full w-full object-cover grayscale contrast-125" />
+                    {d.images && d.images.length > 1 ? (
+                      <ImageSlideshow
+                        images={d.images}
+                        alt={d.name}
+                        className="h-full w-full"
+                        showArrows={false}
+                        showDots={false}
+                        grayscale
+                      />
+                    ) : (
+                      <img src={d.image} alt={d.name} className="h-full w-full object-cover grayscale contrast-125" />
+                    )}
                   </div>
                   <div>
                     <h3 className="font-sans text-base font-bold uppercase text-foreground">{d.name}</h3>
