@@ -1,17 +1,18 @@
 
 
-## Đồng bộ kích thước khung cho tất cả mẫu xăm trong Catalog
+## Chuyển hình ảnh catalog sang fit theo chiều ngang
 
-### Vấn đề
-Hiện tại, ảnh đơn dùng `h-auto` (chiều cao tự do theo ảnh gốc), trong khi slideshow dùng `aspect-[3/4]`. Kết quả: các ô có kích thước khác nhau, masonry grid không đều.
+### Thay đổi
+Chuyển tất cả hình trong catalog từ `object-cover` (cắt ảnh để lấp đầy khung) sang `object-contain` (hiển thị trọn ảnh, fit theo chiều ngang) và thêm nền `bg-secondary/30` để phần trống không bị trắng.
 
-### Giải pháp
-Bỏ masonry layout, chuyển sang **CSS Grid đều** với tất cả item cùng `aspect-[3/4]` và `object-cover`:
+**Catalog.tsx** — 2 chỗ:
+- ImageSlideshow: `objectFit="cover"` → `objectFit="contain"`
+- Ảnh đơn: `object-cover` → `object-contain`
+- Container `aspect-[3/4]`: thêm `bg-secondary/30`
 
-**Catalog.tsx**:
-- Thay `.masonry-grid` bằng CSS grid: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0`
-- Tất cả ảnh (đơn lẫn slideshow) đều nằm trong container `aspect-[3/4]` với `object-cover`
-- Giữ nguyên hover overlay và grayscale effect
+**CatalogCard.tsx** — tương tự:
+- ImageSlideshow & ảnh đơn: chuyển sang `object-contain`
+- Thêm `bg-secondary/30` cho container
 
-Kết quả: mọi ô đều cùng tỉ lệ 3:4, border đều, không lệch.
+Kết quả: ảnh hiển thị trọn vẹn không bị cắt, fit theo chiều ngang, nền xám nhạt phía sau.
 
