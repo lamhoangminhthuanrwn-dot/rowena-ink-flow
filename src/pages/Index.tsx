@@ -33,11 +33,23 @@ const Index = () => {
               <ArrowRight className="text-muted-foreground group-hover:text-primary transition-colors" size={20} />
             </div>
             <div className="aspect-[4/5] w-full overflow-hidden border border-border">
-              <img
-                src={featured[0]?.image}
-                alt={featured[0]?.name}
-                className="h-full w-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
-              
+              {featured[0]?.images && featured[0].images.length > 1 ? (
+                <ImageSlideshow
+                  images={featured[0].images}
+                  alt={featured[0].name}
+                  className="h-full w-full"
+                  objectFit="contain"
+                  grayscale
+                  showArrows
+                  showDots={false}
+                />
+              ) : (
+                <img
+                  src={featured[0]?.image}
+                  alt={featured[0]?.name}
+                  className="h-full w-full object-contain grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700"
+                />
+              )}
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
