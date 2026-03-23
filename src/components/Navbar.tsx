@@ -11,9 +11,9 @@ const Navbar = () => {
   const { user, isAdmin, canManagePosts, loading } = useAuth();
 
   const links = [
-    { to: "/mau-xam", label: "MẪU XĂM" },
-    { to: "/tin-tuc", label: "TIN TỨC" },
-  ];
+  { to: "/mau-xam", label: "ARCHIVE" },
+  { to: "/tin-tuc", label: "TIN TỨC" }];
+
 
   if (user && isAdmin) {
     links.push({ to: "/ketoan", label: "KẾ TOÁN" });
@@ -32,48 +32,48 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-                isActive(l.to) ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"
-              }`}
-            >
+          {links.map((l) =>
+          <Link
+            key={l.to}
+            to={l.to}
+            className={`font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+            isActive(l.to) ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"}`
+            }>
+            
               {l.label}
             </Link>
-          ))}
+          )}
           {!loading && (
-            user ? (
-              <button
-                onClick={() => navigate("/tai-khoan")}
-                className={`flex items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-                  isActive("/tai-khoan") ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"
-                }`}
-              >
+          user ?
+          <button
+            onClick={() => navigate("/tai-khoan")}
+            className={`flex items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+            isActive("/tai-khoan") ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"}`
+            }>
+            
                 <User size={14} />
                 TÀI KHOẢN
-              </button>
-            ) : (
-              <Link
-                to="/dang-nhap"
-                className={`font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-                  isActive("/dang-nhap") ? "text-primary" : "text-foreground/70 hover:text-primary"
-                }`}
-              >
+              </button> :
+
+          <Link
+            to="/dang-nhap"
+            className={`font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+            isActive("/dang-nhap") ? "text-primary" : "text-foreground/70 hover:text-primary"}`
+            }>
+            
                 ĐĂNG NHẬP
-              </Link>
-            )
-          )}
+              </Link>)
+
+          }
           <Link
             to="/dat-lich"
             className={`border px-4 py-2 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-all ${
-              isActive("/dat-lich")
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border text-foreground hover:border-primary hover:text-primary"
-            }`}
-          >
-            BOOK
+            isActive("/dat-lich") ?
+            "border-primary bg-primary text-primary-foreground" :
+            "border-border text-foreground hover:border-primary hover:text-primary"}`
+            }>
+            
+            ​đặt lịch 
           </Link>
         </div>
 
@@ -82,61 +82,61 @@ const Navbar = () => {
         </button>
       </div>
 
-      {open && (
-        <div className="border-t border-border bg-background md:hidden">
+      {open &&
+      <div className="border-t border-border bg-background md:hidden">
           <div className="flex flex-col px-6 py-4">
             <Link
-              to="/"
-              onClick={() => setOpen(false)}
-              className={`py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-                isActive("/") ? "text-primary" : "text-foreground/70"
-              }`}
-            >
+            to="/"
+            onClick={() => setOpen(false)}
+            className={`py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+            isActive("/") ? "text-primary" : "text-foreground/70"}`
+            }>
+            
               TRANG CHỦ
             </Link>
-            {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                onClick={() => setOpen(false)}
-                className={`py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-                  isActive(l.to) ? "text-primary" : "text-foreground/70"
-                }`}
-              >
+            {links.map((l) =>
+          <Link
+            key={l.to}
+            to={l.to}
+            onClick={() => setOpen(false)}
+            className={`py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+            isActive(l.to) ? "text-primary" : "text-foreground/70"}`
+            }>
+            
                 {l.label}
               </Link>
-            ))}
+          )}
             <Link
-              to="/dat-lich"
-              onClick={() => setOpen(false)}
-              className="mt-2 border border-primary bg-primary py-3 text-center font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground"
-            >
+            to="/dat-lich"
+            onClick={() => setOpen(false)}
+            className="mt-2 border border-primary bg-primary py-3 text-center font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground">
+            
               BOOK
             </Link>
             {!loading && (
-              user ? (
-                <Link
-                  to="/tai-khoan"
-                  onClick={() => setOpen(false)}
-                  className="py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground/70"
-                >
+          user ?
+          <Link
+            to="/tai-khoan"
+            onClick={() => setOpen(false)}
+            className="py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground/70">
+            
                   TÀI KHOẢN
-                </Link>
-              ) : (
-                <Link
-                  to="/dang-nhap"
-                  onClick={() => setOpen(false)}
-                  className="py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground/70"
-                >
+                </Link> :
+
+          <Link
+            to="/dang-nhap"
+            onClick={() => setOpen(false)}
+            className="py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground/70">
+            
                   ĐĂNG NHẬP
-                </Link>
-              )
-            )}
+                </Link>)
+
+          }
           </div>
         </div>
-      )}
-    </nav>
-  );
+      }
+    </nav>);
+
 };
 
 export default Navbar;
