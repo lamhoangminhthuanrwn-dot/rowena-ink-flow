@@ -18,12 +18,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { data, error } = await supabase
+    // Optional JWT check — determine caller identity
+    let callerUid: string | null = null;
+    let isAdmin = false;
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      const anonClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const token = authHeader.replace('Bearer ', '');
+      const { data: claimsData } = await anonClient.auth.getClaims(token);
+      if (claimsData?.claims?.sub) {
+        callerUid = claimsData.claims.sub as string;
+        // Check admin role
+        const { data: roleCheck } = await supabaseAdmin.rpc('has_role', {
+          _user_id: callerUid,
+          _role: 'admin',
+        });
+        isAdmin = roleCheck === true;
+      }
+    }
+
+    const { data, error } = await supabaseAdmin
       .from('bookings')
       .select('booking_code, customer_name, customer_phone, customer_email, product_name, placement, size, preferred_date, preferred_time, notes, note, branch_name, user_id, artists(name)')
       .eq('booking_code', booking_code)
@@ -35,10 +58,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Determine if caller is the booking owner or admin
+    const isOwner = callerUid != null && data.user_id != null && callerUid === data.user_id;
+    const canSeePII = isOwner || isAdmin;
+
     // Fetch referral code if user is logged in
     let referral_code: string | null = null;
     if (data.user_id) {
-      const { data: profile } = await supabase
+      const { data: profile } = await supabaseAdmin
         .from('profiles')
         .select('referral_code')
         .eq('id', data.user_id)
@@ -49,16 +76,17 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({
       booking: {
         booking_code: data.booking_code,
-        customer_name: data.customer_name,
-        customer_phone: data.customer_phone,
-        customer_email: data.customer_email,
+        // Only return PII to owner or admin
+        customer_name: canSeePII ? data.customer_name : undefined,
+        customer_phone: canSeePII ? data.customer_phone : undefined,
+        customer_email: canSeePII ? data.customer_email : undefined,
         product_name: data.product_name,
         placement: data.placement,
         size: data.size,
         preferred_date: data.preferred_date,
         preferred_time: data.preferred_time,
-        notes: data.notes,
-        note: data.note,
+        notes: canSeePII ? data.notes : undefined,
+        note: canSeePII ? data.note : undefined,
         branch_name: data.branch_name,
         artist_name: (data.artists as { name: string } | null)?.name || null,
       },
