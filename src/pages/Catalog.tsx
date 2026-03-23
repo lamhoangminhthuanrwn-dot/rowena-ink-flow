@@ -37,12 +37,15 @@ const Catalog = () => {
           {filtered.map((d) => (
             <Link key={d.id} to={`/mau-xam/${d.slug}`} className="masonry-item block">
               {d.images && d.images.length > 1 ? (
-                <div className="w-full">
-                  <img
-                    src={d.image}
+                <div className="w-full aspect-[3/4]">
+                  <ImageSlideshow
+                    images={d.images}
                     alt={d.name}
-                    className="w-full h-auto grayscale-hover block"
-                    loading="lazy"
+                    className="h-full w-full"
+                    objectFit="cover"
+                    showDots={false}
+                    showArrows={true}
+                    grayscale
                   />
                 </div>
               ) : (

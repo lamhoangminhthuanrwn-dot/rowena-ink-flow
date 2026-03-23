@@ -10,9 +10,10 @@ interface ImageSlideshowProps {
   showDots?: boolean;
   showArrows?: boolean;
   objectFit?: "cover" | "contain";
+  grayscale?: boolean;
 }
 
-const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover" }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = true, showArrows = true, objectFit = "cover", grayscale = false }: ImageSlideshowProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = useCallback(() => {
@@ -36,9 +37,10 @@ const ImageSlideshow = ({ images, alt, className, interval = 5000, showDots = tr
           src={src}
           alt={`${alt} ${i + 1}`}
           className={cn(
-            "absolute inset-0 h-full w-full transition-opacity duration-700",
+            "absolute inset-0 h-full w-full transition-all duration-700",
             objectFit === "contain" ? "object-contain" : "object-cover",
-            i === currentIndex ? "opacity-100" : "opacity-0"
+            i === currentIndex ? "opacity-100" : "opacity-0",
+            grayscale && "grayscale contrast-125 group-hover/slide:grayscale-0"
           )}
           loading={i === 0 ? "eager" : "lazy"}
         />
