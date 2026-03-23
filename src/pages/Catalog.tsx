@@ -33,11 +33,11 @@ const Catalog = () => {
 
       {/* Masonry Grid */}
       <main className="mx-auto max-w-[1440px] px-6 md:px-10 py-10">
-        <div className="masonry-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0">
           {filtered.map((d) => (
-            <Link key={d.id} to={`/mau-xam/${d.slug}`} className="masonry-item block">
-              {d.images && d.images.length > 1 ? (
-                <div className="w-full aspect-[3/4]">
+            <Link key={d.id} to={`/mau-xam/${d.slug}`} className="group relative block border border-border/50 overflow-hidden transition-colors hover:border-primary">
+              <div className="aspect-[3/4] overflow-hidden">
+                {d.images && d.images.length > 1 ? (
                   <ImageSlideshow
                     images={d.images}
                     alt={d.name}
@@ -47,19 +47,19 @@ const Catalog = () => {
                     showArrows={true}
                     grayscale
                   />
-                </div>
-              ) : (
-                <img
-                  src={d.image}
-                  alt={d.name}
-                  className="w-full h-auto grayscale-hover block"
-                  loading="lazy"
-                />
-              )}
-              <div className="meta-overlay flex flex-col">
+                ) : (
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+              <div className="absolute bottom-0 left-0 w-full translate-y-full transition-transform duration-300 group-hover:translate-y-0 bg-background/85 p-4 border-t border-border">
                 <span className="font-sans text-sm font-bold uppercase tracking-wider text-foreground">{d.name}</span>
-                <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground mt-1">{d.category}</span>
-                <span className="font-mono text-xs text-primary mt-1">{displayPrice(d)}</span>
+                <span className="block font-mono text-xs uppercase tracking-widest text-muted-foreground mt-1">{d.category}</span>
+                <span className="block font-mono text-xs text-primary mt-1">{displayPrice(d)}</span>
               </div>
             </Link>
           ))}
