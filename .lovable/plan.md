@@ -1,18 +1,22 @@
 
 
-## Cập nhật link YouTube
+## Vấn đề: Nhà cung cấp domain không hỗ trợ bản ghi NS
 
-Thay đổi URL YouTube trong `src/components/Footer.tsx` dòng 15:
+Hệ thống email của Lovable yêu cầu thêm bản ghi **NS (Name Server)** cho subdomain `notify.rowenatattoos.com` để ủy quyền DNS. Nếu nhà cung cấp domain hiện tại không cho thêm bản ghi NS, có 2 hướng giải quyết:
 
-- **Từ**: `https://www.youtube.com/@rowenatattomiennam`
-- **Thành**: Giữ nguyên — link hiện tại đã đúng với URL người dùng cung cấp.
+### Phương án 1: Chuyển DNS sang Cloudflare (miễn phí, khuyến nghị)
+- Đăng ký tài khoản Cloudflare miễn phí tại cloudflare.com
+- Thêm domain `rowenatattoos.com` vào Cloudflare
+- Cập nhật nameserver tại nhà cung cấp domain hiện tại trỏ về Cloudflare
+- Sau khi DNS chuyển xong, thêm bản ghi NS trên Cloudflare (Cloudflare hỗ trợ đầy đủ các loại bản ghi)
+- Giữ nguyên tất cả bản ghi DNS hiện có
 
-Kiểm tra lại: link YouTube trong code đã là `https://www.youtube.com/@rowenatattomiennam`, trùng khớp với URL người dùng gửi. Không cần thay đổi.
+### Phương án 2: Chuyển domain sang nhà cung cấp khác
+- Các nhà cung cấp hỗ trợ NS: Namecheap, GoDaddy, Google Domains, Tên Miền Việt Nam (inet.vn), MatBao...
+- Quy trình transfer domain mất 5-7 ngày
 
-Tuy nhiên, nếu người dùng muốn cập nhật link Facebook từ tin nhắn trước (`https://www.facebook.com/people/Rowena-Tattoo/61556145616091/`), thay đổi dòng 14:
-
-- **Từ**: `https://www.facebook.com/profile.php?id=61556145616091`
-- **Thành**: `https://www.facebook.com/people/Rowena-Tattoo/61556145616091/`
-
-Chỉ 1 dòng thay đổi trong `src/components/Footer.tsx`.
+### Lưu ý
+- Không cần thay đổi code — chỉ cần cấu hình DNS đúng
+- Sau khi thêm được bản ghi NS, email sẽ tự động hoạt động
+- Bạn đang dùng nhà cung cấp domain nào? Tôi có thể hướng dẫn cụ thể hơn.
 
