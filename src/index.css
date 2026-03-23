@@ -185,9 +185,9 @@
   width: 100%;
   background-color: transparent;
   border: none;
-  border-bottom: 1px solid hsl(240 5% 34%);
+  border-bottom: 1px solid hsl(var(--muted));
   padding: 1rem 0 0.5rem;
-  color: hsl(0 0% 98%);
+  color: hsl(var(--foreground));
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
   transition: border-color 0.2s ease;
@@ -196,11 +196,11 @@
 
 .brutalist-input:focus {
   outline: none;
-  border-bottom: 2px solid hsl(0 0% 98%);
+  border-bottom: 2px solid hsl(var(--foreground));
 }
 
 .brutalist-input::placeholder {
-  color: hsl(240 5% 34%);
+  color: hsl(var(--muted));
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.875rem;
   text-transform: uppercase;
