@@ -1,23 +1,45 @@
 
 
-## Đổi tông màu giao diện từ đen sang xám
+## Thiết kế lại thanh lọc danh mục — tinh tế hơn
 
-Chuyển nền và các bề mặt từ tông đen (#050505, #121212) sang tông xám nhạt hơn để bớt u tối, vẫn giữ phong cách brutalist.
+### Hiện tại
+Các nút filter dạng `[TẤT CẢ]` với dấu ngoặc vuông, font mono bold, khá thô.
 
-### Thay đổi CSS variables trong `src/index.css`
+### Thiết kế mới
+Chuyển sang dạng tab tối giản với hiệu ứng underline animated, bỏ dấu ngoặc vuông:
 
-| Token | Hiện tại (đen) | Mới (xám) |
-|-------|----------------|-----------|
-| `--background` | `0 0% 2%` | `0 0% 10%` (~#1a1a1a) |
-| `--card` | `0 0% 7%` | `0 0% 15%` (~#262626) |
-| `--popover` | `0 0% 7%` | `0 0% 15%` |
-| `--secondary` | `0 0% 12%` | `0 0% 20%` (~#333) |
-| `--accent` | `0 0% 7%` | `0 0% 15%` |
-| `--sidebar-background` | `0 0% 2%` | `0 0% 10%` |
-| `--sidebar-accent` | `0 0% 12%` | `0 0% 20%` |
-| `surface` color | `#121212` | `#222222` |
+- Font: `font-sans` thay vì `font-mono`, cỡ chữ `text-xs`, `tracking-[0.2em]`, `uppercase`
+- Nút active: có gạch chân đỏ (2px) bên dưới bằng pseudo-element hoặc `border-bottom`, text màu `foreground`
+- Nút inactive: text `muted-foreground`, hover chuyển sang `foreground`
+- Bỏ dấu `[ ]` quanh text
+- Thêm `overflow-x-auto` + `no-scrollbar` cho mobile để cuộn ngang mượt
+- Giữ sticky behavior và vị trí hiện tại
 
-Cập nhật cả block `:root` và `.dark` trong `index.css`, và giá trị `surface` trong `tailwind.config.ts`.
+### Thay đổi file
 
-Giữ nguyên: foreground trắng, primary đỏ, muted, border, typography, layout.
+**`src/pages/Catalog.tsx`** — chỉ sửa phần filter bar (dòng 12-27):
+```tsx
+<div className="sticky top-16 z-40 border-b border-border/50 bg-background/95 backdrop-blur-sm w-full">
+  <div className="mx-auto flex max-w-[1440px] gap-8 px-6 md:px-10 overflow-x-auto no-scrollbar">
+    {categories.map((c) => (
+      <button
+        key={c}
+        onClick={() => setActive(c)}
+        className={`relative py-4 font-sans text-xs uppercase tracking-[0.2em] transition-colors whitespace-nowrap ${
+          active === c
+            ? "text-foreground"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        {c}
+        {active === c && (
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
+        )}
+      </button>
+    ))}
+  </div>
+</div>
+```
+
+Điểm khác biệt: backdrop-blur nhẹ, underline indicator thay vì bracket, font sans thanh lịch hơn, spacing rộng rãi hơn.
 
