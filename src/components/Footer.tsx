@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, MapPin, Phone, Clock, Mail } from "lucide-react";
 import logoRowena from "@/assets/logo-rowena.png";
+import logoRowenaLight from "@/assets/logo-rowena-light.png";
+import { useTheme } from "@/hooks/useTheme";
 
 const TikTokIcon = ({ size = 16 }: {size?: number;}) =>
 <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -24,6 +26,7 @@ const branches = [
 
 
 const Footer = () => {
+  const { theme } = useTheme();
   const [activeBranch, setActiveBranch] = useState(0);
   const [mapVisible, setMapVisible] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -45,7 +48,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <img src={logoRowena} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
+              <img src={theme === "dark" ? logoRowena : logoRowenaLight} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Nghệ thuật xăm hình chuyên nghiệp. Mỗi tác phẩm là một câu chuyện riêng.
@@ -151,7 +154,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-3">
-            <img src={logoRowena} alt="Rowena" className="h-4 w-auto object-contain" />
+            <img src={theme === "dark" ? logoRowena : logoRowenaLight} alt="Rowena" className="h-4 w-auto object-contain" />
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               © 2023 ROWENA TATTOO. ALL RIGHTS RESERVED.
             </p>
