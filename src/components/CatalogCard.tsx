@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { TattooDesign } from "@/data/tattooDesigns";
 import { displayPrice } from "@/data/tattooDesigns";
+import ImageSlideshow from "@/components/ImageSlideshow";
 
 interface CatalogCardProps {
   design: TattooDesign;
