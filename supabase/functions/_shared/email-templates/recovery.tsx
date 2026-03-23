@@ -22,21 +22,22 @@ export const RecoveryEmail = ({
   siteName,
   confirmationUrl,
 }: RecoveryEmailProps) => (
-  <Html lang="vi" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Đặt lại mật khẩu — ROWENA Tattoo</Preview>
+    <Preview>Reset your password for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
-        <Heading style={h1}>Đặt lại mật khẩu</Heading>
+        <Heading style={h1}>Reset your password</Heading>
         <Text style={text}>
-          Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản ROWENA của bạn. Nhấn nút bên dưới để chọn mật khẩu mới.
+          We received a request to reset your password for {siteName}. Click
+          the button below to choose a new password.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Đặt lại mật khẩu
+          Reset Password
         </Button>
         <Text style={footer}>
-          Nếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua email này.
+          If you didn't request a password reset, you can safely ignore this
+          email. Your password will not be changed.
         </Text>
       </Container>
     </Body>
@@ -45,44 +46,26 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', 'Crimson Pro', Arial, sans-serif" }
-const container = { padding: '32px 28px' }
-const brand = {
-  fontFamily: "'Crimson Pro', Georgia, serif",
-  fontSize: '20px',
-  fontWeight: 'bold' as const,
-  color: 'hsl(222, 47%, 11%)',
-  letterSpacing: '0.05em',
-  margin: '0 0 24px',
-}
-const brandSub = {
-  fontFamily: "'DM Sans', Arial, sans-serif",
-  fontSize: '10px',
-  fontWeight: '300' as const,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.2em',
-  color: 'hsl(215, 20%, 65%)',
-}
+const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const container = { padding: '20px 25px' }
 const h1 = {
-  fontFamily: "'Crimson Pro', Georgia, serif",
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: 'hsl(222, 47%, 11%)',
+  color: '#000000',
   margin: '0 0 20px',
 }
 const text = {
   fontSize: '14px',
   color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
+  lineHeight: '1.5',
+  margin: '0 0 25px',
 }
 const button = {
-  backgroundColor: 'hsl(216, 19%, 26%)',
-  color: 'hsl(210, 19%, 98%)',
+  backgroundColor: '#000000',
+  color: '#ffffff',
   fontSize: '14px',
-  fontWeight: '600' as const,
-  borderRadius: '0px',
-  padding: '12px 24px',
+  borderRadius: '8px',
+  padding: '12px 20px',
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }

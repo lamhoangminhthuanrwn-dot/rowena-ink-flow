@@ -27,27 +27,32 @@ export const EmailChangeEmail = ({
   newEmail,
   confirmationUrl,
 }: EmailChangeEmailProps) => (
-  <Html lang="vi" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Xác nhận thay đổi email — ROWENA Tattoo</Preview>
+    <Preview>Confirm your email change for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={brand}>ROWENA <span style={brandSub}>tattoo</span></Text>
-        <Heading style={h1}>Xác nhận thay đổi email</Heading>
+        <Heading style={h1}>Confirm your email change</Heading>
         <Text style={text}>
-          Bạn đã yêu cầu thay đổi email từ{' '}
-          <Link href={`mailto:${email}`} style={link}>{email}</Link>{' '}
-          sang{' '}
-          <Link href={`mailto:${newEmail}`} style={link}>{newEmail}</Link>.
+          You requested to change your email address for {siteName} from{' '}
+          <Link href={`mailto:${email}`} style={link}>
+            {email}
+          </Link>{' '}
+          to{' '}
+          <Link href={`mailto:${newEmail}`} style={link}>
+            {newEmail}
+          </Link>
+          .
         </Text>
         <Text style={text}>
-          Nhấn nút bên dưới để xác nhận thay đổi:
+          Click the button below to confirm this change:
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Xác nhận thay đổi email
+          Confirm Email Change
         </Button>
         <Text style={footer}>
-          Nếu bạn không yêu cầu thay đổi này, vui lòng bảo mật tài khoản ngay.
+          If you didn't request this change, please secure your account
+          immediately.
         </Text>
       </Container>
     </Body>
@@ -56,45 +61,27 @@ export const EmailChangeEmail = ({
 
 export default EmailChangeEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', 'Crimson Pro', Arial, sans-serif" }
-const container = { padding: '32px 28px' }
-const brand = {
-  fontFamily: "'Crimson Pro', Georgia, serif",
-  fontSize: '20px',
-  fontWeight: 'bold' as const,
-  color: 'hsl(222, 47%, 11%)',
-  letterSpacing: '0.05em',
-  margin: '0 0 24px',
-}
-const brandSub = {
-  fontFamily: "'DM Sans', Arial, sans-serif",
-  fontSize: '10px',
-  fontWeight: '300' as const,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.2em',
-  color: 'hsl(215, 20%, 65%)',
-}
+const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const container = { padding: '20px 25px' }
 const h1 = {
-  fontFamily: "'Crimson Pro', Georgia, serif",
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: 'hsl(222, 47%, 11%)',
+  color: '#000000',
   margin: '0 0 20px',
 }
 const text = {
   fontSize: '14px',
   color: '#55575d',
-  lineHeight: '1.6',
-  margin: '0 0 20px',
+  lineHeight: '1.5',
+  margin: '0 0 25px',
 }
-const link = { color: 'hsl(216, 19%, 26%)', textDecoration: 'underline' }
+const link = { color: 'inherit', textDecoration: 'underline' }
 const button = {
-  backgroundColor: 'hsl(216, 19%, 26%)',
-  color: 'hsl(210, 19%, 98%)',
+  backgroundColor: '#000000',
+  color: '#ffffff',
   fontSize: '14px',
-  fontWeight: '600' as const,
-  borderRadius: '0px',
-  padding: '12px 24px',
+  borderRadius: '8px',
+  padding: '12px 20px',
   textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
