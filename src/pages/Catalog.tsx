@@ -10,17 +10,22 @@ const Catalog = () => {
   return (
     <div className="min-h-screen pt-16">
       {/* Sticky Filter Bar */}
-      <div className="sticky top-16 z-40 border-b border-border bg-secondary w-full">
-        <div className="mx-auto flex max-w-[1440px] gap-6 px-6 md:px-10 py-3">
+      <div className="sticky top-16 z-40 border-b border-border/50 bg-background/95 backdrop-blur-sm w-full">
+        <div className="mx-auto flex max-w-[1440px] gap-8 px-6 md:px-10 overflow-x-auto no-scrollbar">
           {categories.map((c) => (
             <button
               key={c}
               onClick={() => setActive(c)}
-              className={`font-mono text-sm font-bold uppercase tracking-widest transition-colors ${
-                active === c ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`relative py-4 font-sans text-xs uppercase tracking-[0.2em] transition-colors whitespace-nowrap ${
+                active === c
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              [{c.toUpperCase()}]
+              {c}
+              {active === c && (
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
+              )}
             </button>
           ))}
         </div>
