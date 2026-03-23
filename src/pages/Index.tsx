@@ -40,7 +40,6 @@ const Index = () => {
             </div>
             <div className="mt-4 flex items-end justify-between">
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">[{featured[0]?.category}]</p>
                 <p className="mt-1 font-sans text-lg font-bold uppercase text-foreground">{featured[0]?.name}</p>
               </div>
             </div>
