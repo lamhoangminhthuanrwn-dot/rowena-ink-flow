@@ -36,13 +36,13 @@ const Catalog = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0">
           {filtered.map((d) => (
             <Link key={d.id} to={`/mau-xam/${d.slug}`} className="group relative block border border-border/50 overflow-hidden transition-colors hover:border-primary">
-              <div className="aspect-[3/4] overflow-hidden">
+              <div className="aspect-[3/4] overflow-hidden bg-secondary/30">
                 {d.images && d.images.length > 1 ? (
                   <ImageSlideshow
                     images={d.images}
                     alt={d.name}
                     className="h-full w-full"
-                    objectFit="cover"
+                    objectFit="contain"
                     showDots={false}
                     showArrows={true}
                     grayscale
@@ -51,7 +51,7 @@ const Catalog = () => {
                   <img
                     src={d.image}
                     alt={d.name}
-                    className="h-full w-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
+                    className="h-full w-full object-contain grayscale contrast-125 transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
                     loading="lazy"
                   />
                 )}
