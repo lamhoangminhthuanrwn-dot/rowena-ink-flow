@@ -26,6 +26,7 @@ const branches = [
 
 
 const Footer = () => {
+  const { theme } = useTheme();
   const [activeBranch, setActiveBranch] = useState(0);
   const [mapVisible, setMapVisible] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
