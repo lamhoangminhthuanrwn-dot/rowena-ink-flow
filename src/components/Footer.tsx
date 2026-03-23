@@ -48,7 +48,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <img src={logoRowena} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
+              <img src={theme === "dark" ? logoRowena : logoRowenaLight} alt="Rowena Tattoo" className="h-6 w-auto object-contain" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Nghệ thuật xăm hình chuyên nghiệp. Mỗi tác phẩm là một câu chuyện riêng.
