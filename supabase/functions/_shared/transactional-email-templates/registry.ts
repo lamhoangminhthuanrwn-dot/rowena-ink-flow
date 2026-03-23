@@ -12,9 +12,11 @@ export interface TemplateEntry {
 import { template as bookingNotification } from './booking-notification.tsx'
 import { template as withdrawalNotification } from './withdrawal-notification.tsx'
 import { template as priceUpdateNotification } from './price-update-notification.tsx'
+import { template as changePaymentConfirmation } from './change-payment-confirmation.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'booking-notification': bookingNotification,
   'withdrawal-notification': withdrawalNotification,
   'price-update-notification': priceUpdateNotification,
+  'change-payment-confirmation': changePaymentConfirmation,
 }
