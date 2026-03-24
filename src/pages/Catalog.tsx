@@ -65,6 +65,32 @@ const Catalog = () => {
           ))}
         </div>
       </main>
+
+      {/* CTA */}
+      <section className="border-t border-border bg-secondary/30 px-6 py-12 md:px-10 md:py-16">
+        <div className="mx-auto max-w-[1440px] text-center">
+          <h2 className="font-mono text-xl font-bold uppercase tracking-wider text-foreground md:text-2xl">
+            Không tìm thấy mẫu ưng ý?
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">Đặt lịch tư vấn để artist thiết kế riêng theo ý tưởng của bạn.</p>
+          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              to="/dat-lich"
+              className="border border-primary bg-primary px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Đặt lịch tư vấn
+            </Link>
+            <a
+              href={siteConfig.zaloLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-border px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.15em] text-foreground transition-colors hover:border-primary hover:text-primary"
+            >
+              Nhắn Zalo
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
