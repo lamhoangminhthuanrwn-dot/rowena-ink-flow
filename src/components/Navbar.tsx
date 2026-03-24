@@ -49,8 +49,8 @@ const Navbar = () => {
           <button
             onClick={toggleTheme}
             className="text-foreground/70 hover:text-primary transition-colors"
-            aria-label="Toggle theme"
-          >
+            aria-label="Toggle theme">
+            
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           {!loading && (
@@ -121,7 +121,7 @@ const Navbar = () => {
             onClick={() => setOpen(false)}
             className="mt-2 border border-primary bg-primary py-3 text-center font-mono text-sm font-bold uppercase tracking-[0.15em] text-primary-foreground">
             
-              BOOK
+              ​Đặt lịch
             </Link>
             {!loading && (
           user ?
