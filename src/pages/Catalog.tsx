@@ -14,6 +14,7 @@ const Catalog = () => {
       title: "Bộ sưu tập hình xăm",
       description: "Khám phá bộ sưu tập mẫu hình xăm đa dạng phong cách tại Rowena Tattoo. Mini tattoo, realism, blackwork, fine line và nhiều hơn nữa.",
     });
+    return () => resetSEO();
   }, []);
 
   return (

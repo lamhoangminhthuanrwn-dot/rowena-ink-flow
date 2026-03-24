@@ -11,6 +11,11 @@ const Unsubscribe = () => {
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
+    setSEO({ title: "Hủy đăng ký", noindex: true });
+    return () => resetSEO();
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       setStatus("invalid");
       return;

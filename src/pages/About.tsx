@@ -25,6 +25,7 @@ const About = () => {
       description: "Rowena Tattoo - Studio xăm hình nghệ thuật chuyên nghiệp tại TP.HCM & Hà Nội. Tìm hiểu câu chuyện, giá trị và quy trình làm việc của chúng tôi.",
       jsonLd: buildLocalBusinessJsonLd(),
     });
+    return () => resetSEO();
   }, []);
 
   return (

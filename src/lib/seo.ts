@@ -1,4 +1,5 @@
 import { SITE_DOMAIN } from "@/lib/constants";
+import { siteConfig } from "@/data/siteConfig";
 
 const defaults = {
   title: "ROWENA TATTOO CLUB",
@@ -50,16 +51,19 @@ export function setSEO(opts: {
   image?: string;
   url?: string;
   type?: string;
+  noindex?: boolean;
   jsonLd?: Record<string, unknown>;
+  jsonLdExtra?: { id: string; data: Record<string, unknown> };
 }) {
   const title = opts.title ? `${opts.title} | ROWENA TATTOO CLUB` : defaults.title;
   const desc = opts.description || defaults.description;
   const image = opts.image || defaults.image;
   const type = opts.type || defaults.type;
   const url = opts.url || `${SITE_URL}${window.location.pathname}`;
+  const robots = opts.noindex ? "noindex, nofollow" : "index, follow";
 
   document.title = title;
-  setMeta("name", "robots", "index, follow");
+  setMeta("name", "robots", robots);
   setMeta("name", "description", desc);
   setMeta("property", "og:title", title);
   setMeta("property", "og:description", desc);
@@ -76,10 +80,14 @@ export function setSEO(opts: {
   if (opts.jsonLd) {
     setJsonLd("seo-jsonld", opts.jsonLd);
   }
+  if (opts.jsonLdExtra) {
+    setJsonLd(opts.jsonLdExtra.id, opts.jsonLdExtra.data);
+  }
 }
 
 export function resetSEO() {
   document.title = defaults.title;
+  setMeta("name", "robots", "index, follow");
   setMeta("name", "description", defaults.description);
   setMeta("property", "og:title", defaults.title);
   setMeta("property", "og:description", defaults.description);
@@ -93,6 +101,7 @@ export function resetSEO() {
   setMeta("name", "twitter:card", "summary_large_image");
   setCanonical(SITE_URL);
   removeJsonLd("seo-jsonld");
+  removeJsonLd("seo-jsonld-faq");
 }
 
 // JSON-LD builders
@@ -104,13 +113,66 @@ export function buildLocalBusinessJsonLd() {
     description: defaults.description,
     url: SITE_URL,
     image: defaults.image,
+    telephone: siteConfig.hotline,
     priceRange: "$$",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Hồ Chí Minh",
-      addressCountry: "VN",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "08:00",
+      closes: "18:00",
     },
-    sameAs: [],
+    address: siteConfig.branches.map((b) => ({
+      "@type": "PostalAddress",
+      streetAddress: b.address,
+      addressLocality: b.area,
+    })),
+    sameAs: [
+      siteConfig.socials.facebook,
+      siteConfig.socials.instagram,
+      siteConfig.socials.youtube,
+      siteConfig.socials.tiktok,
+    ],
+  };
+}
+
+export function buildFAQJsonLd(items: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+}
+
+export function buildServiceJsonLd(services: { name: string; desc: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    provider: {
+      "@type": "TattooParlor",
+      name: "ROWENA TATTOO CLUB",
+      url: SITE_URL,
+    },
+    serviceType: "Tattoo",
+    areaServed: siteConfig.branches.map((b) => b.area),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Dịch vụ xăm hình",
+      itemListElement: services.map((s) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: s.name,
+          description: s.desc,
+        },
+      })),
+    },
   };
 }
 

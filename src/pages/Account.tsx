@@ -17,6 +17,11 @@ const Account = () => {
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
 
   useEffect(() => {
+    setSEO({ title: "Tài khoản", noindex: true });
+    return () => resetSEO();
+  }, []);
+
+  useEffect(() => {
     if (!authLoading && !user) navigate("/dang-nhap");
   }, [user, authLoading, navigate]);
 

@@ -20,6 +20,11 @@ const Success = () => {
   const bookingCode = searchParams.get("code");
 
   useEffect(() => {
+    setSEO({ title: "Đặt lịch thành công", noindex: true });
+    return () => resetSEO();
+  }, []);
+
+  useEffect(() => {
     if (!bookingCode) {
       setLoading(false);
       return;

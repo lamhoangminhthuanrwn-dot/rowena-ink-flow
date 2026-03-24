@@ -43,6 +43,7 @@ const Branches = () => {
         });
         setArtists(map);
       });
+    return () => resetSEO();
   }, []);
 
   useEffect(() => {
