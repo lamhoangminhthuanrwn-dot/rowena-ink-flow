@@ -2,8 +2,9 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { tattooDesigns } from "@/data/tattooDesigns";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Phone, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { siteConfig } from "@/data/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFileUpload } from "@/hooks/useFileUpload";
@@ -277,6 +278,28 @@ const Booking = () => {
                 {submitting ? "ĐANG GỬI..." : "ĐẶT LỊCH →"}
               </button>
             )}
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">── Hoặc liên hệ nhanh ──</p>
+            <div className="flex justify-center gap-4">
+              <a
+                href={siteConfig.hotlineHref}
+                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <Phone size={14} />
+                Gọi hotline
+              </a>
+              <a
+                href={siteConfig.zaloLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <MessageCircle size={14} />
+                Nhắn Zalo
+              </a>
+            </div>
           </div>
         </div>
       </div>
