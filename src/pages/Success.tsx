@@ -107,6 +107,21 @@ const Success = () => {
           note={(booking.notes as string) || (booking.note as string) || ""}
         />
 
+        <div className="mb-6 border border-border bg-secondary p-4 text-center">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+            Cần hỗ trợ nhanh hơn?
+          </p>
+          <a
+            href={siteConfig.zaloLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-primary px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest text-primary-foreground transition-all hover:bg-foreground hover:text-background"
+          >
+            <MessageCircle size={14} />
+            Nhắn Zalo để được hỗ trợ
+          </a>
+        </div>
+
         <ReferralBanner referralCode={referralCode} copied={copied} onCopy={copyText} />
 
         <DepositSection

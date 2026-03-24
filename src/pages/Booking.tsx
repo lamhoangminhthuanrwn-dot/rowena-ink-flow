@@ -279,6 +279,28 @@ const Booking = () => {
               </button>
             )}
           </div>
+
+          <div className="mt-6 text-center">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">── Hoặc liên hệ nhanh ──</p>
+            <div className="flex justify-center gap-4">
+              <a
+                href={siteConfig.hotlineHref}
+                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <Phone size={14} />
+                Gọi hotline
+              </a>
+              <a
+                href={siteConfig.zaloLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <MessageCircle size={14} />
+                Nhắn Zalo
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

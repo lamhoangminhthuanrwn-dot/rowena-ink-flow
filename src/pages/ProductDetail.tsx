@@ -190,6 +190,15 @@ const ProductDetail = () => {
               >
                 ĐẶT LỊCH XĂM MẪU NÀY
               </Link>
+              <a
+                href={siteConfig.zaloLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 flex w-full items-center justify-center gap-2 py-3 font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary"
+              >
+                <MessageCircle size={14} />
+                Hoặc nhắn Zalo tư vấn
+              </a>
             </div>
 
             <div className="mt-8 border border-border bg-secondary p-4">
