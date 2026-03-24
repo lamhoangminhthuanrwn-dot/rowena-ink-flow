@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 import Index from "./pages/Index";
 import AdminBookingNotifier from "@/components/AdminBookingNotifier";
 import AdminRoute from "@/components/AdminRoute";
@@ -47,7 +48,7 @@ const App = () => (
           <AdminBookingNotifier />
           <div className="grain">
             <Navbar />
-            <main className="min-h-screen">
+            <main className="min-h-screen pb-14 md:pb-0">
               <ErrorBoundary>
               <Suspense fallback={
                 <div className="flex min-h-screen items-center justify-center">
@@ -84,6 +85,7 @@ const App = () => (
               </ErrorBoundary>
             </main>
             <Footer />
+            <StickyMobileCTA />
           </div>
         </AuthProvider>
       </BrowserRouter>
