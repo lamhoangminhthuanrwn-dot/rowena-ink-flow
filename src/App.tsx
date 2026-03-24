@@ -16,6 +16,9 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 // Lazy-loaded routes for code splitting
 const Catalog = lazy(() => import("./pages/Catalog"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const BranchesPage = lazy(() => import("./pages/Branches"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Success = lazy(() => import("./pages/Success"));
 const Auth = lazy(() => import("./pages/Auth"));
