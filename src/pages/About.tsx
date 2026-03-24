@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Shield, Heart, Sparkles, Award, MessageSquare, Pencil, Zap, HeartHandshake } from "lucide-react";
-import { setSEO, buildLocalBusinessJsonLd } from "@/lib/seo";
+import { setSEO, resetSEO, buildLocalBusinessJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/data/siteConfig";
 
 const values = [
