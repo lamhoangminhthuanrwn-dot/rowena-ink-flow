@@ -125,7 +125,7 @@ const Navbar = () => {
             
               ​Đặt lịch
             </Link>
-            {!loading && user && (
+            {!loading && (user ? (
               <Link
                 to="/tai-khoan"
                 onClick={() => setOpen(false)}
@@ -133,7 +133,15 @@ const Navbar = () => {
               >
                 TÀI KHOẢN
               </Link>
-            )}
+            ) : (
+              <Link
+                to="/dang-nhap"
+                onClick={() => setOpen(false)}
+                className="py-3 font-mono text-sm font-bold uppercase tracking-[0.15em] text-foreground/70"
+              >
+                ĐĂNG NHẬP
+              </Link>
+            ))}
           </div>
         </div>
       }
