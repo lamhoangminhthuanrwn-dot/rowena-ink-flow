@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { MapPin, Phone, Clock, MessageSquare, Navigation } from "lucide-react";
-import { setSEO } from "@/lib/seo";
+import { setSEO, resetSEO } from "@/lib/seo";
 import { siteConfig } from "@/data/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_DOMAIN } from "@/lib/constants";
@@ -43,6 +43,7 @@ const Branches = () => {
         });
         setArtists(map);
       });
+    return () => resetSEO();
   }, []);
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { setSEO, resetSEO } from "@/lib/seo";
 import { CalendarDays, Wallet as WalletIcon, Share2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -14,6 +15,11 @@ const Account = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<"bookings" | "wallet" | "referral">("bookings");
+
+  useEffect(() => {
+    setSEO({ title: "Tài khoản", noindex: true });
+    return () => resetSEO();
+  }, []);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/dang-nhap");

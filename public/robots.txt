@@ -15,5 +15,6 @@ Disallow: /booking
 Disallow: /auth
 Disallow: /account
 Disallow: /huy-dang-ky
+Disallow: /unsubscribe
 
 Sitemap: https://qbbvnjnpbbpskhwngsrq.supabase.co/functions/v1/sitemap

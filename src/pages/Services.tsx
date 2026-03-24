@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Palette, Maximize, RefreshCw, PenTool, HelpCircle } from "lucide-react";
-import { setSEO } from "@/lib/seo";
+import { setSEO, resetSEO, buildServiceJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/data/siteConfig";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { SITE_DOMAIN } from "@/lib/constants";
+
 
 const services = [
   {
@@ -54,18 +54,9 @@ const Services = () => {
     setSEO({
       title: "Dịch vụ xăm hình",
       description: "Dịch vụ xăm hình chuyên nghiệp tại Rowena Tattoo: xăm mini, xăm nghệ thuật, cover tattoo, xăm theo yêu cầu. Tư vấn miễn phí.",
-      jsonLd: {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        provider: {
-          "@type": "TattooParlor",
-          name: "ROWENA TATTOO CLUB",
-          url: `https://${SITE_DOMAIN}`,
-        },
-        serviceType: "Tattoo",
-        areaServed: ["Hồ Chí Minh", "Hà Nội", "Đắk Lắk", "Kuala Lumpur"],
-      },
+      jsonLd: buildServiceJsonLd(services.map((s) => ({ name: s.name, desc: s.desc }))),
     });
+    return () => resetSEO();
   }, []);
 
   return (

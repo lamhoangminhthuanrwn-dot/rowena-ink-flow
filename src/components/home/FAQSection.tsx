@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const faqs = [
+export const homeFaqs = [
   {
     q: "Xăm hình có đau không?",
     a: "Mức độ đau phụ thuộc vào vị trí xăm và ngưỡng chịu đau của mỗi người. Các vùng da mỏng (sườn, mắt cá chân) thường nhạy cảm hơn. Studio có thuốc tê hỗ trợ nếu cần.",
@@ -42,7 +42,7 @@ const FAQSection = () => (
         Giải đáp những thắc mắc phổ biến trước khi bạn quyết định xăm.
       </p>
       <Accordion type="single" collapsible className="w-full">
-        {faqs.map((f, i) => (
+        {homeFaqs.map((f, i) => (
           <AccordionItem key={i} value={`faq-${i}`} className="border-border">
             <AccordionTrigger className="font-sans text-base font-bold text-foreground hover:no-underline hover:text-primary">
               {f.q}

@@ -4,6 +4,7 @@ import { Check, Loader2, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/data/siteConfig";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { setSEO, resetSEO } from "@/lib/seo";
 import BookingSummary from "@/components/success/BookingSummary";
 import ReferralBanner from "@/components/success/ReferralBanner";
 import DepositSection from "@/components/success/DepositSection";
@@ -17,6 +18,11 @@ const Success = () => {
   const [referralCode, setReferralCode] = useState<string | null>(null);
 
   const bookingCode = searchParams.get("code");
+
+  useEffect(() => {
+    setSEO({ title: "Đặt lịch thành công", noindex: true });
+    return () => resetSEO();
+  }, []);
 
   useEffect(() => {
     if (!bookingCode) {

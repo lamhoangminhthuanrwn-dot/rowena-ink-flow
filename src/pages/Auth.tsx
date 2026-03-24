@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { setSEO, resetSEO } from "@/lib/seo";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,11 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setSEO({ title: "Đăng nhập", noindex: true });
+    return () => resetSEO();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

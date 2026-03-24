@@ -5,8 +5,9 @@ import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
 import ArtistTeam from "@/components/home/ArtistTeam";
 import BranchesSection from "@/components/home/BranchesSection";
 import FAQSection from "@/components/home/FAQSection";
+import { homeFaqs } from "@/components/home/FAQSection";
 import SocialProof from "@/components/home/SocialProof";
-import { setSEO, resetSEO, buildLocalBusinessJsonLd } from "@/lib/seo";
+import { setSEO, resetSEO, buildLocalBusinessJsonLd, buildFAQJsonLd } from "@/lib/seo";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -16,6 +17,7 @@ const Index = () => {
       description:
         "ROWENA TATTOO CLUB - Xăm hình nghệ thuật chuyên nghiệp tại TP.HCM & Hà Nội. Đặt lịch online, xem mẫu xăm và giá.",
       jsonLd: buildLocalBusinessJsonLd(),
+      jsonLdExtra: { id: "seo-jsonld-faq", data: buildFAQJsonLd(homeFaqs) },
     });
     return () => resetSEO();
   }, []);

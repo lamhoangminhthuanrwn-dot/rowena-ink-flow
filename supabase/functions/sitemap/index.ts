@@ -15,8 +15,11 @@ const hardcodedProductSlugs = [
 const staticRoutes = [
   { loc: "/", changefreq: "weekly", priority: "1.0" },
   { loc: "/mau-xam", changefreq: "weekly", priority: "0.9" },
+  { loc: "/dich-vu", changefreq: "monthly", priority: "0.8" },
   { loc: "/dat-lich", changefreq: "monthly", priority: "0.8" },
   { loc: "/tin-tuc", changefreq: "daily", priority: "0.8" },
+  { loc: "/gioi-thieu", changefreq: "monthly", priority: "0.7" },
+  { loc: "/chi-nhanh", changefreq: "monthly", priority: "0.7" },
   { loc: "/dang-nhap", changefreq: "monthly", priority: "0.3" },
 ];
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { setSEO, resetSEO } from "@/lib/seo";
 
 type Status = "loading" | "valid" | "already_unsubscribed" | "invalid" | "success" | "error";
 
@@ -8,6 +9,11 @@ const Unsubscribe = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>("loading");
+
+  useEffect(() => {
+    setSEO({ title: "Hủy đăng ký", noindex: true });
+    return () => resetSEO();
+  }, []);
 
   useEffect(() => {
     if (!token) {

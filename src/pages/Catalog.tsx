@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { tattooDesigns, categories, displayPrice } from "@/data/tattooDesigns";
 import ImageSlideshow from "@/components/ImageSlideshow";
-import { setSEO } from "@/lib/seo";
+import { setSEO, resetSEO } from "@/lib/seo";
 import { siteConfig } from "@/data/siteConfig";
 
 const Catalog = () => {
@@ -14,6 +14,7 @@ const Catalog = () => {
       title: "Bộ sưu tập hình xăm",
       description: "Khám phá bộ sưu tập mẫu hình xăm đa dạng phong cách tại Rowena Tattoo. Mini tattoo, realism, blackwork, fine line và nhiều hơn nữa.",
     });
+    return () => resetSEO();
   }, []);
 
   return (
