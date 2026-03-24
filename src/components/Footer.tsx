@@ -69,7 +69,10 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-mono text-xs font-bold uppercase tracking-widest text-foreground">Liên kết</h4>
             <ul className="space-y-2.5 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <li><Link to="/gioi-thieu" className="transition-colors hover:text-primary">GIỚI THIỆU</Link></li>
+              <li><Link to="/dich-vu" className="transition-colors hover:text-primary">DỊCH VỤ</Link></li>
               <li><Link to="/mau-xam" className="transition-colors hover:text-primary">MẪU XĂM</Link></li>
+              <li><Link to="/chi-nhanh" className="transition-colors hover:text-primary">CHI NHÁNH</Link></li>
               <li><Link to="/tin-tuc" className="transition-colors hover:text-primary">TIN TỨC</Link></li>
               <li><Link to="/dat-lich" className="transition-colors hover:text-primary">ĐẶT LỊCH</Link></li>
             </ul>

@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { tattooDesigns, categories, displayPrice } from "@/data/tattooDesigns";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import { setSEO } from "@/lib/seo";
+import { siteConfig } from "@/data/siteConfig";
 
 const Catalog = () => {
   const [active, setActive] = useState("Tất cả");
   const filtered = active === "Tất cả" ? tattooDesigns : tattooDesigns.filter((d) => d.category === active);
 
+  useEffect(() => {
+    setSEO({
+      title: "Bộ sưu tập hình xăm",
+      description: "Khám phá bộ sưu tập mẫu hình xăm đa dạng phong cách tại Rowena Tattoo. Mini tattoo, realism, blackwork, fine line và nhiều hơn nữa.",
+    });
+  }, []);
+
   return (
     <div className="min-h-screen pt-16">
+      {/* H1 */}
+      <div className="border-b border-border bg-secondary/30 px-6 py-10 md:px-10 md:py-14">
+        <div className="mx-auto max-w-[1440px]">
+          <h1 className="font-mono text-2xl font-bold uppercase tracking-wider text-foreground md:text-4xl">Bộ sưu tập hình xăm</h1>
+          <p className="mt-2 text-sm text-muted-foreground md:text-base">Khám phá các phong cách và tìm nguồn cảm hứng cho tác phẩm của bạn.</p>
+        </div>
+      </div>
+
       {/* Sticky Filter Bar */}
       <div className="sticky top-16 z-40 border-b border-border/50 bg-background/95 backdrop-blur-sm w-full">
         <div className="mx-auto flex max-w-[1440px] gap-8 px-6 md:px-10 overflow-x-auto no-scrollbar">
@@ -65,6 +82,32 @@ const Catalog = () => {
           ))}
         </div>
       </main>
+
+      {/* CTA */}
+      <section className="border-t border-border bg-secondary/30 px-6 py-12 md:px-10 md:py-16">
+        <div className="mx-auto max-w-[1440px] text-center">
+          <h2 className="font-mono text-xl font-bold uppercase tracking-wider text-foreground md:text-2xl">
+            Không tìm thấy mẫu ưng ý?
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">Đặt lịch tư vấn để artist thiết kế riêng theo ý tưởng của bạn.</p>
+          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              to="/dat-lich"
+              className="border border-primary bg-primary px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Đặt lịch tư vấn
+            </Link>
+            <a
+              href={siteConfig.zaloLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-border px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.15em] text-foreground transition-colors hover:border-primary hover:text-primary"
+            >
+              Nhắn Zalo
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
