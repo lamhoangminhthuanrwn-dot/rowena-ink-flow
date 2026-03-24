@@ -116,7 +116,7 @@ const Index = () => {
               <path clipRule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fillRule="evenodd" />
             </svg>
           </div>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-foreground leading-tight">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-foreground leading-tight my-0">
             VỆ SINH TUYỆT ĐỐI. NGHỆ THUẬT KHÔNG THỎA HIỆP. TIÊU CHUẨN KHÔNG THƯƠNG LƯỢNG.
           </h2>
           <Link
