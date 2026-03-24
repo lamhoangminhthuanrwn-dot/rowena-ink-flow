@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Palette, Maximize, RefreshCw, PenTool, HelpCircle } from "lucide-react";
-import { setSEO } from "@/lib/seo";
+import { setSEO, resetSEO, buildServiceJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/data/siteConfig";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SITE_DOMAIN } from "@/lib/constants";
