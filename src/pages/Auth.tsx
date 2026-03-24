@@ -18,6 +18,11 @@ const Auth = () => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setSEO({ title: "Đăng nhập", noindex: true });
+    return () => resetSEO();
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
