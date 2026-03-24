@@ -1,6 +1,7 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, MessageCircle } from "lucide-react";
+import { siteConfig } from "@/data/siteConfig";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import BookingSummary from "@/components/success/BookingSummary";
