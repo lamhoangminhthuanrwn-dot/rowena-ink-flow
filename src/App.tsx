@@ -60,8 +60,11 @@ const App = () => (
               }>
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/gioi-thieu" element={<About />} />
+                  <Route path="/dich-vu" element={<Services />} />
                   <Route path="/mau-xam" element={<Catalog />} />
                   <Route path="/mau-xam/:slug" element={<ProductDetail />} />
+                  <Route path="/chi-nhanh" element={<BranchesPage />} />
                   {/* Redirects from old URLs */}
                   <Route path="/trang-chu" element={<Navigate to="/" replace />} />
                   <Route path="/catalog" element={<Navigate to="/mau-xam" replace />} />

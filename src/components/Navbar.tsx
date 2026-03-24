@@ -14,7 +14,10 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
 
   const links = [
-  { to: "/mau-xam", label: "Mẫu xăm" },
+  { to: "/gioi-thieu", label: "GIỚI THIỆU" },
+  { to: "/dich-vu", label: "DỊCH VỤ" },
+  { to: "/mau-xam", label: "MẪU XĂM" },
+  { to: "/chi-nhanh", label: "CHI NHÁNH" },
   { to: "/tin-tuc", label: "TIN TỨC" }];
 
 

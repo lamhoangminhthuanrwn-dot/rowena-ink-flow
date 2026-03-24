@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { tattooDesigns, categories, displayPrice } from "@/data/tattooDesigns";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import { setSEO } from "@/lib/seo";
+import { siteConfig } from "@/data/siteConfig";
 
 const Catalog = () => {
   const [active, setActive] = useState("Tất cả");
   const filtered = active === "Tất cả" ? tattooDesigns : tattooDesigns.filter((d) => d.category === active);
 
+  useEffect(() => {
+    setSEO({
+      title: "Bộ sưu tập hình xăm",
+      description: "Khám phá bộ sưu tập mẫu hình xăm đa dạng phong cách tại Rowena Tattoo. Mini tattoo, realism, blackwork, fine line và nhiều hơn nữa.",
+    });
+  }, []);
+
   return (
     <div className="min-h-screen pt-16">
+      {/* H1 */}
+      <div className="border-b border-border bg-secondary/30 px-6 py-10 md:px-10 md:py-14">
+        <div className="mx-auto max-w-[1440px]">
+          <h1 className="font-mono text-2xl font-bold uppercase tracking-wider text-foreground md:text-4xl">Bộ sưu tập hình xăm</h1>
+          <p className="mt-2 text-sm text-muted-foreground md:text-base">Khám phá các phong cách và tìm nguồn cảm hứng cho tác phẩm của bạn.</p>
+        </div>
+      </div>
+
       {/* Sticky Filter Bar */}
       <div className="sticky top-16 z-40 border-b border-border/50 bg-background/95 backdrop-blur-sm w-full">
         <div className="mx-auto flex max-w-[1440px] gap-8 px-6 md:px-10 overflow-x-auto no-scrollbar">
