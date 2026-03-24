@@ -2,7 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { tattooDesigns, displayPrice, formatVNDShort } from "@/data/tattooDesigns";
 import type { TattooVariant } from "@/data/tattooDesigns";
-import { ArrowLeft, Clock, Ruler, Info } from "lucide-react";
+import { ArrowLeft, Clock, Ruler, Info, MessageCircle } from "lucide-react";
+import { siteConfig } from "@/data/siteConfig";
 import ImageSlideshow from "@/components/ImageSlideshow";
 import {
   Table,
