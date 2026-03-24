@@ -56,28 +56,17 @@ const Navbar = () => {
             
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          {!loading && (
-          user ?
-          <button
-            onClick={() => navigate("/tai-khoan")}
-            className={`flex items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-            isActive("/tai-khoan") ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"}`
-            }>
-            
-                <User size={14} />
-                TÀI KHOẢN
-              </button> :
-
-          <Link
-            to="/dang-nhap"
-            className={`font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
-            isActive("/dang-nhap") ? "text-primary" : "text-foreground/70 hover:text-primary"}`
-            }>
-            
-                ĐĂNG NHẬP
-              </Link>)
-
-          }
+          {!loading && user && (
+            <button
+              onClick={() => navigate("/tai-khoan")}
+              className={`flex items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-colors ${
+                isActive("/tai-khoan") ? "text-primary border-b border-primary pb-1" : "text-foreground/70 hover:text-primary"
+              }`}
+            >
+              <User size={14} />
+              TÀI KHOẢN
+            </button>
+          )}
           <Link
             to="/dat-lich"
             className={`border px-4 py-2 font-mono text-sm font-bold uppercase tracking-[0.15em] transition-all ${
